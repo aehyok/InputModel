@@ -1496,7 +1496,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_GetInputModelByID = @"select IV_ID,NAMESPACE,IV_NAME,DESCRIPTION,DISPLAYNAME,DISPLAYORDER,IV_CS,TID,DELRULE,DWDM,INTEGRATEDAPP,RESTYPE,
-                                                       beforewrite,afterwrite from MD_INPUTVIEW where IV_ID=:IVID ";
+                                                       beforewrite,afterwrite from MD_INPUTVIEW where IV_ID=@IVID ";
         public MD_InputModel GetInputModelByID(string InputModelID)
         {
             MD_InputModel _ret = null;
@@ -1504,7 +1504,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelByID, cn);
-                _cmd.Parameters.Add(":IVID", decimal.Parse(InputModelID));
+                _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
 
                 using (SqlDataReader _dr = _cmd.ExecuteReader())
                 {
@@ -1536,7 +1536,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         _ret.GetNewRecordGuideLine = StrUtils.GetMetaByName2("NEWZB", _ret.Param);
                         _ret.OrderField = _orderField;
                         _ret.TableName = _tname;
-                        _ret.WriteTableNames = GetWriteDesTableOfInputModel(_ret, cn);
+                        _ret.WriteTableNames = GetWriteDesTableOfInputModel(_ret);
                         _ret.ChildInputModel = GetChildInputModel(_ret, cn);
                     }
                     _dr.Close();
@@ -1600,7 +1600,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     _ret.GetNewRecordGuideLine = StrUtils.GetMetaByName2("NEWZB", _ret.Param);
                     _ret.OrderField = _orderField;
                     _ret.TableName = _tname;
-                    _ret.WriteTableNames = GetWriteDesTableOfInputModel(_ret, cn);
+                    _ret.WriteTableNames = GetWriteDesTableOfInputModel(_ret);
                     _ret.ChildInputModel = GetChildInputModel(_ret, cn);
 
                 }
@@ -1622,7 +1622,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private List<MD_InputModel_Child> GetChildInputModel(MD_InputModel _ret, SqlConnection cn)
         {
             OraMetaDataFactroy _of = new OraMetaDataFactroy();
-            List<MD_InputModel_Child> _cret = _of.GetChildInputModel(_ret, cn);
+            List<MD_InputModel_Child> _cret = _of.GetChildInputModel(_ret);
             foreach (MD_InputModel_Child _child in _cret)
             {
                 if (_child.ChildModel != null)
@@ -1638,54 +1638,61 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_GetWriteDesTableOfInputModel = @"select  ID,TABLENAME,TABLETITLE,ISLOCK,DISPLAYORDER
-                                                                  from MD_INPUTTABLE where IV_ID = :IVID order by DISPLAYORDER  ";
-        private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model, SqlConnection cn)
+                                                                  from MD_INPUTTABLE where IV_ID = @IVID order by DISPLAYORDER  ";
+        private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model)
         {
-            List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
 
-            SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
-            _cmd.Parameters.Add(":IVID", _model.ID);
-            using (SqlDataReader _dr = _cmd.ExecuteReader())
+            List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                while (_dr.Read())
+                SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
+                _cmd.Parameters.Add("@IVID", _model.ID);
+                using (SqlDataReader _dr = _cmd.ExecuteReader())
                 {
-                    MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
-                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                            _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                            _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                            _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
-                            _model.ID,
-                            _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4))
-                    );
-                    GetInputModelSaveTableColumn(_tb, cn);
-                    _ret.Add(_tb);
+                    while (_dr.Read())
+                    {
+                        MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
+                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(1) ? "" : _dr.GetString(1),
+                                _dr.IsDBNull(2) ? "" : _dr.GetString(2),
+                                _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
+                                _model.ID,
+                                _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4))
+                        );
+                        GetInputModelSaveTableColumn(_tb);
+                        _ret.Add(_tb);
+                    }
                 }
             }
             return _ret;
         }
 
-        private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=:TID ";
-        private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb, SqlConnection cn)
+        private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID ";
+        private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
         {
-
-            SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
-            _cmd.Parameters.Add(":TID", decimal.Parse(_tb.ID));
-            using (SqlDataReader _dr = _cmd.ExecuteReader())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
-
-                while (_dr.Read())
+                SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
+                _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
+                using (SqlDataReader _dr = _cmd.ExecuteReader())
                 {
-                    MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
-                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                            _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                            _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                            _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                            _dr.IsDBNull(4) ? "" : _dr.GetString(4)
-                    );
-                    _tb.Columns.Add(_col);
+                    if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
+
+                    while (_dr.Read())
+                    {
+                        MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
+                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(1) ? "" : _dr.GetString(1),
+                                _dr.IsDBNull(2) ? "" : _dr.GetString(2),
+                                _dr.IsDBNull(3) ? "" : _dr.GetString(3),
+                                _dr.IsDBNull(4) ? "" : _dr.GetString(4)
+                        );
+                        _tb.Columns.Add(_col);
+                    }
                 }
             }
+
+             
         }
 
         /// <summary>
@@ -1694,7 +1701,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         /// <param name="_ret"></param>
         /// 
         private const string SQL_GetInputModelColumnGroups = @"select IVG_ID,DISPLAYTITLE,DISPLAYORDER,GROUPTYPE,APPREGURL,GROUPCS
-                                                                   from md_inputgroup  where IV_ID=:IVID order by DISPLAYORDER asc ";
+                                                                   from md_inputgroup  where IV_ID=@IVID order by DISPLAYORDER asc ";
         private void GetInputModelColumnGroups(MD_InputModel _ret)
         {
             if (_ret.Groups == null) _ret.Groups = new List<MD_InputModel_ColumnGroup>();
@@ -1704,7 +1711,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 SqlParameter[] _param = {
-                                        new SqlParameter(":IVID", OracleDbType.Decimal)};
+                                        new SqlParameter("@IVID", OracleDbType.Decimal)};
                 _param[0].Value = decimal.Parse(_ret.ID);
                 using (SqlDataReader _dr = DBHelper.ExecuteReader(cn, CommandType.Text, SQL_GetInputModelColumnGroups, _param))
                 {
@@ -1718,7 +1725,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         _group.GroupType = _dr.IsDBNull(3) ? "DEFAULT" : _dr.GetString(3).ToUpper();
                         _group.AppRegUrl = _dr.IsDBNull(4) ? "" : _dr.GetString(4);
                         _group.GroupParam = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
-                        GetColumnsOfInputGroup(_group, cn);
+                        GetColumnsOfInputGroup(_group);
                         _ret.Groups.Add(_group);
                     }
                     _dr.Close();
@@ -1735,50 +1742,53 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                             TEXTALIGNMENT,EDITFORMAT,DISPLAYFORMAT,REQUIRED,TOOLTIP,DATACHANGEDEVENT,MAXLENGTH,
                                                             DEFAULTSHOW
                                                             from MD_INPUTVIEWCOLUMN 
-                                                            where IV_ID=:IVID and IVG_ID=:IVGID
+                                                            where IV_ID=@IVID and IVG_ID=@IVGID
                                                             order by COLUMNORDER";
-        private void GetColumnsOfInputGroup(MD_InputModel_ColumnGroup _group, SqlConnection cn)
+        private void GetColumnsOfInputGroup(MD_InputModel_ColumnGroup _group)
         {
             List<MD_InputModel_Column> _ret = new List<MD_InputModel_Column>();
 
-            SqlCommand _cmd = new SqlCommand(SQL_GetColumnsOfInputGroup, cn);
-            _cmd.Parameters.Add(":IVID", decimal.Parse(_group.ModelID));
-            _cmd.Parameters.Add(":IVGID", decimal.Parse(_group.GroupID));
-
-            SqlDataReader _dr = _cmd.ExecuteReader();
-            if (_group.Columns == null) _group.Columns = new List<MD_InputModel_Column>();
-            while (_dr.Read())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                MD_InputModel_Column _col = new MD_InputModel_Column(
-                        _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                        _dr.IsDBNull(8) ? "" : _dr.GetString(8),
-                        _dr.IsDBNull(12) ? "" : _dr.GetString(12),
-                        _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                        _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDouble(9)),
-                        _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString(),
-                        _dr.IsDBNull(11) ? true : (_dr.GetDouble(11) < 1),
-                        _dr.IsDBNull(7) ? true : (_dr.GetString(7).ToUpper() == "Y"),
-                        _dr.IsDBNull(13) ? false : (_dr.GetDouble(13) > 0),
-                        _dr.IsDBNull(11) ? false : (_dr.GetDouble(11) > 0),
-                        _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                        _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                        _dr.IsDBNull(5) ? "" : _dr.GetString(5),
-                        _dr.IsDBNull(6) ? "" : _dr.GetString(6),
-                        _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDouble(14)),
-                        _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDouble(15)),
-                        _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDouble(16)),
-                        _dr.IsDBNull(17) ? "" : _dr.GetString(17),
-                        _dr.IsDBNull(18) ? "" : _dr.GetString(18),
-                        _dr.IsDBNull(19) ? false : (_dr.GetDouble(19) > 0),
-                        _dr.IsDBNull(20) ? "" : _dr.GetString(20),
-                         _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDouble(22)),
-                        _dr.IsDBNull(21) ? "" : _dr.GetString(21)
+                SqlCommand _cmd = new SqlCommand(SQL_GetColumnsOfInputGroup, cn);
+                _cmd.Parameters.Add("@IVID", decimal.Parse(_group.ModelID));
+                _cmd.Parameters.Add("@IVGID", decimal.Parse(_group.GroupID));
 
-                );
-                _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDouble(23) > 0);
-                _group.Columns.Add(_col);
+                SqlDataReader _dr = _cmd.ExecuteReader();
+                if (_group.Columns == null) _group.Columns = new List<MD_InputModel_Column>();
+                while (_dr.Read())
+                {
+                    MD_InputModel_Column _col = new MD_InputModel_Column(
+                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                            _dr.IsDBNull(8) ? "" : _dr.GetString(8),
+                            _dr.IsDBNull(12) ? "" : _dr.GetString(12),
+                            _dr.IsDBNull(10) ? "" : _dr.GetString(10),
+                            _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDouble(9)),
+                            _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString(),
+                            _dr.IsDBNull(11) ? true : (_dr.GetDouble(11) < 1),
+                            _dr.IsDBNull(7) ? true : (_dr.GetString(7).ToUpper() == "Y"),
+                            _dr.IsDBNull(13) ? false : (_dr.GetDouble(13) > 0),
+                            _dr.IsDBNull(11) ? false : (_dr.GetDouble(11) > 0),
+                            _dr.IsDBNull(3) ? "" : _dr.GetString(3),
+                            _dr.IsDBNull(4) ? "" : _dr.GetString(4),
+                            _dr.IsDBNull(5) ? "" : _dr.GetString(5),
+                            _dr.IsDBNull(6) ? "" : _dr.GetString(6),
+                            _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDouble(14)),
+                            _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDouble(15)),
+                            _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDouble(16)),
+                            _dr.IsDBNull(17) ? "" : _dr.GetString(17),
+                            _dr.IsDBNull(18) ? "" : _dr.GetString(18),
+                            _dr.IsDBNull(19) ? false : (_dr.GetDouble(19) > 0),
+                            _dr.IsDBNull(20) ? "" : _dr.GetString(20),
+                             _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDouble(22)),
+                            _dr.IsDBNull(21) ? "" : _dr.GetString(21)
+
+                    );
+                    _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDouble(23) > 0);
+                    _group.Columns.Add(_col);
+                }
+                _dr.Close();
             }
-            _dr.Close();
         }
 
         private const string SQL_GetInputModelColumnDefine = @"select IVC_ID,IV_ID,TCID,DWDM,
@@ -1787,7 +1797,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                         DISPLAYNAME,ISCOMPUTE,COLUMNWIDTH,COLUMNHEIGHT,
                                         TEXTALIGNMENT,EDITFORMAT,DISPLAYFORMAT,REQUIRED,TOOLTIP,DATACHANGEDEVENT,MAXLENGTH,
                                         defaultshow from MD_INPUTVIEWCOLUMN 
-                                         where IV_ID=:IVID and IVG_ID=0
+                                         where IV_ID=@IVID and IVG_ID=0
                                         order by COLUMNORDER";
         private List<MD_InputModel_Column> GetInputModelColumnDefine(string _inputModelID)
         {
@@ -1796,7 +1806,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelColumnDefine, cn);
-                _cmd.Parameters.Add(":IVID", decimal.Parse(_inputModelID));
+                _cmd.Parameters.Add("@IVID", decimal.Parse(_inputModelID));
 
                 SqlDataReader _dr = _cmd.ExecuteReader();
                 while (_dr.Read())
@@ -1841,14 +1851,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool DelSavedQuery(string _savedID)
         {
-            string _sql = "delete from QUERY_SAVE where id=:ID and yhid=:YHID ";
+            string _sql = "delete from QUERY_SAVE where id=@ID and yhid=@YHID ";
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 try
                 {
                     SqlCommand _cmd = new SqlCommand(_sql, cn);
-                    _cmd.Parameters.Add(":ID", _savedID);
-                    _cmd.Parameters.Add(":YHID", decimal.Parse(SinoUserCtx.CurUser.UserID));
+                    _cmd.Parameters.Add("@ID", _savedID);
+                    _cmd.Parameters.Add("@YHID", decimal.Parse(SinoUserCtx.CurUser.UserID));
                     _cmd.ExecuteNonQuery();
                     return true;
                 }
@@ -1869,8 +1879,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 try
                 {
-                    SqlCommand _cmd = new SqlCommand("select zhcx_hgjs.get_dwjb(:DWID) from dual ", cn);
-                    _cmd.Parameters.Add(":nDWID", decimal.Parse(SinoUserCtx.CurUser.CurrentPost.PostDwID));
+                    SqlCommand _cmd = new SqlCommand("select zhcx_hgjs.get_dwjb(@DWID) from dual ", cn);
+                    _cmd.Parameters.Add("@nDWID", decimal.Parse(SinoUserCtx.CurUser.CurrentPost.PostDwID));
                     object _retObj = _cmd.ExecuteScalar();
                     if (_retObj == null) return "缉私分局";
                     string _ret = _retObj.ToString();
@@ -1897,10 +1907,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string[] _names = _modelName.Split('.');
                     //取审核ID
-                    SqlCommand _cmd = new SqlCommand("SELECT SH.ID FROM SJSH_B SH WHERE SH.NAMESPACE=:NAMESPACE AND SH.VIEWNAME=:VIEWNAME AND SH.SHDXGJZ=:SHDXGJZ", cn);
-                    _cmd.Parameters.Add(":NAMESPACE", _names[0]);
-                    _cmd.Parameters.Add(":VIEWNAME", _names[1]);
-                    _cmd.Parameters.Add(":SHDXGJZ", _mainKey);
+                    SqlCommand _cmd = new SqlCommand("SELECT SH.ID FROM SJSH_B SH WHERE SH.NAMESPACE=@NAMESPACE AND SH.VIEWNAME=@VIEWNAME AND SH.SHDXGJZ=@SHDXGJZ", cn);
+                    _cmd.Parameters.Add("@NAMESPACE", _names[0]);
+                    _cmd.Parameters.Add("@VIEWNAME", _names[1]);
+                    _cmd.Parameters.Add("@SHDXGJZ", _mainKey);
                     object _retObj = _cmd.ExecuteScalar();
                     if (_retObj == null)
                     {
@@ -1909,11 +1919,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
                         _shid = _factroy.GetNewID();
                         //插入
-                        _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (:ID,:NS,:VN,:MAINKEY)", cn);
-                        _cmd.Parameters.Add(":ID", decimal.Parse(_shid));
-                        _cmd.Parameters.Add(":NS", _names[0]);
-                        _cmd.Parameters.Add(":VN", _names[1]);
-                        _cmd.Parameters.Add(":MAINKEY", _mainKey);
+                        _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (@ID,@NS,@VN,@MAINKEY)", cn);
+                        _cmd.Parameters.Add("@ID", decimal.Parse(_shid));
+                        _cmd.Parameters.Add("@NS", _names[0]);
+                        _cmd.Parameters.Add("@VN", _names[1]);
+                        _cmd.Parameters.Add("@MAINKEY", _mainKey);
                         _cmd.ExecuteNonQuery();
                     }
                     else
@@ -1921,12 +1931,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         _shid = _retObj.ToString();
                     }
                     //取审核信息
-                    string _sqlStr = "SELECT * FROM SJSH_JGJLB WHERE ID =:ID";
+                    string _sqlStr = "SELECT * FROM SJSH_JGJLB WHERE ID =@ID";
                     DataTable _ret = new DataTable();
                     SqlDataAdapter _adapter = new SqlDataAdapter();
                     //Set the select command to fetch product details
                     _adapter.SelectCommand = new SqlCommand(_sqlStr, cn);
-                    _adapter.SelectCommand.Parameters.Add(":ID", decimal.Parse(_shid));
+                    _adapter.SelectCommand.Parameters.Add("@ID", decimal.Parse(_shid));
                     //AddWithKey sets the Primary Key information to complete the 
                     //schema information
                     _adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
@@ -1959,10 +1969,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string[] _names = QueryModelName.Split('.');
                     //取审核ID
-                    SqlCommand _cmd = new SqlCommand("SELECT SH.ID FROM SJSH_B SH WHERE SH.NAMESPACE=:NAMESPACE AND SH.VIEWNAME=:VIEWNAME AND SH.SHDXGJZ=:SHDXGJZ", cn);
-                    _cmd.Parameters.Add(":NAMESPACE", _names[0]);
-                    _cmd.Parameters.Add(":VIEWNAME", _names[1]);
-                    _cmd.Parameters.Add(":SHDXGJZ", _mainKey);
+                    SqlCommand _cmd = new SqlCommand("SELECT SH.ID FROM SJSH_B SH WHERE SH.NAMESPACE=@NAMESPACE AND SH.VIEWNAME=@VIEWNAME AND SH.SHDXGJZ=@SHDXGJZ", cn);
+                    _cmd.Parameters.Add("@NAMESPACE", _names[0]);
+                    _cmd.Parameters.Add("@VIEWNAME", _names[1]);
+                    _cmd.Parameters.Add("@SHDXGJZ", _mainKey);
                     object _retObj = _cmd.ExecuteScalar();
                     if (_retObj == null)
                     {
@@ -1971,11 +1981,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
                         SHID = _factroy.GetNewID();
                         //插入
-                        _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (:ID,:NS,:VN,:MAINKEY)", cn);
-                        _cmd.Parameters.Add(":ID", decimal.Parse(SHID));
-                        _cmd.Parameters.Add(":NS", _names[0]);
-                        _cmd.Parameters.Add(":VN", _names[1]);
-                        _cmd.Parameters.Add(":MAINKEY", _mainKey);
+                        _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (@ID,@NS,@VN,@MAINKEY)", cn);
+                        _cmd.Parameters.Add("@ID", decimal.Parse(SHID));
+                        _cmd.Parameters.Add("@NS", _names[0]);
+                        _cmd.Parameters.Add("@VN", _names[1]);
+                        _cmd.Parameters.Add("@MAINKEY", _mainKey);
                         _cmd.ExecuteNonQuery();
                     }
                     else
@@ -1983,10 +1993,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         SHID = _retObj.ToString();
                     }
                     //取审核信息
-                    string _sqlStr = "SELECT SHJLID FROM SJSH_JGJLB WHERE ID =:ID AND DWJBFL=:JBFL";
+                    string _sqlStr = "SELECT SHJLID FROM SJSH_JGJLB WHERE ID =:ID AND DWJBFL=@JBFL";
                     SqlCommand _cmd2 = new SqlCommand(_sqlStr, cn);
-                    _cmd2.Parameters.Add(":ID", decimal.Parse(SHID));
-                    _cmd2.Parameters.Add(":JBFL", _level);
+                    _cmd2.Parameters.Add("@ID", decimal.Parse(SHID));
+                    _cmd2.Parameters.Add("@JBFL", _level);
 
                     object _jlidObj = _cmd2.ExecuteScalar();
                     if (_jlidObj == null)
@@ -3374,7 +3384,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_GetInputGroupByID = @"select IVG_ID,IV_ID,DISPLAYTITLE,DISPLAYORDER,GROUPTYPE,APPREGURL,GROUPCS
-                                                            from md_inputgroup where IVG_ID=:IVGID";
+                                                            from md_inputgroup where IVG_ID=@IVGID";
         public MD_InputModel_ColumnGroup GetInputGroupByID(string InputGroupID)
         {
             MD_InputModel_ColumnGroup _ret = null;
@@ -3382,7 +3392,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputGroupByID, cn);
-                _cmd.Parameters.Add(":IVGID", decimal.Parse(InputGroupID));
+                _cmd.Parameters.Add("@IVGID", decimal.Parse(InputGroupID));
 
                 SqlDataReader _dr = _cmd.ExecuteReader();
                 while (_dr.Read())
@@ -3395,7 +3405,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     _ret.GroupType = _dr.IsDBNull(4) ? "DEFAULT" : _dr.GetString(4).ToUpper();
                     _ret.AppRegUrl = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
                     _ret.GroupParam = _dr.IsDBNull(6) ? "" : _dr.GetString(6);
-                    GetColumnsOfInputGroup(_ret, cn);
+                    GetColumnsOfInputGroup(_ret);
                 }
                 _dr.Close();
                 cn.Close();
@@ -3412,9 +3422,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 try
                 {
-                    string _sql = "delete from MD_COMPUTECOLUMN where ID=:ID";
+                    string _sql = "delete from MD_COMPUTECOLUMN where ID=@ID";
                     SqlCommand _cmd = new SqlCommand(_sql, cn);
-                    _cmd.Parameters.Add(":ID", ColumnName);
+                    _cmd.Parameters.Add("@ID", ColumnName);
                     _cmd.ExecuteNonQuery();
                     return true;
                 }
@@ -3588,11 +3598,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         throw new Exception("字段名称参数格式不正确，要求格式为：表名.字段名");
                     }
-                    string _sql = string.Format("select {0} from {1} where WSID=:ID", _fs[1], _fs[0]);
+                    string _sql = string.Format("select {0} from {1} where WSID=@ID", _fs[1], _fs[0]);
 
 
                     SqlParameter[] _param = {
-                                 new SqlParameter(":ID",SqlDbType.NVarChar) };
+                                 new SqlParameter("@ID",SqlDbType.NVarChar) };
                     _param[0].Value = IndexString;
                     object _retobj = DBHelper.ExecuteScalar(cn, CommandType.Text, _sql, _param);
                     if (_retobj == null) return "";
@@ -3649,7 +3659,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
 
-        private const string SQL_GetTaskQueryLog = @"select * from TASK_QUERY_SQL_LOG where TASK_ID=:TASKID order by ACTIONTIME";
+        private const string SQL_GetTaskQueryLog = @"select * from TASK_QUERY_SQL_LOG where TASK_ID=@TASKID order by ACTIONTIME";
         public DataTable GetTaskQueryLog(string TaskID)
         {
             SqlParameter[] _param = {

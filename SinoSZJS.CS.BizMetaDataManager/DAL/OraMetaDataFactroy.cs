@@ -1204,7 +1204,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sb.Append(" CTAG=@CTAG,REFWORDTB=@REFWORD ");
             _sb.Append(" WHERE TCID=@TCID");
 
-            SqlParameter[] _param3 = {                                        
+            SqlParameter[] _param3 = {
                                         new SqlParameter("@TID", OracleDbType.Decimal),
                                         new SqlParameter("@COLUMNNAME", SqlDbType.NVarChar, 50),
                                         new SqlParameter("@ISNULLABLE", SqlDbType.NVarChar, 100),
@@ -1226,7 +1226,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                         new SqlParameter("@CTAG",SqlDbType.NVarChar,500),
                                         new SqlParameter("@REFWORDTB",SqlDbType.NVarChar,50),
                                         new SqlParameter("@TCID", OracleDbType.Decimal)
-                                }
+                                };
 
             _param3[0].Value = Convert.ToDecimal(_table.TID);
             _param3[1].Value = _tc.ColumnName;
@@ -3385,8 +3385,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     _model.OrderField = _orderField;
                     _model.TableName = _tname;
                     _model.Groups = GetInputColumnGroups(_model, cn);
-                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model, cn);
-                    _model.ChildInputModel = GetChildInputModel(_model, cn);
+                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model);
+                    _model.ChildInputModel = GetChildInputModel(_model);
 
                 }
                 cn.Close();
@@ -3424,50 +3424,57 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         private const string SQL_GetWriteDesTableOfInputModel = @"select  ID,TABLENAME,TABLETITLE,ISLOCK,DISPLAYORDER,SAVEMODE
                                                                     from MD_INPUTTABLE where IV_ID = @IVID order by DISPLAYORDER";
-        private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model, SqlConnection cn)
+        private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model)
         {
             List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
-            SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
-            _cmd.Parameters.Add("@IVID", _model.ID);
-            SqlDataReader _dr = _cmd.ExecuteReader();
-            while (_dr.Read())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
-                                _model.ID,
-                                _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4)),
-                                _dr.IsDBNull(5) ? "" : _dr.GetString(5)
-                );
-                GetInputModelSaveTableColumn(_tb, cn);
-                _ret.Add(_tb);
+                SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
+                _cmd.Parameters.Add("@IVID", _model.ID);
+                SqlDataReader _dr = _cmd.ExecuteReader();
+                while (_dr.Read())
+                {
+                    MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
+                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
+                                    _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
+                                    _model.ID,
+                                    _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4)),
+                                    _dr.IsDBNull(5) ? "" : _dr.GetString(5)
+                    );
+                    GetInputModelSaveTableColumn(_tb);
+                    _ret.Add(_tb);
 
+                }
+                _dr.Close();
             }
-            _dr.Close();
             return _ret;
         }
 
         private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID";
-        private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb, SqlConnection cn)
+        private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
         {
-            SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
-            _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
-            SqlDataReader _dr = _cmd.ExecuteReader();
-            if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
-            while (_dr.Read())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                                 _dr.IsDBNull(4) ? "" : _dr.GetString(4)
-                );
-                _tb.Columns.Add(_col);
+                SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
+                _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
+                SqlDataReader _dr = _cmd.ExecuteReader();
+                if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
+                while (_dr.Read())
+                {
+                    MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
+                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
+                                    _dr.IsDBNull(3) ? "" : _dr.GetString(3),
+                                     _dr.IsDBNull(4) ? "" : _dr.GetString(4)
+                    );
+                    _tb.Columns.Add(_col);
+                }
+                _dr.Close();
             }
-            _dr.Close();
+
         }
 
 
@@ -3514,8 +3521,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     _model.GetNewRecordGuideLine = StrUtils.GetMetaByName2("NEWZB", _model.Param);
                     _model.OrderField = _orderField;
                     _model.TableName = _tname;
-                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model, cn);
-                    _model.ChildInputModel = GetChildInputModel(_model, cn);
+                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model);
+                    _model.ChildInputModel = GetChildInputModel(_model);
                 }
                 _dr.Close();
                 cn.Close();
@@ -3527,38 +3534,41 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_GetChildInputModel = @"select  t.ID,t.IV_ID,t.CIV_ID,t.PARAM, iv.NAMESPACE CNS ,iv.IV_NAME CIVNAME,t. DISPLAYORDER,t.SHOWCONDITION,t.SELECTMODE
                                                         from MD_INPUTVIEWCHILD t,MD_INPUTVIEW iv  where t.IV_ID = @IVID and t.CIV_ID =iv.IV_ID 
                                                         order by t.DISPLAYORDER";
-        public List<MD_InputModel_Child> GetChildInputModel(MD_InputModel _model, SqlConnection cn)
+        public List<MD_InputModel_Child> GetChildInputModel(MD_InputModel _model)
         {
             List<MD_InputModel_Child> _ret = new List<MD_InputModel_Child>();
-            SqlCommand _cmd = new SqlCommand(SQL_GetChildInputModel, cn);
-            _cmd.Parameters.Add("@IVID", _model.ID);
-            SqlDataReader _dr = _cmd.ExecuteReader();
-            while (_dr.Read())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                string _cns = _dr.IsDBNull(4) ? "" : _dr.GetString(4);
-                string _cname = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
-                string _paramstring = _dr.IsDBNull(3) ? "" : _dr.GetString(3);
-                MD_InputModel_Child _child = new MD_InputModel_Child(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                string.Format("{0}.{1}", _model.NameSpace, _model.ModelName),
-                                string.Format("{0}.{1}", _cns, _cname),
-                                _dr.IsDBNull(6) ? 0 : Convert.ToInt32(_dr.GetDouble(6))
-                );
-                _child.ShowCondition = _dr.IsDBNull(7) ? "" : _dr.GetString(7);
-                _child.SelectMode = _dr.IsDBNull(8) ? 0 : Convert.ToInt16(_dr.GetDouble(8));
-                _child.ChildModel = GetInputModel(_cns, _cname);
-                if (_child.Parameters == null) _child.Parameters = new List<MD_InputModel_ChildParam>();
-                foreach (string _pstr in StrUtils.GetMetasByName2("PARAM", _paramstring))
+                SqlCommand _cmd = new SqlCommand(SQL_GetChildInputModel, cn);
+                _cmd.Parameters.Add("@IVID", _model.ID);
+                SqlDataReader _dr = _cmd.ExecuteReader();
+                while (_dr.Read())
                 {
-                    string[] _s = _pstr.Split(':');
-                    MD_InputModel_ChildParam _p = new MD_InputModel_ChildParam(_s[0], _s[1], _s[2]);
-                    _child.Parameters.Add(_p);
+                    string _cns = _dr.IsDBNull(4) ? "" : _dr.GetString(4);
+                    string _cname = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
+                    string _paramstring = _dr.IsDBNull(3) ? "" : _dr.GetString(3);
+                    MD_InputModel_Child _child = new MD_InputModel_Child(
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    string.Format("{0}.{1}", _model.NameSpace, _model.ModelName),
+                                    string.Format("{0}.{1}", _cns, _cname),
+                                    _dr.IsDBNull(6) ? 0 : Convert.ToInt32(_dr.GetDouble(6))
+                    );
+                    _child.ShowCondition = _dr.IsDBNull(7) ? "" : _dr.GetString(7);
+                    _child.SelectMode = _dr.IsDBNull(8) ? 0 : Convert.ToInt16(_dr.GetDouble(8));
+                    _child.ChildModel = GetInputModel(_cns, _cname);
+                    if (_child.Parameters == null) _child.Parameters = new List<MD_InputModel_ChildParam>();
+                    foreach (string _pstr in StrUtils.GetMetasByName2("PARAM", _paramstring))
+                    {
+                        string[] _s = _pstr.Split(':');
+                        MD_InputModel_ChildParam _p = new MD_InputModel_ChildParam(_s[0], _s[1], _s[2]);
+                        _child.Parameters.Add(_p);
+                    }
+
+                    _ret.Add(_child);
+
                 }
-
-                _ret.Add(_child);
-
+                _dr.Close();
             }
-            _dr.Close();
             return _ret;
         }
 

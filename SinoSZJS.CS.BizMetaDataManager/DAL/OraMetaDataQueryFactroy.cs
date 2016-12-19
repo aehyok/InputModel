@@ -1556,7 +1556,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_GetInputModelByName = @"select IV_ID,NAMESPACE,IV_NAME,DESCRIPTION,DISPLAYNAME,DISPLAYORDER,IV_CS,TID,DELRULE,DWDM,INTEGRATEDAPP,RESTYPE,
-                                                         beforewrite,afterwrite from MD_INPUTVIEW where NAMESPACE=:NS and IV_NAME=:IVNAME ";
+                                                         beforewrite,afterwrite from MD_INPUTVIEW where NAMESPACE=@NS and IV_NAME=@IVNAME ";
         public MD_InputModel GetInputModelByName(string _modelName)
         {
             MD_InputModel _ret = null;
@@ -1568,8 +1568,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             using (SqlConnection cn = DBHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelByName, cn);
-                _cmd.Parameters.Add(":NS", _ns);
-                _cmd.Parameters.Add(":IVNAME", _mame);
+                _cmd.Parameters.Add("@NS", _ns);
+                _cmd.Parameters.Add("@IVNAME", _mame);
                 SqlDataReader _dr = _cmd.ExecuteReader();
                 while (_dr.Read())
                 {

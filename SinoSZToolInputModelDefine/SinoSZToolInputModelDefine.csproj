@@ -1,0 +1,355 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D97052E9-CCCA-43F2-87BD-3BF476B28DC5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SinoSZToolInputModelDefine</RootNamespace>
+    <AssemblyName>SinoSZToolInputModelDefine</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <ApplicationIcon>GOAL!FIFAWorldCup2006014.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>SinoSZToolInputModelDefine.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Printing.v12.2.Core, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraTreeList.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Oracle.DataAccess, Version=4.112.1.2, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DAConfig.cs" />
+    <Compile Include="Define\MenuGroup.cs" />
+    <Compile Include="Dialog\Dialog_AddChildModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddChildModel.Designer.cs">
+      <DependentUpon>Dialog_AddChildModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddColumnToGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddColumnToGroup.Designer.cs">
+      <DependentUpon>Dialog_AddColumnToGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddInputModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddInputModel.Designer.cs">
+      <DependentUpon>Dialog_AddInputModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddSaveTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddSaveTable.Designer.cs">
+      <DependentUpon>Dialog_AddSaveTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddTableColumn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_AddTableColumn.Designer.cs">
+      <DependentUpon>Dialog_AddTableColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_GuideLine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_GuideLine.Designer.cs">
+      <DependentUpon>Dialog_GuideLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\Dialog_MoveColumnToGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\Dialog_MoveColumnToGroup.Designer.cs">
+      <DependentUpon>Dialog_MoveColumnToGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog_ExportInputModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog_ExportInputModel.Designer.cs">
+      <DependentUpon>Dialog_ExportInputModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditPanel\UC_GuideLineManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditPanel\UC_GuideLineManager.Designer.cs">
+      <DependentUpon>UC_GuideLineManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputColumns.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputColumns.Designer.cs">
+      <DependentUpon>UC_InputColumns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputModel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputModel.Designer.cs">
+      <DependentUpon>UC_InputModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputModel_Child.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditPanel\UC_InputModel_Child.Designer.cs">
+      <DependentUpon>UC_InputModel_Child.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditPanel\UC_WriteTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditPanel\UC_WriteTable.Designer.cs">
+      <DependentUpon>UC_WriteTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmInputModelDefine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmInputModelDefine.Designer.cs">
+      <DependentUpon>frmInputModelDefine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IMenuControl.cs" />
+    <Compile Include="ImportInputModelController.cs" />
+    <Compile Include="MD_Title.cs" />
+    <Compile Include="MenuController.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Dialog\Dialog_AddChildModel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_AddChildModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_AddColumnToGroup.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_AddColumnToGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_AddInputModel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_AddInputModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_AddSaveTable.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_AddSaveTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_AddTableColumn.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_AddTableColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_GuideLine.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_GuideLine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\Dialog_MoveColumnToGroup.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_MoveColumnToGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog_ExportInputModel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Dialog_ExportInputModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditPanel\UC_GuideLineManager.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UC_GuideLineManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditPanel\UC_InputColumns.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UC_InputColumns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditPanel\UC_InputModel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UC_InputModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditPanel\UC_InputModel_Child.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UC_InputModel_Child.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditPanel\UC_WriteTable.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UC_WriteTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmInputModelDefine.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmInputModelDefine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ni_png_0734.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g14.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g15.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xx.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g9.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g10.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\check11.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\check2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\x1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g28.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g29.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ff.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\b25.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GOAL!FIFAWorldCup2006014.ico" />
+    <None Include="Resources\g8.ico" />
+    <None Include="Resources\g7.ico" />
+    <None Include="Resources\g13.ico" />
+    <None Include="Resources\g12.ico" />
+    <None Include="Resources\g41.ico" />
+    <None Include="Resources\g40.ico" />
+    <None Include="Resources\e15.ico" />
+    <None Include="Resources\e14.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SinoSZJS.Base\SinoSZJS.Base.csproj">
+      <Project>{76FC4ED1-A1D0-4167-9C82-2B69EFF6A33B}</Project>
+      <Name>SinoSZJS.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SinoSZJS.CS.BizMetaDataManager\SinoSZJS.CS.BizMetaDataManager.csproj">
+      <Project>{FC8882DB-9DD2-4323-94D4-2EB1BAA77972}</Project>
+      <Name>SinoSZJS.CS.BizMetaDataManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SinoSZJS.DataAccess\SinoSZJS.DataAccess.csproj">
+      <Project>{C41251E4-BC9E-4A3C-92D0-22682FBAA541}</Project>
+      <Name>SinoSZJS.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SinoSZPluginFramework\SinoSZPluginFramework.csproj">
+      <Project>{C855A639-511E-4B4F-8A71-3224083C5D40}</Project>
+      <Name>SinoSZPluginFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

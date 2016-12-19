@@ -11,6 +11,8 @@ using SinoSZJS.Base.MetaData.QueryModel;
 using SinoSZJS.Base.MetaData.Common;
 using System.Linq;
 using SinoSZJS.Base.MetaData.Define;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZJS.CS.BizMetaDataManager.DAL
 {
@@ -562,13 +564,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private static string GetViewIDByName(string _viewName)
         {
 
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                OracleTransaction _txn = cn.BeginTransaction();
+                SqlTransaction _txn = cn.BeginTransaction();
                 try
                 {
                     string[] _fs = _viewName.Split('.');
-                    OracleCommand _cmd = new OracleCommand(SQL_GetViewIDByName, cn);
+                    SqlCommand _cmd = new SqlCommand(SQL_GetViewIDByName, cn);
                     _cmd.Parameters.Add(":NS", _fs[0]);
                     _cmd.Parameters.Add(":VN", _fs[1]);
                     string _s = _cmd.ExecuteScalar().ToString();
@@ -577,7 +579,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _errmsg = string.Format("执行不错查询模型ID的命令出错,错误信息为:{0}!SQL语句：{1}", ex.Message, SQL_GetViewIDByName);
-                    OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "";
                 }
             }
@@ -643,15 +645,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private static string ExcuteProcedure(string _pStr)
         {
 
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                OracleTransaction _txn = cn.BeginTransaction();
+                SqlTransaction _txn = cn.BeginTransaction();
                 try
                 {
-                    OracleParameter _p1 = new OracleParameter(":1", OracleDbType.Varchar2, 1000);
+                    SqlParameter _p1 = new SqlParameter(":1", SqlDbType.NVarChar, 1000);
                     _p1.Direction = ParameterDirection.Output;
                     string _sql = _pStr.Substring(5, _pStr.Length - 7);
-                    OracleHelper.ExecuteNonQuery(cn, CommandType.Text, _sql, _p1);
+                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sql, _p1);
 
                     _txn.Commit();
                     return _p1.Value.ToString();
@@ -659,7 +661,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _errmsg = string.Format("执行命令嵌入的命令出错,错误信息为:{0}!SQL语句：{1}", ex.Message, _pStr);
-                    OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    ////OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return "";
                 }
@@ -680,7 +682,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 string _fun = _retstr.Substring(_pos, _pos2 - _pos + 1);
                 string _sql = string.Format("select {0} RETVALUE from dual", _fun.Replace("&", ""));
-                _retValue = OracleHelper.ExecuteScalar(OracleHelper.ConnectionStringProfile, CommandType.Text, _sql, null); ;
+                _retValue = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, null); ;
                 if (_retValue != null)
                 {
                     _res = _retstr.Replace(_fun, _retValue.ToString());

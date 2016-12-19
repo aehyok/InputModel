@@ -8,6 +8,8 @@ using SinoSZJS.DataAccess;
 using SinoSZJS.Base.Misc;
 using System.IO;
 using System.Reflection;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZJS.CS.BizMetaDataManager.MTS
 {
@@ -32,9 +34,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         {
             try
             {
-                using (OracleConnection cn = OracleHelper.OpenConnection())
+                using (SqlConnection cn = DBHelper.OpenConnection())
                 {
-                    OracleCommand _cmd = new OracleCommand(SQL_GetAdapterDLLFile, cn);
+                    SqlCommand _cmd = new SqlCommand(SQL_GetAdapterDLLFile, cn);
                     _cmd.Parameters.Add(":CSNAME", MethodName);
                     string _dllname = (string)_cmd.ExecuteScalar();
                     string AssmblyName = StrUtils.GetMetaByName2("Assembly", _dllname);
@@ -58,7 +60,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
             }
             catch (Exception ex)
             {
-                OralceLogWriter.WriteSystemLog(string.Format("取消息报文接收处理器时出错！MethodName={0} {1}", MethodName, ex.Message), "ERROR");
+                ////OralceLogWriter.WriteSystemLog(string.Format("取消息报文接收处理器时出错！MethodName={0} {1}", MethodName, ex.Message), "ERROR");
                 return null;
             }
         }

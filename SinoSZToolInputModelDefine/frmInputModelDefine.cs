@@ -47,8 +47,7 @@ namespace SinoSZToolInputModelDefine
 		private void InitNodes()
 		{
 			treeList1.Nodes.Clear();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
-            {
+
                 OraMetaDataFactroy _of = new OraMetaDataFactroy();
                 IList<MD_Nodes> _nodes = _of.GetNodeList();
                 foreach (MD_Nodes _node in _nodes)
@@ -60,7 +59,6 @@ namespace SinoSZToolInputModelDefine
                     _fnode.SelectImageIndex = 0;
                 }
                 ShowNodeData(treeList1.FocusedNode);
-            }
 		}
 
 		#region ShowFocusData

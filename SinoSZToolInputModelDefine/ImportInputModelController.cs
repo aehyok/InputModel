@@ -6,6 +6,8 @@ using Oracle.DataAccess.Client;
 using SinoSZJS.Base.MetaData.Define;
 using SinoSZJS.CS.BizMetaDataManager.DAL;
 using SinoSZJS.DataAccess;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZToolInputModelDefine
 {
@@ -102,39 +104,39 @@ namespace SinoSZToolInputModelDefine
 			}
 
 			//写入数据库
-			using (OracleConnection cn = OracleHelper.OpenConnection())
+			using (SqlConnection cn = DBHelper.OpenConnection())
 			{
-				OracleTransaction _txn = cn.BeginTransaction();
+				SqlTransaction _txn = cn.BeginTransaction();
 				try
 				{
-					OracleCommand _cmd = new OracleCommand("select * from md_inputview ", cn);
-					OracleDataAdapter _oda = new OracleDataAdapter(_cmd);
-					OracleCommandBuilder builder = new OracleCommandBuilder(_oda);
+					SqlCommand _cmd = new SqlCommand("select * from md_inputview ", cn);
+					SqlDataAdapter _oda = new SqlDataAdapter(_cmd);
+					SqlCommandBuilder builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_IV));
 					
-					_cmd = new OracleCommand("select * from md_inputgroup ", cn);
-					_oda = new OracleDataAdapter(_cmd);
-					builder = new OracleCommandBuilder(_oda);
+					_cmd = new SqlCommand("select * from md_inputgroup ", cn);
+					_oda = new SqlDataAdapter(_cmd);
+					builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_INPUTGROUP));
 
-					_cmd = new OracleCommand("select * from md_inputtable  ", cn);
-					_oda = new OracleDataAdapter(_cmd);
-					builder = new OracleCommandBuilder(_oda);
+					_cmd = new SqlCommand("select * from md_inputtable  ", cn);
+					_oda = new SqlDataAdapter(_cmd);
+					builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_INPUTTABLE));
 
-					_cmd = new OracleCommand("select * from md_inputtablecolumn", cn);
-					_oda = new OracleDataAdapter(_cmd);
-					builder = new OracleCommandBuilder(_oda);
+					_cmd = new SqlCommand("select * from md_inputtablecolumn", cn);
+					_oda = new SqlDataAdapter(_cmd);
+					builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_INPUTTABLECOLUMN));
 
-					_cmd = new OracleCommand("select * from md_inputviewchild  ", cn);
-					_oda = new OracleDataAdapter(_cmd);
-					builder = new OracleCommandBuilder(_oda);
+					_cmd = new SqlCommand("select * from md_inputviewchild  ", cn);
+					_oda = new SqlDataAdapter(_cmd);
+					builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_INPUTVIEWCHILD));
 
-					_cmd = new OracleCommand("select * from md_inputviewcolumn ", cn);
-					_oda = new OracleDataAdapter(_cmd);
-					builder = new OracleCommandBuilder(_oda);
+					_cmd = new SqlCommand("select * from md_inputviewcolumn ", cn);
+					_oda = new SqlDataAdapter(_cmd);
+					builder = new SqlCommandBuilder(_oda);
 					_oda.Update(ResetState(TB_INPUTVIEWCOLUMN));
 
 
@@ -144,7 +146,7 @@ namespace SinoSZToolInputModelDefine
 				catch (Exception e)
 				{
 					_txn.Rollback();
-					OralceLogWriter.WriteSystemLog(string.Format("在导入录入模型时出错，错误信息:{0}", e.Message), "ERROR");
+					//OralceLogWriter.WriteSystemLog(string.Format("在导入录入模型时出错，错误信息:{0}", e.Message), "ERROR");
 					throw e;
 				}
 			}

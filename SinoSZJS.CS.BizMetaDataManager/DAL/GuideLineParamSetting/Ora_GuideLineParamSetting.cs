@@ -4,26 +4,27 @@ using System.Text;
 using Oracle.DataAccess.Client;
 using SinoSZJS.Base.Authorize;
 using SinoSZJS.Base.MetaData.QueryModel;
+using System.Data.SqlClient;
 
 namespace SinoSZJS.CS.BizMetaDataManager.DAL.GuideLineParamSetting
 {
         public class Ora_GuideLineParamSetting
         {
               
-                public static MD_GuideLine_ParamSetting GetCurrentPostRecord(string _guideLineID, OracleConnection cn)
+                public static MD_GuideLine_ParamSetting GetCurrentPostRecord(string _guideLineID, SqlConnection cn)
                 {
                         MD_GuideLine_ParamSetting _ret = null;
                         string _sql = "select CSID,ZBID,DWID,CS from tj_zdyzbdyb_cs where zbid =:ZBID and dwid=:DWID ";
-                        OracleCommand _cmd = new OracleCommand(_sql, cn);
+                        SqlCommand _cmd = new SqlCommand(_sql, cn);
                         _cmd.Parameters.Add(":ZBID", decimal.Parse(_guideLineID));
                         _cmd.Parameters.Add(":DWID", decimal.Parse(SinoUserCtx.CurUser.CurrentPost.PostDwID));
-                        using (OracleDataReader _dr = _cmd.ExecuteReader())
+                        using (SqlDataReader _dr = _cmd.ExecuteReader())
                         {
                             while (_dr.Read())
                             {
-                                string _csid = _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString();
-                                string _zbid = _dr.IsDBNull(1) ? "" : _dr.GetDecimal(1).ToString();
-                                string _dwid = _dr.IsDBNull(2) ? "" : _dr.GetDecimal(2).ToString();
+                                string _csid = _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString();
+                                string _zbid = _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString();
+                                string _dwid = _dr.IsDBNull(2) ? "" : _dr.GetDouble(2).ToString();
                                 string _cs = _dr.IsDBNull(3) ? "" : _dr.GetString(3);
                                 _ret = new MD_GuideLine_ParamSetting(_csid, _zbid, _dwid, _cs);
 
@@ -32,11 +33,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL.GuideLineParamSetting
                         return _ret;
                 }
 
-                public static MD_GuideLine_ParamSetting GetDefaultRecord(string _guideLineID, OracleConnection cn)
+                public static MD_GuideLine_ParamSetting GetDefaultRecord(string _guideLineID, SqlConnection cn)
                 {
                         MD_GuideLine_ParamSetting _ret = null;
                         string _sql = "select SEQUENCES_META.nextval from dual ";
-                        OracleCommand _cmd = new OracleCommand(_sql, cn);
+                        SqlCommand _cmd = new SqlCommand(_sql, cn);
                         decimal _csid = (decimal)_cmd.ExecuteScalar();
                         string _zbid = _guideLineID;
                         string _dwid = SinoUserCtx.CurUser.CurrentPost.PostDwID;
@@ -47,9 +48,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL.GuideLineParamSetting
 
                 public const string ChangeSetting = @"update tj_zdyzbdyb_cs set cs=:CS,querysql =:QUERYSQL 
                                         where zbid=:ZBID and dwid=:DWID ";
-                public static void SaveCurrentPostRecord(MD_GuideLine_ParamSetting SavedSetting, string _queryStr, OracleConnection cn)
+                public static void SaveCurrentPostRecord(MD_GuideLine_ParamSetting SavedSetting, string _queryStr, SqlConnection cn)
                 {
-                        OracleCommand _cmd = new OracleCommand(ChangeSetting, cn);
+                        SqlCommand _cmd = new SqlCommand(ChangeSetting, cn);
                         _cmd.Parameters.Add(":CS", SavedSetting.ParamMeta);
                         _cmd.Parameters.Add(":QUERYSQL", _queryStr);
                         _cmd.Parameters.Add(":ZBID", decimal.Parse(SavedSetting.GuideLineID));
@@ -59,9 +60,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL.GuideLineParamSetting
                 }
                 public const string InsertSetting = @"insert into tj_zdyzbdyb_cs (csid,zbid,dwid,cs,querysql)
                                         values  (:CSID,:ZBID,:DWID,:CS,:QUERYSQL) ";
-                internal static void InsertCurrentPostRecord(MD_GuideLine_ParamSetting SavedSetting, string _queryStr, OracleConnection cn)
+                internal static void InsertCurrentPostRecord(MD_GuideLine_ParamSetting SavedSetting, string _queryStr, SqlConnection cn)
                 {
-                        OracleCommand _cmd = new OracleCommand(InsertSetting, cn);
+                        SqlCommand _cmd = new SqlCommand(InsertSetting, cn);
                         _cmd.Parameters.Add(":CS", decimal.Parse(SavedSetting.CSID));
                         _cmd.Parameters.Add(":ZBID", decimal.Parse(SavedSetting.GuideLineID));
                         _cmd.Parameters.Add(":DWID", SinoUserCtx.CurUser.CurrentPost.PostDwID);

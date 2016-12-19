@@ -5,6 +5,8 @@ using Oracle.DataAccess.Client;
 using System.Data;
 using SinoSZJS.Base.RefCode;
 using SinoSZJS.DataAccess;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZJS.CS.BizMetaDataManager.DAL
 {
@@ -14,7 +16,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public RefCodeTablePropertie GetRefCodePropertie(string _refCodeName)
         {
-            OracleParameter[] _param;
+            SqlParameter[] _param;
             string[] _ctNames = _refCodeName.Split('.');
 
             RefCodeTablePropertie _ret = new RefCodeTablePropertie();
@@ -25,31 +27,31 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 _sb.Append(" and NAMESPACE=:NAMESPACE ");
 
-                _param = new OracleParameter[] {
-                                                new OracleParameter(":TNAME",OracleDbType.Varchar2,50),
-                                                new OracleParameter(":NAMESPACE",OracleDbType.Varchar2,50) };
+                _param = new SqlParameter[] {
+                                                new SqlParameter(":TNAME",SqlDbType.NVarChar,50),
+                                                new SqlParameter(":NAMESPACE",SqlDbType.NVarChar,50) };
                 _param[0].Value = _ctNames[1];
                 _param[1].Value = _ctNames[0];
             }
             else
             {
-                _param = new OracleParameter[] {
-                                                new OracleParameter(":TNAME",OracleDbType.Varchar2,50)};
+                _param = new SqlParameter[] {
+                                                new SqlParameter(":TNAME",SqlDbType.NVarChar,50)};
                 _param[0].Value = _ctNames[0];
             }
 
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                using (OracleDataReader dr = OracleHelper.ExecuteReader(cn, CommandType.Text, _sb.ToString(), _param))
+                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sb.ToString(), _param))
                 {
                     while (dr.Read())
                     {
                         _ret = new RefCodeTablePropertie(dr.GetString(0), dr.IsDBNull(1) ? dr.GetString(0) : dr.GetString(1),
                                 RefCodeType.Alpha, true, dr.IsDBNull(4) ? false : true,
-                                dr.IsDBNull(3) ? 1 : Convert.ToInt32(dr.GetDecimal(3)),
-                                dr.IsDBNull(2) ? 1 : Convert.ToInt32(dr.GetDecimal(2)),
+                                dr.IsDBNull(3) ? 1 : Convert.ToInt32(dr.GetDouble(3)),
+                                dr.IsDBNull(2) ? 1 : Convert.ToInt32(dr.GetDouble(2)),
                                 dr.IsDBNull(4) ? "" : dr.GetString(4),
-                                dr.IsDBNull(5) ? false : (dr.GetDecimal(5) > 0));
+                                dr.IsDBNull(5) ? false : (dr.GetDouble(5) > 0));
                     }
 
                     dr.Close();
@@ -65,7 +67,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string[] _fnames = _refCodeName.Split('.');
 
             string _sql = string.Format("select DM,MC,PYZT,PX,SFYX,BZ,FATHERCODE,SFXS,SFLR,SFYJD from JSODS.{0} order by PX,DM", _fnames[_fnames.Length - 1]);
-            OracleDataReader dr = OracleHelper.ExecuteReader(OracleHelper.ConnectionStringProfile, CommandType.Text, _sql);
+            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql);
 
             while (dr.Read())
             {
@@ -73,7 +75,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         dr.GetString(0),
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? "" : dr.GetString(2),
-                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDecimal(3)),
+                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDouble(3)),
                         dr.IsDBNull(4) ? true : (dr.GetString(4) == "1"),
                         dr.IsDBNull(5) ? "" : dr.GetString(5),
                         dr.IsDBNull(6) ? "" : dr.GetString(6),
@@ -102,13 +104,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _sql += " where FATHERCODE = :FCODE order by PX,DM";
             }
 
-            OracleParameter[] _param = new OracleParameter[] {
-                                                new OracleParameter(":FCODE",OracleDbType.Varchar2,50)};
+            SqlParameter[] _param = new SqlParameter[] {
+                                                new SqlParameter(":FCODE",SqlDbType.NVarChar,50)};
             _param[0].Value = _fatherCode;
 
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                using (OracleDataReader dr = OracleHelper.ExecuteReader(cn, CommandType.Text, _sql, _param))
+                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sql, _param))
                 {
                     while (dr.Read())
                     {
@@ -116,7 +118,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 dr.GetString(0),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDecimal(3)),
+                                dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDouble(3)),
                                 dr.IsDBNull(4) ? true : (dr.GetString(4) == "1"),
                                 dr.IsDBNull(5) ? "" : dr.GetString(5),
                                 dr.IsDBNull(6) ? "" : dr.GetString(6),
@@ -141,11 +143,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sql += " where DM = :CODE order by PX,DM";
 
 
-            OracleParameter[] _param = new OracleParameter[] {
-                                                new OracleParameter(":CODE",OracleDbType.Varchar2,50)};
+            SqlParameter[] _param = new SqlParameter[] {
+                                                new SqlParameter(":CODE",SqlDbType.NVarChar,50)};
             _param[0].Value = _value;
 
-            OracleDataReader dr = OracleHelper.ExecuteReader(OracleHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
 
             while (dr.Read())
             {
@@ -153,7 +155,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         dr.GetString(0),
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? "" : dr.GetString(2),
-                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDecimal(3)),
+                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDouble(3)),
                         dr.IsDBNull(4) ? true : (dr.GetString(4) == "1"),
                         dr.IsDBNull(5) ? "" : dr.GetString(5),
                         dr.IsDBNull(6) ? "" : dr.GetString(6),

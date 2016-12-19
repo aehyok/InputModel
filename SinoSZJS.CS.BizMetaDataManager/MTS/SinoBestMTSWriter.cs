@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Oracle.DataAccess.Client;
 using SinoSZJS.DataAccess;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZJS.CS.BizMetaDataManager.MTS
 {
@@ -15,12 +17,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         public static bool SaveBufferData(string PKGuid, string DEPLOYID_TX, string DEPLOYID_RX, string PROSTATUS, string MSG, int TRANTIME, string DataPKG, string PROCMETHOD)
         {
             decimal _checkret = 0;
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                OracleTransaction _txn = cn.BeginTransaction();
+                SqlTransaction _txn = cn.BeginTransaction();
 
                 //判断接收区是否有GUID，
-                using (OracleCommand _cmd_check = new OracleCommand(SQL_CheckReceiveBuffer, cn))
+                using (SqlCommand _cmd_check = new SqlCommand(SQL_CheckReceiveBuffer, cn))
                 {
                     _cmd_check.Parameters.Add(":PKGUID", PKGuid);
                     _checkret = (decimal)_cmd_check.ExecuteScalar();
@@ -33,7 +35,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
 					//string _receivedata = Encoding.Default.GetString(outputb);
 
                     //如果接收区没有，则写入
-                    using (OracleCommand _cmd = new OracleCommand(SQL_SaveReceiveBufferData, cn))
+                    using (SqlCommand _cmd = new SqlCommand(SQL_SaveReceiveBufferData, cn))
                     {
                         _cmd.Parameters.Add(":PKGUID", PKGuid);
                         _cmd.Parameters.Add(":DEPLOYID_TX", DEPLOYID_TX);
@@ -59,13 +61,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         private const string SQL_ChangeStatus = @"update CM_MSG_RECIVEBUFFER set PROSTATUS=:PROSTATUS,PROCMSG=:PROCMSG where PKGUID=:PKGUID";
         public static void ChangeStatus(string status, string PkGuid, string Message)
         {
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = DBHelper.OpenConnection())
             {
-                OracleTransaction _txn = cn.BeginTransaction();
+                SqlTransaction _txn = cn.BeginTransaction();
 
                 try
                 {//如果接收区没有，则写入
-                    using (OracleCommand _cmd = new OracleCommand(SQL_ChangeStatus, cn))
+                    using (SqlCommand _cmd = new SqlCommand(SQL_ChangeStatus, cn))
                     {
                         _cmd.Parameters.Add(":PROSTATUS", status);
                         _cmd.Parameters.Add(":PROCMSG", Message);

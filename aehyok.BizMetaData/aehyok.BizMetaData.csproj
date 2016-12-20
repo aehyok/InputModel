@@ -44,6 +44,7 @@
     <Compile Include="NameSpaceAccessor.cs" />
     <Compile Include="NodeAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryModelAccessor.cs" />
     <Compile Include="SequenceAccessor.cs" />
   </ItemGroup>
   <ItemGroup>

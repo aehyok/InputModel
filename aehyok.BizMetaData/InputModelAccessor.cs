@@ -24,7 +24,6 @@ namespace aehyok.BizMetaData
         public static IList<MD_InputModel> GetInputModelOfNamespace(string _namespace)
         {
             IList<MD_InputModel> _ret = new List<MD_InputModel>();
-
             using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelOfNamespace, cn);
@@ -49,7 +48,6 @@ namespace aehyok.BizMetaData
                     _ret.Add(_model);
                 }
                 _dr.Close();
-
                 foreach (MD_InputModel _model in _ret)
                 {
                     string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
@@ -66,11 +64,9 @@ namespace aehyok.BizMetaData
                     _model.Groups = GetInputColumnGroups(_model, cn);
                     _model.WriteTableNames = GetWriteDesTableOfInputModel(_model);
                     _model.ChildInputModel = GetChildInputModel(_model);
-
                 }
                 cn.Close();
             }
-
             return _ret;
         }
 
@@ -97,7 +93,6 @@ namespace aehyok.BizMetaData
                     );
                     GetInputModelSaveTableColumn(_tb);
                     _ret.Add(_tb);
-
                 }
                 _dr.Close();
             }
@@ -126,7 +121,6 @@ namespace aehyok.BizMetaData
                 }
                 _dr.Close();
             }
-
         }
 
         private const string SQL_GetInputColumnGroups = @"select  IVG_ID,IV_ID,DISPLAYTITLE,DISPLAYORDER,GROUPTYPE,APPREGURL,GROUPCS
@@ -170,7 +164,6 @@ namespace aehyok.BizMetaData
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModel, cn);
                 _cmd.Parameters.Add("@NAMESPACE", _namespace);
                 _cmd.Parameters.Add("@IVNAME", ModelName);
-
                 SqlDataReader _dr = _cmd.ExecuteReader();
                 while (_dr.Read())
                 {
@@ -187,7 +180,6 @@ namespace aehyok.BizMetaData
                                     _dr.IsDBNull(10) ? "" : _dr.GetString(10),
                                     _dr.IsDBNull(11) ? "" : _dr.GetString(11)
                     );
-
                     string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
                     string _orderField = StrUtils.GetMetaByName2("ORDER", _model.Param);
                     string _modelType = StrUtils.GetMetaByName2("TYPE", _model.Param);
@@ -241,9 +233,7 @@ namespace aehyok.BizMetaData
                         MD_InputModel_ChildParam _p = new MD_InputModel_ChildParam(_s[0], _s[1], _s[2]);
                         _child.Parameters.Add(_p);
                     }
-
                     _ret.Add(_child);
-
                 }
                 _dr.Close();
             }
@@ -304,7 +294,6 @@ namespace aehyok.BizMetaData
         {
             try
             {
-
                 using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_SaveNewInputModel, cn);
@@ -347,14 +336,12 @@ namespace aehyok.BizMetaData
                 {
                     SqlCommand _cmd = new SqlCommand("delete MD_INPUTVIEW  where IV_ID=@IV_ID", cn);
                     _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
-
                     _cmd.ExecuteNonQuery();
                 }
                 return true;
             }
             catch (Exception e)
             {
-
                 return false;
             }
         }
@@ -369,14 +356,12 @@ namespace aehyok.BizMetaData
                     SqlCommand _cmd = new SqlCommand(SQL_InputModel_MoveColumnToGroup, cn);
                     _cmd.Parameters.Add("@IVGID", decimal.Parse(InputModelColumnGroup.GroupID));
                     _cmd.Parameters.Add("@IVCID", decimal.Parse(_col.ColumnID));
-
                     _cmd.ExecuteNonQuery();
                 }
                 return true;
             }
             catch (Exception e)
             {
-
                 return false;
             }
         }
@@ -394,7 +379,6 @@ namespace aehyok.BizMetaData
                     _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
                     _cmd.Parameters.Add("@IVGID", decimal.Parse(GroupID));
                     _cmd.ExecuteNonQuery();
-
 
                     _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_del, cn, _txn);
                     _cmd.Parameters.Add("@IVID", decimal.Parse(GroupID));
@@ -743,7 +727,6 @@ namespace aehyok.BizMetaData
 
             using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-
                 try
                 {
                     SqlParameter[] _param = {
@@ -811,6 +794,97 @@ namespace aehyok.BizMetaData
                 }
                 catch (Exception e)
                 {
+                    return false;
+                }
+            }
+        }
+
+        public static DataSet GetInputModelDefineData(string InputModelID)
+        {
+            DataSet _ret = new DataSet();
+            using (SqlConnection cn = SqlHelper.OpenConnection())
+            {
+                try
+                {
+                    SqlCommand _cmd = new SqlCommand("select * from md_inputview  where IV_ID=@IVID", cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    SqlDataAdapter _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTVIEW");
+
+                    _cmd = new SqlCommand("select * from md_inputviewcolumn where IV_ID=@IVID", cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTVIEWCOLUMN");
+
+
+                    _cmd = new SqlCommand("select * from md_inputgroup where IV_ID=@IVID", cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTGROUP");
+
+                    _cmd = new SqlCommand("select * from md_inputtable  where IV_ID=@IVID", cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTTABLE");
+
+
+                    string _sql = @"select * from md_inputtablecolumn t
+									WHERE IVT_ID IN
+									(select ID from md_inputtable  where IV_ID=@IVID) ";
+                    _cmd = new SqlCommand(_sql, cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTTABLECOLUMN");
+
+                    _cmd = new SqlCommand("select * from md_inputviewchild  where IV_ID=@IVID", cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
+                    _oda = new SqlDataAdapter(_cmd);
+                    _oda.Fill(_ret, "MD_INPUTVIEWCHILD");
+
+                    return _ret;
+                }
+                catch (Exception e)
+                {
+                    LogWriter.WriteSystemLog(string.Format("在导出录入模型时取录入模型定义数据时发生错误，错误信息：{0}", e.Message), "ERROR");
+                    return null;
+                }
+            }
+        }
+
+        private const string SQL_DelInputModelChild = @"delete from md_inputviewchild  where ID=@IVID";
+        public static bool DelInputModelChild(string ChildModelID)
+        {
+            using (SqlConnection cn = SqlHelper.OpenConnection())
+            {
+                try
+                {
+                    SqlCommand _cmd = new SqlCommand(SQL_DelInputModelChild, cn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(ChildModelID));
+                    _cmd.ExecuteNonQuery();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    LogWriter.WriteSystemLog(string.Format("在删除子录入模型时发生错误，错误信息：{0}", e.Message), "ERROR");
+                    return false;
+                }
+            }
+        }
+
+        public static bool IsExistID(string _oldid, string _tname, string _colname)
+        {
+            using (SqlConnection cn = SqlHelper.OpenConnection())
+            {
+                try
+                {
+                    string _sql = string.Format("select count({0}) from {1} where {2}='{3}'", _colname, _tname, _colname, _oldid);
+                    decimal _ret = (decimal)SqlHelper.ExecuteScalar(cn, CommandType.Text, _sql);
+
+                    return (_ret > 0);
+                }
+                catch (Exception e)
+                {
+                    LogWriter.WriteSystemLog(string.Format("在检查{0}表中是否存在{1}的序列值为{2}时发生错误，错误信息：{3}", _tname, _colname, _oldid, e.Message), "ERROR");
                     return false;
                 }
             }

@@ -999,8 +999,24 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_GetNewID = @"SELECT sequences_meta.nextval FROM DUAL";
         public string GetNewID()
         {
-            object _ret = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNewID);
-            return _ret.ToString();
+            string flag = string.Empty;
+            using (SqlConnection conn = DBHelper.OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "GetSequence";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Connection = conn;
+
+                SqlParameter p6 = cmd.Parameters.Add("@value", OracleDbType.Double);
+                p6.Direction = ParameterDirection.Output;
+
+                cmd.ExecuteScalar();
+                flag = p6.Value.ToString();
+            }
+            return flag;
+
+            //object _ret = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNewID);
+            //return _ret.ToString();
         }
 
         #endregion
@@ -3713,14 +3729,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
                 {
-                    SqlCommand _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_ups, cn);
+                    SqlCommand _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_ups, cn,_txn);
                     _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
                     _cmd.Parameters.Add("@IVGID", decimal.Parse(GroupID));
                     _cmd.ExecuteNonQuery();
 
 
-                    _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_del, cn);
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(GroupID));
+                    _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_del, cn,_txn);
+                    _cmd.Parameters.Add("@IVID", decimal.Parse(GroupID));
                     _cmd.ExecuteNonQuery();
                     _txn.Commit();
                     return true;
@@ -3736,7 +3752,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         private const string SQL_AddNewInputModelGroup = @"INSERT INTO MD_INPUTGROUP
                                                             (IVG_ID,IV_ID,DISPLAYTITLE,DISPLAYORDER,GROUPTYPE,APPREGURL,GROUPCS) values
-                                                            (:IVG_ID,:IV_ID,:DISPLAYTITLE,:DISPLAYORDER,:GROUPTYPE,:APPREGURL,:GROUPCS)";
+                                                            (@IVG_ID,@IV_ID,@DISPLAYTITLE,@DISPLAYORDER,@GROUPTYPE,@APPREGURL,@GROUPCS)";
         public bool AddNewInputModelGroup(MD_InputModel_ColumnGroup Group)
         {
             try
@@ -3744,13 +3760,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 using (SqlConnection cn = DBHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelGroup, cn);
-                    _cmd.Parameters.Add(":IVG_ID", Group.GroupID);
-                    _cmd.Parameters.Add(":IV_ID", Group.ModelID);
-                    _cmd.Parameters.Add(":DISPLAYTITLE", Group.DisplayTitle);
-                    _cmd.Parameters.Add(":DISPLAYORDER", Convert.ToDecimal(Group.DisplayOrder));
-                    _cmd.Parameters.Add(":GROUPTYPE", Group.GroupType);
-                    _cmd.Parameters.Add(":APPREGURL", Group.AppRegUrl);
-                    _cmd.Parameters.Add(":GROUPCS", Group.GroupParam);
+                    _cmd.Parameters.Add("@IVG_ID", Group.GroupID);
+                    _cmd.Parameters.Add("@IV_ID", Group.ModelID);
+                    _cmd.Parameters.Add("@DISPLAYTITLE", Group.DisplayTitle);
+                    _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(Group.DisplayOrder));
+                    _cmd.Parameters.Add("@GROUPTYPE", string.Empty);
+                    _cmd.Parameters.Add("@APPREGURL", string.Empty);
+                    _cmd.Parameters.Add("@GROUPCS", string.Empty);
                     _cmd.ExecuteNonQuery();
                 }
                 return true;
@@ -3763,15 +3779,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
 
-        private const string SQL_SaveInputModelColumnGroup = @"update  MD_INPUTGROUP set  DISPLAYTITLE=@DISPLAYTITLE,GROUPTYPE=@GROUPTYPE,APPREGURL=:APPREGURL,GROUPCS=:GROUPCS,
-                                                                        DISPLAYORDER=:DISPLAYORDER where IVG_ID=:IVGID ";
+        private const string SQL_SaveInputModelColumnGroup = @"update  MD_INPUTGROUP set  DISPLAYTITLE=@DISPLAYTITLE,GROUPTYPE=@GROUPTYPE,APPREGURL=@APPREGURL,GROUPCS=@GROUPCS,
+                                                                        DISPLAYORDER=@DISPLAYORDER where IVG_ID=@IVG_ID ";
         private const string SQL_SaveInputModelColumnGroup_ups = @"update MD_INPUTVIEWCOLUMN 
-                                    set DWDM=:DWDM,INPUTDEFAULT=:INPUTDEFAULT,INPUTRULE=:INPUTRULE,CANEDITRULE=:CANEDITRULE ,
-                                    CANDISPLAY=:CANDISPLAY,COLUMNNAME=:COLUMNNAME,COLUMNORDER=:COLUMNORDER,COLUMNTYPE=:COLUMNTYPE ,
-                                    READONLY=:READONLY,DISPLAYNAME=:DISPLAYNAME,ISCOMPUTE=:ISCOMPUTE,COLUMNWIDTH=:COLUMNWIDTH,
-                                    COLUMNHEIGHT=:COLUMNHEIGHT,TEXTALIGNMENT=:TEXTALIGNMENT,EDITFORMAT=:EDITFORMAT,DISPLAYFORMAT=:DISPLAYFORMAT,
-                                    REQUIRED=:REQUIRED,TOOLTIP=:TOOLTIP,DATACHANGEDEVENT=:DATACHANGEDEVENT,MAXLENGTH=:MAXLENGTH,DEFAULTSHOW=:DEFAULTSHOW 
-                                     where IVC_ID=:IVC_ID";
+                                    set DWDM=@DWDM,INPUTDEFAULT=@INPUTDEFAULT,INPUTRULE=@INPUTRULE,CANEDITRULE=@CANEDITRULE ,
+                                    CANDISPLAY=@CANDISPLAY,COLUMNNAME=@COLUMNNAME,COLUMNORDER=@COLUMNORDER,COLUMNTYPE=@COLUMNTYPE ,
+                                    READONLY=@READONLY,DISPLAYNAME=@DISPLAYNAME,ISCOMPUTE=@ISCOMPUTE,COLUMNWIDTH=@COLUMNWIDTH,
+                                    COLUMNHEIGHT=@COLUMNHEIGHT,TEXTALIGNMENT=@TEXTALIGNMENT,EDITFORMAT=@EDITFORMAT,DISPLAYFORMAT=@DISPLAYFORMAT,
+                                    REQUIRED=@REQUIRED,TOOLTIP=@TOOLTIP,DATACHANGEDEVENT=@DATACHANGEDEVENT,MAXLENGTH=@MAXLENGTH,DEFAULTSHOW=@DEFAULTSHOW 
+                                     where IVC_ID=@IVC_ID";
         public bool SaveInputModelColumnGroup(MD_InputModel_ColumnGroup Group)
         {
             SqlCommand _cmd;
@@ -3784,21 +3800,21 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                     if (Group.GroupID != "0")
                     {
-                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup, cn);
+                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup, cn,_txn);
                         _cmd.Parameters.Add("@DISPLAYTITLE", Group.DisplayTitle);
                         _cmd.Parameters.Add("@GROUPTYPE", Group.GroupType);
                         _cmd.Parameters.Add("@APPREGURL", Group.AppRegUrl);
                         _cmd.Parameters.Add("@GROUPCS", Group.GroupParam);
                         _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(Group.DisplayOrder));
 
-                        _cmd.Parameters.Add(":IVG_ID", decimal.Parse(Group.GroupID));
+                        _cmd.Parameters.Add("@IVG_ID", decimal.Parse(Group.GroupID));
                         _cmd.ExecuteNonQuery();
                     }
 
 
                     foreach (MD_InputModel_Column _col in Group.Columns)
                     {
-                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup_ups, cn);
+                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup_ups, cn,_txn);
                         _cmd.Parameters.Add("@DWDM", _col.DWDM);
                         _cmd.Parameters.Add("@INPUTDEFAULT", _col.DefaultValue);
                         _cmd.Parameters.Add("@INPUTRULE", _col.InputRule);
@@ -3870,10 +3886,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                             CANDISPLAY,COLUMNORDER,COLUMNTYPE,READONLY,
                                                             DISPLAYNAME,ISCOMPUTE,COLUMNWIDTH,COLUMNHEIGHT,
                                                             TEXTALIGNMENT,IVG_ID ) values
-                                                             (:IVC_ID,:IV_ID,0,:COLUMNNAME,
+                                                             (@IVC_ID,@IV_ID,0,@COLUMNNAME,
                                                              'Y',0,'VARCHAR',0,
-                                                             :DISPLAYNAME,0,1,1,
-                                                            0,:IVG_ID ) ";
+                                                             @DISPLAYNAME,0,1,1,
+                                                            0,@IVG_ID ) ";
         public bool AddNewInputModelColumn(string InputModelID, string GroupID, string ColumnName)
         {
             try
@@ -3992,10 +4008,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         private const string SQL_SaveInputModelSaveTable = @"update MD_INPUTTABLE
                                                                     set TABLETITLE=:TABLETITLE,DISPLAYORDER=:DISPLAYORDER,ISLOCK=:ISLOCK,SAVEMODE=:SAVEMODE
-                                                                    where ID=:ID ";
+                                                                    where ID=@ID ";
         private const string SQL_SaveInputModelSaveTable_ins = @"insert into MD_INPUTTABLECOLUMN
                                                             (ID,IVT_ID,DESCOL,SRCCOL,METHOD,DESDES) values
-                                                            (:ID,:IVT_ID,:DESCOL,:SRCCOL,:METHOD,:DESDES)  ";
+                                                            (@ID,@IVT_ID,@DESCOL,@SRCCOL,@METHOD,@DESDES)  ";
         public bool SaveInputModelSaveTable(MD_InputModel_SaveTable _newTable)
         {
             using (SqlConnection cn = DBHelper.OpenConnection())
@@ -4004,16 +4020,16 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 try
                 {
                     SqlCommand _upCmd = new SqlCommand(SQL_SaveInputModelSaveTable, cn);
-                    _upCmd.Parameters.Add(":TABLETITLE", _newTable.TableTitle);
-                    _upCmd.Parameters.Add(":DISPLAYORDER", Convert.ToDecimal(_newTable.DisplayOrder));
-                    _upCmd.Parameters.Add(":ISLOCK", _newTable.IsLock ? (decimal)1 : (decimal)0);
-                    _upCmd.Parameters.Add(":SAVEMODE", _newTable.SaveMode);
-                    _upCmd.Parameters.Add(":ID", decimal.Parse(_newTable.ID));
+                    _upCmd.Parameters.Add("@TABLETITLE", _newTable.TableTitle);
+                    _upCmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(_newTable.DisplayOrder));
+                    _upCmd.Parameters.Add("@ISLOCK", _newTable.IsLock ? (decimal)1 : (decimal)0);
+                    _upCmd.Parameters.Add("@SAVEMODE", _newTable.SaveMode);
+                    _upCmd.Parameters.Add("@ID", decimal.Parse(_newTable.ID));
                     _upCmd.ExecuteNonQuery();
 
 
                     SqlCommand _cmd = new SqlCommand("delete from  MD_INPUTTABLECOLUMN where IVT_ID=@ID", cn);
-                    _cmd.Parameters.Add(":ID", decimal.Parse(_newTable.ID));
+                    _cmd.Parameters.Add("@ID", decimal.Parse(_newTable.ID));
                     _cmd.ExecuteNonQuery();
 
                     foreach (MD_InputModel_SaveTableColumn _col in _newTable.Columns)
@@ -4124,8 +4140,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 try
                 {
                     SqlCommand _cmd = new SqlCommand(_sql, cn);
-                    _cmd.Parameters.Add(":IV_ID", decimal.Parse(MainModelID));
-                    _cmd.Parameters.Add(":CIV_ID", decimal.Parse(ChildModelID));
+                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(MainModelID));
+                    _cmd.Parameters.Add("@CIV_ID", decimal.Parse(ChildModelID));
                     _cmd.ExecuteNonQuery();
                     return true;
                 }

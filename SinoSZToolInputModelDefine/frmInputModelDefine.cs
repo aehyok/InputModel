@@ -246,15 +246,17 @@ namespace SinoSZToolInputModelDefine
 			_node.ImageIndex = 7;
 			_node.SelectImageIndex = 0;
 
-			foreach (MD_InputModel_ColumnGroup _group in _model.Groups)
-			{
-				_node = treeList1.AppendNode(null, _fnode);
-				_node.SetValue(this.treeListColumn1, _group);
-				_node.HasChildren = false;
-				_node.ImageIndex = 7;
-				_node.SelectImageIndex = 0;
-			}
-
+            if (_model.Groups != null)
+            {
+                foreach (MD_InputModel_ColumnGroup _group in _model.Groups)
+                {
+                    _node = treeList1.AppendNode(null, _fnode);
+                    _node.SetValue(this.treeListColumn1, _group);
+                    _node.HasChildren = false;
+                    _node.ImageIndex = 7;
+                    _node.SelectImageIndex = 0;
+                }
+            }
 		}
 
 		private void LoadInputModelDetial(TreeListNode _fnode, MD_InputModel _model)

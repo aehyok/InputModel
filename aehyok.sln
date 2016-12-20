@@ -31,6 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{E61AF2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinoSZJS.DataAccess", "SinoSZJS.DataAccess\SinoSZJS.DataAccess.csproj", "{C41251E4-BC9E-4A3C-92D0-22682FBAA541}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Script", "Script", "{45C904A3-E2E7-4A49-9B02-19172E0542B0}"
+	ProjectSection(SolutionItems) = preProject
+		Procedure.sql = Procedure.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

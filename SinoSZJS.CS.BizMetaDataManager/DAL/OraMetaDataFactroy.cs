@@ -3684,7 +3684,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 using (SqlConnection cn = DBHelper.OpenConnection())
                 {
-                    SqlCommand _cmd = new SqlCommand("delete MD_INPUTVIEW  where IV_ID=@IVID", cn);
+                    SqlCommand _cmd = new SqlCommand("delete MD_INPUTVIEW  where IV_ID=@IV_ID", cn);
                     _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
 
                     _cmd.ExecuteNonQuery();
@@ -3962,7 +3962,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 try
                 {
 
-                    SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelSavedTable, cn);
+                    SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelSavedTable, cn,_txn);
                     _cmd.Parameters.Add("@ID", decimal.Parse(GetNewID()));
                     _cmd.Parameters.Add("@TABLENAME", TableName);
                     _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));

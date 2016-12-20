@@ -60,7 +60,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
 
             //单查询语句
-            _ds = DBHelper.FillDataSet(_mainQueryStr, _qv.MainTable.TableName);
+            _ds = SqlHelper.FillDataSet(_mainQueryStr, _qv.MainTable.TableName);
             WriteQueryLog(_mainQueryStr, Environment.TickCount - _GetQueryFinishedTime);
 
             int _GetDataByQueryFinishedTime = Environment.TickCount;
@@ -123,7 +123,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 //单查询语句
                 try
                 {
-                    _ds = DBHelper.FillDataSet(_mainQueryStr, _qv.MainTable.TableName);
+                    _ds = SqlHelper.FillDataSet(_mainQueryStr, _qv.MainTable.TableName);
                     WriteQueryLog(_mainQueryStr, Environment.TickCount - _GetQueryFinishedTime);
                 }
                 catch (Exception ex)
@@ -162,7 +162,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             int _BuildQueryStringFinishedTime = Environment.TickCount;
 
             //单查询语句
-            DataTable _dt = DBHelper.Get_Data(_QueryStrings, _qv.MainTable.TableName);
+            DataTable _dt = SqlHelper.Get_Data(_QueryStrings, _qv.MainTable.TableName);
             WriteQueryLog(_QueryStrings, Environment.TickCount - _GetQueryFinishedTime);
 
             int _GetDataByQueryFinishedTime = Environment.TickCount;
@@ -201,7 +201,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             //构建查询字符串
             Dictionary<string, string> _resultQueryStrings = SQLQueryBuilder.GetQueryStr(_qv, _queryRequest, ref _mainQueryStr);
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 _taskid = Guid.NewGuid().ToString();
@@ -242,7 +242,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             //构建查询字符串
             Dictionary<string, string> _resultQueryStrings = OraQueryBuilder.GetQueryStr(_qv, _queryRequest, ref _mainQueryStr);
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 _taskid = Guid.NewGuid().ToString();
@@ -402,7 +402,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             MDQuery_Request _ret = null;
             string _sql = " select QUERYCONTEXT from TASK_QUERY where ID=:ID";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(_sql, cn);
                 _cmd.Parameters.Add(":ID", _taskID);
@@ -434,7 +434,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string _childSQL = "";
             DataSet _ds = new DataSet();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -443,7 +443,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     string _sqlStr = string.Format("insert into QUERY_TEMP (PK_C) {0}", _mainQueryStr);
                     try
                     {
-                        DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sqlStr);
+                        SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sqlStr);
                     }
                     catch (Exception ex)
                     {
@@ -461,7 +461,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                             SqlDataAdapter _adapter = new SqlDataAdapter();
                             //Set the select command to fetch product details
                             _childSQL = (string)_resultQueryStrings[_key];
-                            DataTable _dt = DBHelper.FillDataTable(cn, CommandType.Text, _childSQL);
+                            DataTable _dt = SqlHelper.FillDataTable(cn, CommandType.Text, _childSQL);
                             _dt.TableName = _key;
                             _ds.Tables.Add(_dt);
                             WriteQueryLog(_childSQL, Environment.TickCount - _startTime);
@@ -497,12 +497,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                 DataTable _ret = new DataTable();
                 _ret.TableName = _mainTableName;
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     try
                     {
                         _sqlStr = OraQueryBuilder.GetMainTableData(_maintable, _keyid);
-                        _ret = DBHelper.FillDataTable(cn, CommandType.Text, _sqlStr);
+                        _ret = SqlHelper.FillDataTable(cn, CommandType.Text, _sqlStr);
 
                         cn.Close();
                     }
@@ -510,7 +510,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _errStr = string.Format("通过主键取主表记录时发生错误! QueryModelName={0} MainTableName={1} Key={2} \n\r ErrorMsg:{4} \n\r SQL: {3} ",
                                 _queryModelName, _mainTableName, _keyid, _sqlStr, e.Message);
-                        //OralceLogWriter.WriteSystemLog(_errStr, "ERROR");
+                        LogWriter.WriteSystemLog(_errStr, "ERROR");
                         throw e;
                     }
                 }
@@ -536,13 +536,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                 DataTable _ret = new DataTable();
                 _ret.TableName = _childTableName;
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     try
                     {
                         _sqlStr = OraQueryBuilder.GetChildTableData(_model.MainTable, _childTable, _keyid);
 
-                        _ret = DBHelper.FillDataTable(cn, CommandType.Text, _sqlStr);
+                        _ret = SqlHelper.FillDataTable(cn, CommandType.Text, _sqlStr);
                         //Fill the DataSet with data from 'Products' database table
                         cn.Close();
                     }
@@ -550,7 +550,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _errStr = string.Format("通过主表主键键取子表记录时发生错误! QueryModelName={0} ChildTableName={1} Key={2} \n\r ErrorMsg:{4} \n\r SQL: {3} ",
                                 _queryModelName, _childTableName, _keyid, _sqlStr, e.Message);
-                        //OralceLogWriter.WriteSystemLog(_errStr, "ERROR");
+                        LogWriter.WriteSystemLog(_errStr, "ERROR");
                         throw e;
                     }
                 }
@@ -579,7 +579,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     string _sqlStr = OraQueryBuilder.GetMainTableKeyByChildKey(_model.MainTable, _childTable, _childKey);
                     SqlParameter[] _param = { new SqlParameter(":CHILDKEY", SqlDbType.NVarChar) };
                     _param[0].Value = _childKey;
-                    return DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, _param).ToString();
+                    return SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, _param).ToString();
                 }
             }
             else
@@ -601,7 +601,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _sqlStr = OraQueryBuilder.GetMainTableKeyByColumnCondition(_model.MainTable, _columnName, _data);
 
-                    return DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlStr).ToString();
+                    return SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlStr).ToString();
                 }
             }
             else
@@ -618,7 +618,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 if (!_model.ChildTableDict.ContainsKey(_childTableName)) return 0;
                 MDModel_Table _childTable = _model.ChildTableDict[_childTableName];
                 string _sqlStr = OraQueryBuilder.GetChildTableCount(_model.MainTable, _childTable, _keyid);
-                decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, null);
+                decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, null);
 
                 return Convert.ToInt32(_count);
 
@@ -642,7 +642,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     int _startTime = Environment.TickCount;
                     string _sqlStr = OraQueryBuilder.GetChildTableCount(_model.MainTable, _ctable, _keyid);
-                    int _count = Convert.ToInt32(DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, null));
+                    int _count = Convert.ToInt32(SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlStr, null));
                     int _endTime = Environment.TickCount;
                     WriteQueryLog(_sqlStr, _endTime - _startTime);
                     MDQuery_ChildTableRowCount _item = new MDQuery_ChildTableRowCount(_ctable.TableName, _count);
@@ -657,7 +657,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                  values (SEQ_ZHTJ.NEXTVAL,sysdate,:USETIME,:QUERY_STR,'1',:YHID)  ";
         private void WriteQueryLog(string _sqlStr, int _userTime)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 SqlCommand _cmd = new SqlCommand(SQL_WriteQueryLog, cn);
@@ -682,7 +682,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = Convert.ToDecimal(_userTime);
             _param[1].Value = (_sqlStr.Length > 2000) ? _sqlStr.Substring(0, 2000) : _sqlStr;
             _param[2].Value = (decimal)0;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
         }
 
         public List<MD_ConceptGroup> GetConceptList()
@@ -691,7 +691,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
             string _sql = "select groupname,groupdes,dwdm,displayorder from md_conceptgroup ";
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text,
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text,
                                            _sql);
 
             while (dr.Read())
@@ -714,9 +714,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sql += " where GROUPNAME = :GROUPNAME ";
             SqlParameter[] _param = { new SqlParameter(":GROUPNAME", SqlDbType.NVarChar) };
             _param[0].Value = _groupName;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text,
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text,
                                               _sql, _param))
                 {
                     while (dr.Read())
@@ -784,9 +784,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                                         new SqlParameter(":VIEWNAME",SqlDbType.NVarChar)};
             _param[0].Value = _modelNames[0];
             _param[1].Value = _modelNames[1];
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text,
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text,
                                               _sb.ToString(), _param))
                 {
 
@@ -851,7 +851,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             //        _sqlConcept += string.Format(" and {2}({0}.ZHCX_DW,'{1}') = '1' ", _sc.TableName, SinoUserCtx.CurUser.CurrentPost.PostDWDM, _sfun);
             //}
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlConcept);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlConcept);
             string _sourceStr = _sc.QueryModel.DisplayTitle;
             while (dr.Read())
             {
@@ -874,7 +874,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sql.Append(" ) ");
 
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString());
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString());
 
             while (dr.Read())
             {
@@ -910,7 +910,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_fatherGuildLineID);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -947,7 +947,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
             }
             _queryStr = OraQueryBuilder.ReplaceExtSecret(_queryStr, "");
-            DataTable _ret = DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
+            DataTable _ret = SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
             WriteQueryLog(_queryStr, Environment.TickCount - _GetQueryFinishedTime);
             return _ret;
         }
@@ -967,7 +967,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
             }
             _queryStr = OraQueryBuilder.ReplaceExtSecretNoUserInfo(_queryStr);
-            DataTable _ret = DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
+            DataTable _ret = SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
             WriteQueryLogBySystem(_queryStr, Environment.TickCount - _GetQueryFinishedTime);
             return _ret;
         }
@@ -984,7 +984,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _queryStr = OraQueryBuilder.RebuildGuideLineQueryString(_queryStr, _gp);
             }
             _queryStr = OraQueryBuilder.ReplaceExtSecret(_queryStr, "");
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
         }
 
         public int QueryGuideLineResultCount(string _guideLineID, List<MDQuery_GuideLineParameter> _params)
@@ -1000,7 +1000,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             }
             _queryStr = OraQueryBuilder.ReplaceExtSecret(_queryStr, "");
             string _sqlCount = string.Format("select count(*) from ({0}) ", _queryStr);
-            decimal _ret = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sqlCount);
+            decimal _ret = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sqlCount);
 
             WriteQueryLog(_sqlCount, Environment.TickCount - _GetQueryFinishedTime);
             return Convert.ToInt32(_ret);
@@ -1020,7 +1020,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _queryStr = OraQueryBuilder.RebuildGuideLineQueryString(_queryStr, _gp);
             }
             _queryStr = OraQueryBuilder.ReplaceFunction(_queryStr);
-            DataTable _ret = DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
+            DataTable _ret = SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
             return _ret;
         }
 
@@ -1036,7 +1036,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _queryStr = OraQueryBuilder.RebuildGuideLineQueryStringByDefault(_queryStr, _gp);
             }
             _queryStr = OraQueryBuilder.ReplaceExtSecret(_queryStr, "");
-            DataTable _ret = DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
+            DataTable _ret = SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, _queryStr);
             WriteQueryLog(_queryStr, Environment.TickCount - _GetQueryFinishedTime);
             return _ret;
         }
@@ -1054,9 +1054,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                
                         };
             _param[0].Value = decimal.Parse(_guideLineID);
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sql.ToString(), _param))
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql.ToString(), _param))
                 {
                     while (dr.Read())
                     {
@@ -1096,7 +1096,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(SinoUserCtx.CurUser.UserID);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -1138,7 +1138,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _taskID;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -1174,7 +1174,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
             string _delChild = "delete from TASK_QUERY_SQL where TASK_ID=:TASK_ID";
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 SqlCommand _cmd = new SqlCommand(_sql.ToString(), cn);
@@ -1194,7 +1194,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_LockQueryTaskResult = @"update TASK_QUERY set LOCKRESULT=1  where ID=:ID and REQUESTUSER=:REQUESTUSER";
         public bool LockQueryTaskResult(string _taskID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 SqlCommand _cmd = new SqlCommand(SQL_LockQueryTaskResult, cn);
@@ -1210,7 +1210,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_CancleQueryTask = @"update TASK_QUERY set TASKSTATE=4 where ID=:ID and REQUESTUSER=:REQUESTUSER ";
         public bool CancleQueryTask(string _taskID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 SqlCommand _cmd = new SqlCommand(SQL_CancleQueryTask, cn);
@@ -1228,7 +1228,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             List<MD_CheckRule> _ret = new List<MD_CheckRule>();
             string[] _qvs = QueryModelName.Split('.');
             string _sql = "select ID,GZMC,GZSF,DWDM,STATE from SJSH_SHGZB where NAMESPACE= :NS and VIEWNAME=:MODEL and DWDM=:DWDM";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(_sql, cn);
                 _cmd.Parameters.Add(":NS", _qvs[0]);
@@ -1260,7 +1260,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _updateSql = "update SJSH_SHGZB set STATE=1 where  ID=:ID";
             string[] _qvs = QueryModelName.Split('.');
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 SqlCommand _cmd = new SqlCommand(_clearSql, cn);
@@ -1338,7 +1338,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             Dictionary<string, string> _ret = new Dictionary<string, string>();
             string _sql = string.Format("select dm,mc from jsods.{0}", OraCommandSecretCheck.CheckTableName(_refTableName));
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(_sql, cn);
                 SqlDataReader _dr = _cmd.ExecuteReader();
@@ -1358,7 +1358,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private MDQuery_Request GetQueryTaskRequestContext(string _taskID, ref string TaskType)
         {
             MDQuery_Request _ret = null;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetQueryTaskRequestContext, cn);
                 _cmd.Parameters.Add(":ID", _taskID);
@@ -1392,7 +1392,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             DataSet _ret = new DataSet();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -1412,7 +1412,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _errmsg = string.Format("取任务查询的结果数据时发生错误TASKID={0} XH={1} Error:{2}", _taskID, _xh, ex.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                 }
                 cn.Close();
             }
@@ -1441,7 +1441,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             stream.Close();
             string _id = Guid.NewGuid().ToString();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_SaveQuery, cn);
                 _cmd.Parameters.Add(":ID", _id);
@@ -1470,14 +1470,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = decimal.Parse(SinoUserCtx.CurUser.UserID);
             _param[1].Value = decimal.Parse(SinoUserCtx.CurUser.CurrentPost.PostDwID);
             _param[2].Value = QueryModelName;
-            return DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            return SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
         }
 
 
         public MDQuery_Request LoadQuery(string SaveQueryID)
         {
             MDQuery_Request _ret = null;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(" select  TJSF from QUERY_SAVE where ID=:ID", cn);
                 _cmd.Parameters.Add(":ID", SaveQueryID);
@@ -1501,7 +1501,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             MD_InputModel _ret = null;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelByID, cn);
                 _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
@@ -1565,7 +1565,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _ns = _mns[0];
             string _mame = _mns[1];
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelByName, cn);
                 _cmd.Parameters.Add("@NS", _ns);
@@ -1643,7 +1643,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
 
             List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
                 _cmd.Parameters.Add("@IVID", _model.ID);
@@ -1670,7 +1670,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID ";
         private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
                 _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
@@ -1708,12 +1708,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _ret.Groups.Clear();
             string _sql = "";
             _sql += " ";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlParameter[] _param = {
                                         new SqlParameter("@IVID", OracleDbType.Decimal)};
                 _param[0].Value = decimal.Parse(_ret.ID);
-                using (SqlDataReader _dr = DBHelper.ExecuteReader(cn, CommandType.Text, SQL_GetInputModelColumnGroups, _param))
+                using (SqlDataReader _dr = SqlHelper.ExecuteReader(cn, CommandType.Text, SQL_GetInputModelColumnGroups, _param))
                 {
 
                     while (_dr.Read())
@@ -1748,7 +1748,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             List<MD_InputModel_Column> _ret = new List<MD_InputModel_Column>();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetColumnsOfInputGroup, cn);
                 _cmd.Parameters.Add("@IVID", decimal.Parse(_group.ModelID));
@@ -1803,7 +1803,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             List<MD_InputModel_Column> _ret = new List<MD_InputModel_Column>();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelColumnDefine, cn);
                 _cmd.Parameters.Add("@IVID", decimal.Parse(_inputModelID));
@@ -1852,7 +1852,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool DelSavedQuery(string _savedID)
         {
             string _sql = "delete from QUERY_SAVE where id=@ID and yhid=@YHID ";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -1866,7 +1866,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("删除保存的查询时出错,错误信息为:{0}!\nID:{1}",
                            e.Message, _savedID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -1875,7 +1875,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public string GetUserLevel()
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -1891,7 +1891,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取用户级别信息时出错,错误信息为:{0}!\nUserName:{1}",
                            e.Message, SinoUserCtx.CurUser.LoginName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "缉私分局";
                 }
                 cn.Close();
@@ -1901,7 +1901,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public DataTable GetDataCheckInfo(string _modelName, string _mainKey, ref string _shid)
         {
             _shid = "";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -1950,7 +1950,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取用户审核信息时出错,错误信息为:{0}!\nModelName:{1}\nMainKey={2}",
                            e.Message, _modelName, _mainKey);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
                 cn.Close();
@@ -1963,7 +1963,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             SHID = "";
             string _ret = "";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2015,7 +2015,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取用户审核信息记录ID时出错,错误信息为:{0}!\nModelName:{1}\nMainKey={2}\n Level={3}",
                            e.Message, QueryModelName, _mainKey, _level);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
                 cn.Close();
@@ -2057,7 +2057,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
 
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2114,7 +2114,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("保存用户审核信息时出错,错误信息为:{0}!\n CurrentLevel:{1}\n CurrentID={2}",
                            e.Message, CurrentLevel, CurrentID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     cn.Close();
                     return "-1";
@@ -2129,19 +2129,19 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public string GetDataCheckWHXH(string _tableName, string _mainColumn, string _mainKey)
         {
             string _selectwhxh = string.Format("SELECT WHXHB.WHXH FROM {0}_WHXH WHXHB WHERE WHXHB.{1} = :MAINID  ", _tableName, _mainColumn);
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
                     SqlParameter[] _param = { new SqlParameter(":MAINID", _mainKey) };
-                    object _retObj = DBHelper.ExecuteScalar(cn, CommandType.Text, _selectwhxh, _param);
+                    object _retObj = SqlHelper.ExecuteScalar(cn, CommandType.Text, _selectwhxh, _param);
                     return _retObj.ToString();
                 }
                 catch (Exception e)
                 {
                     string _errmsg = string.Format("取表数据的维护序号时出错,错误信息为:{0}!\n _tableName:{1}\n _mainColumn={2} _mainKey={3}",
                            e.Message, _tableName, _mainColumn, _mainKey);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "-1";
                 }
                 cn.Close();
@@ -2159,7 +2159,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _checkStr = "";
 
             string[] qvs = _queryModelName.Split('.');
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2179,7 +2179,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("保存新的审核规则时出错,错误信息为:{0}!\n _ruleName:{1}\n _queryModelName={2}",
                            e.Message, _ruleName, _queryModelName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2191,7 +2191,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelDataCheckRule = "delete from SJSH_SHGZB where ID=:ID and DWDM=:DWDM";
         public bool DelDataCheckRule(string _ruleID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2207,7 +2207,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("删除审核规则时出错,错误信息为:{0}!\n _ruleID:{1}\n DWDM={2}",
                           e.Message, _ruleID, SinoUserCtx.CurUser.CurrentPost.PostDWDM);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2219,7 +2219,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool ChangeDataCheckRule(string _ruleID, string _gzsf)
         {
             string _del = "update SJSH_SHGZB set GZSF=:GZSF where ID=:ID and DWDM=:DWDM";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2236,7 +2236,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("修改审核规则算法时出错,错误信息为:{0}!\n _ruleID:{1}\n DWDM={2}",
                           e.Message, _ruleID, SinoUserCtx.CurUser.CurrentPost.PostDWDM);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2249,7 +2249,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool IsPASpaceExist(string PersonAnalizeSapceName)
         {
             string _sql = "select count(AS_ID) from MD_ANALIZESPACE where DISPLAYTITLE=:DISPLAYTITLE and YHID=:YHID";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2263,7 +2263,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("判断是否存在名称为{1}的分析空间时出错,错误信息为:{0}!",
                           e.Message, PersonAnalizeSapceName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
                 cn.Close();
@@ -2278,7 +2278,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _newid = _of.GetNewID();
 
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2295,7 +2295,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("创建名称为{1}的分析空间时出错,错误信息为:{0}!",
                           e.Message, PersonAnalizeSapceName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
                 cn.Close();
@@ -2309,7 +2309,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_PAnalizeProject> GetPAProjectOfUser()
         {
             List<MD_PAnalizeProject> _ret = new List<MD_PAnalizeProject>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2338,7 +2338,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取用户{1}的个人分析空间时出错,错误信息为:{0}!",
                           e.Message, SinoUserCtx.CurUser.UserName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
                 cn.Close();
@@ -2363,7 +2363,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             /*
             OraMetaDataFactroy _of = new OraMetaDataFactroy();
             string tid = _of.GetNewID();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 #region 建立表元数据
@@ -2383,7 +2383,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _errmsg = string.Format("结果存入个人分析空间出错：写入个分析空间表元数据定义时出错！,错误信息为:{0}!", e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2414,7 +2414,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _errmsg = string.Format("结果存入个人分析空间出错：写入个分析空间表字段{1}元数据定义时出错！,错误信息为:{0}!",
                                 e.Message, _col.ColumnName);
-                        //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                        LogWriter.WriteSystemLog(_errmsg, "ERROR");
                         _txn.Rollback();
                         return false;
                     }
@@ -2434,7 +2434,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _errmsg = string.Format("结果存入个人分析空间出错：通过元数据建立分析空间表{0}时出错！,错误信息为:存贮过程返回为 1--失败 !",
                             tid);
-                        //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                        LogWriter.WriteSystemLog(_errmsg, "ERROR");
                         _txn.Rollback();
                         return false;
                     }
@@ -2443,7 +2443,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("结果存入个人分析空间出错：通过元数据建立分析空间表{1}时出错！,错误信息为:{0}!",
                                   e.Message, tid);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2479,7 +2479,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("结果存入个人分析空间出错：将记录数据插入个人分析空间的表时出错！,错误信息为:{0}! ",
                                   e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2498,7 +2498,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _errmsg = string.Format("结果存入个人分析空间出错：通过TranMC_to_DM修改表{0}中的代码项时出错！,错误信息为:存贮过程返回为 1--失败 !",
                             tid);
-                        //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                        LogWriter.WriteSystemLog(_errmsg, "ERROR");
                         _txn.Rollback();
                         return false;
                     }
@@ -2507,7 +2507,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("结果存入个人分析空间出错：通过TranMC_to_DM修改表{0}中的代码项时出错！,错误信息为:存贮过程返回为 1--失败 !",
                                   tid);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -2545,7 +2545,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 string _errmsg = string.Format("取数据补录的表格数据时出错,错误信息为:{0}!",
                       e.Message, SinoUserCtx.CurUser.UserName);
-                //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                LogWriter.WriteSystemLog(_errmsg, "ERROR");
                 return null;
             }
 
@@ -2558,7 +2558,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             MD_InputModel _inputModel = GetInputModelByName(_inputModelName);
             if (_inputModel == null || _inputModel.TableName == "") return false;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 string cmdStr = string.Format("select * from {0} ", _inputModel.TableName);
                 SqlTransaction txn = cn.BeginTransaction();
@@ -2577,13 +2577,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _sql;
             resultDataType = "VARCHAR";
             QueryString = OraQueryBuilder.BuildComupteField(ExpressionString, TableDefine);
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
                     _sql = string.Format("select {0} from {1} where rownum<2", QueryString, TableDefine.TableName);
                     SqlTransaction txn = cn.BeginTransaction();
-                    using (SqlDataReader _dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sql))
+                    using (SqlDataReader _dr = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql))
                     {
                         DataTable _dt = _dr.GetSchemaTable();
                         DataRow _row = _dt.Rows[0];
@@ -2619,13 +2619,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string _sql;
             queryString = OraQueryBuilder.BuildStatisticsField(TableName, _column, FunctionDefine);
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
                     _sql = string.Format("{0} where rownum<2", queryString);
                     SqlTransaction txn = cn.BeginTransaction();
-                    using (SqlDataReader _dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sql))
+                    using (SqlDataReader _dr = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql))
                     {
                         DataTable _dt = _dr.GetSchemaTable();
                         DataRow _row = _dt.Rows[0];
@@ -2660,7 +2660,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                 values (:ID,:COLUMNAME,:COLUMNEXP,:TABLENAME,:VIEWNAME,:COLUMNMETA,:COLUMNDES,0,:USERID,sysdate) ";
         public void SaveComputeFieldDefine(string DisplayName, string Description, string Expression, string QueryString, string ResultDataType, string TableName, string ModelName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2691,7 +2691,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MDQuery_ComputeColumnDefine> GetPersonSavedComputField(string ModelName, string TableName)
         {
             List<MDQuery_ComputeColumnDefine> _ret = new List<MDQuery_ComputeColumnDefine>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2735,7 +2735,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_FUNCTION> GetFunctionList(int _type)
         {
             List<MD_FUNCTION> _ret = new List<MD_FUNCTION>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2781,7 +2781,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public string GetCanUsePanalizeSet()
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2808,7 +2808,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public string GetQueryModelDescription(string _modelName)
         {
             string _ret = "";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2841,7 +2841,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _sql;
             DataTable _ret = new DataTable();
             _ret.TableName = "RULELIST";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2863,7 +2863,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取审核规则列表时出错,错误信息为:{0}!\n _queryModelName={1}",
                         e.Message, QueryModelName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 
                 }
                 cn.Close();
@@ -2881,7 +2881,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             SqlCommand _cmd;
             MD_CheckRule srcRule = null;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2928,7 +2928,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("导入审核规则时出错,错误信息为:{0}!\n SrcRuleID={1}",
                        e.Message, SrcRuleID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     cn.Close();
                 }
@@ -2943,7 +2943,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             SqlCommand _cmd;
             MD_CheckRule srcRule = null;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -2988,7 +2988,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("以审核规则{1}覆盖规则{2}时出错,错误信息为:{0}!\n",
                        e.Message, SrcRuleID, TargetRuleID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     cn.Close();
                 }
@@ -3007,14 +3007,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 SqlParameter[] _param = { new SqlParameter(":MAINKEYID", SqlDbType.NVarChar) };
                 _param[0].Value = MainKeyID;
-                object _retObj = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+                object _retObj = SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
                 if (_retObj != null) _ret = _retObj.ToString();
             }
             catch (Exception e)
             {
                 string _errmsg = string.Format("取审核信息zhcx.Get_SjshInfo_HGJS({1})时出错,错误信息为:{0}!\n",
                    e.Message, MainKeyID);
-                //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                LogWriter.WriteSystemLog(_errmsg, "ERROR");
             }
 
             return _ret;
@@ -3027,7 +3027,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             DataTable _ret = new DataTable();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3041,7 +3041,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取审核公告列表时出错,错误信息为:{0}!FBDW={1}\n SQL语句：{2}",
                         e.Message, SinoUserCtx.CurUser.CurrentPost.PostDwID, SQL_GetDataCheckBoardList);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 
                 }
                 cn.Close();
@@ -3058,7 +3058,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public MD_DataCheckMsg GetDataCheckMsg(string _ggjlid)
         {
             MD_DataCheckMsg _ret = null;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3095,7 +3095,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取审核公告信息时出错,错误信息为:{0}!ID={1}\n SQL语句：{2}",
                         e.Message, _ggjlid, SQL_GetDataCheckMsg);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 
                 }
                 cn.Close();
@@ -3110,7 +3110,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string _sql = "insert into SJSH_GGXX ";
             _sql += " ( ID,SHJLID,BH,FBDW,FBSJ,FBR,LXDH,DZYJ,XXBT,XXNR,CDDW,SFYC) ";
             _sql += " values (  SEQUENCES_META.NEXTVAL,:SHJLID,'',:FBDW,sysdate,:FBR,:LXDH,:DZYJ,:XXBT,:XXNR,:CDDW,:SFYC) ";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3130,7 +3130,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("插入审核公告信息时出错,错误信息为:{0}!",
                        e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -3143,7 +3143,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool UpdateDataCheckMsg(string _ggjlid, string _title, string _context, string _cddw, string _tel, string _email, decimal _sfkj)
         {
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3161,7 +3161,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("保存修改的审核公告信息时出错,错误信息为:{0}!",
                        e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -3173,7 +3173,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public string GetSjshInfo_DWID(string _shjlid)
         {
             string _ret = "";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3186,7 +3186,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取审核记录[{1}]对应的单位ID时出错,错误信息为:{0}!\n",
                        e.Message, _shjlid);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                 }
             }
             return _ret;
@@ -3198,7 +3198,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
 
             string _sql = "update SJSH_GGXX set FKJG=:FKJG,FKSJ=sysdate where ID=:ID ";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3211,7 +3211,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("反馈审核公告信息[{1}]时出错,错误信息为:{0}!\n",
                        e.Message, _ggjlid);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -3223,7 +3223,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool DeleteDataCheckMsg(string _ggjlid)
         {
             string _sql = "delete SJSH_GGXX where ID=:ID and FBDW=:FBDW";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3236,7 +3236,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("删除审核公告信息[{1}]时出错,错误信息为:{0}!\n",
                        e.Message, _ggjlid);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -3248,7 +3248,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public MD_GuideLine_ParamSetting GetGuideLineParamSetting(string _guideLineID)
         {
             MD_GuideLine_ParamSetting _ret = null;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3260,7 +3260,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取指定指标[{1}]在本单位[{2}]的参数设置时出错,错误信息为:{0}!\n",
                        e.Message, _guideLineID, SinoUserCtx.CurUser.CurrentPost.PostDwID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 
                 }
             }
@@ -3291,11 +3291,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 string _errmsg = string.Format("在创建指标[{1}]在单位[{2}]的参数设置下的查询语句时出错,错误信息为:{0}!\n",
                          e2.Message, _guideLineID, SinoUserCtx.CurUser.CurrentPost.PostDwID);
-                //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                LogWriter.WriteSystemLog(_errmsg, "ERROR");
                 return false;
             }
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -3320,7 +3320,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("保存指标[{1}]在本单位[{2}]的参数设置时出错,错误信息为:{0}!\n",
                        e.Message, _guideLineID, SinoUserCtx.CurUser.CurrentPost.PostDwID);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -3389,7 +3389,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             MD_InputModel_ColumnGroup _ret = null;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputGroupByID, cn);
                 _cmd.Parameters.Add("@IVGID", decimal.Parse(InputGroupID));
@@ -3418,7 +3418,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool DelComputeFieldDefine(string ColumnName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3432,7 +3432,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("删除收藏的计算项字段[{1}]时出错,错误信息为:{0}!\n",
                     e.Message, ColumnName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
             }
@@ -3449,7 +3449,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             OraMetaDataQueryFactroy _of = new OraMetaDataQueryFactroy();
             MDModel_QueryModel _qv = _of.GetMDQueryModelDefine(compareRequest.QueryModelName);
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -3469,7 +3469,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                     //执行主查询
                     string _CompareStr = CompareBuilder.CreateCompareSQL(_qv, compareRequest);
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _CompareStr);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _CompareStr);
 
 
 
@@ -3485,7 +3485,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         adapter = new SqlDataAdapter();
 
                         string _queryStr = (string)_getResults[_key];
-                        DataTable _lsdt = DBHelper.FillDataTable(cn, CommandType.Text, _queryStr);
+                        DataTable _lsdt = SqlHelper.FillDataTable(cn, CommandType.Text, _queryStr);
                         _lsdt.TableName = _key;
                         _ret.Tables.Add(_lsdt);
                     }
@@ -3507,7 +3507,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("数据比对时发生错误,错误信息为:{0}!\n",
                     e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 
                 }
             }
@@ -3519,7 +3519,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public string GetAttachFileName(string IndexString, string FieldName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3533,7 +3533,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     string _sql = string.Format("select {0} from {1} where ID=:ID", _fs[1], _fs[0]);
 
                     SqlParameter[] _param = { new SqlParameter(":ID", IndexString) };
-                    object _retObj = DBHelper.ExecuteScalar(cn, CommandType.Text, _sql, _param);
+                    object _retObj = SqlHelper.ExecuteScalar(cn, CommandType.Text, _sql, _param);
 
                     if (_retObj == null) return "";
                     return _retObj.ToString();
@@ -3543,7 +3543,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取附件的文件名称时出错,IndexString={1} FieldName={2} 错误信息为:{0}!\n",
                     e.Message, IndexString, FieldName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "";
                 }
             }
@@ -3551,7 +3551,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public byte[] GetAttachFileBytes(string IndexString, string FieldName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3565,7 +3565,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     SqlParameter[] _param = {
                                  new SqlParameter(":ID",SqlDbType.NVarChar)};
                     _param[0].Value = IndexString;
-                    SqlDataReader mySqlDataReader = DBHelper.ExecuteReader(cn, CommandType.Text, _sql, _param);
+                    SqlDataReader mySqlDataReader = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql, _param);
 
                     mySqlDataReader.Read();
                     OracleBlob myOracleBlob = null;// mySqlDataReader.GetOracleBlob(0);
@@ -3580,7 +3580,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取附件内容时出错,IndexString={1} FieldName={2} 错误信息为:{0}!\n",
                     e.Message, IndexString, FieldName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
             }
@@ -3589,7 +3589,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public string GetFLWSFileName(string IndexString, string FieldName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3604,7 +3604,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     SqlParameter[] _param = {
                                  new SqlParameter("@ID",SqlDbType.NVarChar) };
                     _param[0].Value = IndexString;
-                    object _retobj = DBHelper.ExecuteScalar(cn, CommandType.Text, _sql, _param);
+                    object _retobj = SqlHelper.ExecuteScalar(cn, CommandType.Text, _sql, _param);
                     if (_retobj == null) return "";
                     return _retobj.ToString().Trim();
 
@@ -3613,7 +3613,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取法律文书的文件名称时出错,IndexString={1} FieldName={2} 错误信息为:{0}!\n",
                     e.Message, IndexString, FieldName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "";
                 }
             }
@@ -3621,7 +3621,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public byte[] GetFLWSFileBytes(string IndexString, string FieldName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -3637,7 +3637,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
                     _param[0].Value = IndexString;
 
-                    SqlDataReader mySqlDataReader = DBHelper.ExecuteReader(cn, CommandType.Text, _sql, _param);
+                    SqlDataReader mySqlDataReader = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql, _param);
                     mySqlDataReader.Read();
                     OracleBlob myOracleBlob = null; // mySqlDataReader.GetOracleBlob(0);
                     myOracleBlob.Position = 0;
@@ -3652,7 +3652,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errmsg = string.Format("取法律文书内容时出错,IndexString={1} FieldName={2} 错误信息为:{0}!\n",
                     e.Message, IndexString, FieldName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return null;
                 }
             }
@@ -3667,7 +3667,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                
                         };
             _param[0].Value = TaskID;
-            return DBHelper.FillDataTable(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTaskQueryLog, _param);
+            return SqlHelper.FillDataTable(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTaskQueryLog, _param);
 
         }
 
@@ -3681,7 +3681,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = RequestTime;
             _param[1].Value = TaskID;
-            int _ret = DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_ChangeQueryTaskRequestTime, _param);
+            int _ret = SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_ChangeQueryTaskRequestTime, _param);
             return true;
         }
 
@@ -3696,7 +3696,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             MDModel_QueryModel _modelDefine = GetMDQueryModelDefine(QueryModelName);
             List<ReportHisDataRow> _ret = new List<ReportHisDataRow>();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
 
                 //作者：读取历史数据
@@ -3716,7 +3716,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _getData = string.Format("SELECT {3} FROM {0} WHERE {1}='{2}' ", _modelDefine.MainTable.TableName, _modelDefine.MainTable.MainKey
                                                                 , MainKeyID, _fieldstr);
-                    _CurTable = DBHelper.Get_Data(_getData, "MAINDATA");
+                    _CurTable = SqlHelper.Get_Data(_getData, "MAINDATA");
                     if (_CurTable != null)
                     {
                         if (_CurTable.Rows.Count > 0) _crow = _CurTable.Rows[0];
@@ -3724,7 +3724,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception ex)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取当前记录数据失败，{0}", ex.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取当前记录数据失败，{0}", ex.Message), "ERROR");
 
                 }
 
@@ -3735,7 +3735,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     {
                         string _getHisData = string.Format("SELECT {4} FROM {0} WHERE {1}='{2}' and WHXH={3} ", _hisTname, _modelDefine.MainTable.MainKey
                                                                     , MainKeyID, WHXH, _fieldstr);
-                        _HisTable = DBHelper.Get_Data(_getHisData, "HISDATA");
+                        _HisTable = SqlHelper.Get_Data(_getHisData, "HISDATA");
                         if (_HisTable != null)
                         {
                             _olddt = _HisTable;
@@ -3744,7 +3744,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     }
                     catch (Exception ex)
                     {
-                        //OralceLogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取历史记录数据失败，{0}", ex.Message), "ERROR");
+                        LogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取历史记录数据失败，{0}", ex.Message), "ERROR");
                     }
                 }
 
@@ -3753,7 +3753,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _getRKData = string.Format("SELECT {4} FROM {0} WHERE {1}='{2}' and WHXH=ZHCX_HGJS.Get_TJSH_WHXH('{3}','{1}','{2}') ",
                         _hisTname, _modelDefine.MainTable.MainKey, MainKeyID, _modelDefine.MainTable.TableName, _fieldstr);
-                    _RKTable = DBHelper.Get_Data(_getRKData, "RKDATA");
+                    _RKTable = SqlHelper.Get_Data(_getRKData, "RKDATA");
                     if (_RKTable != null)
                     {
                         _rkdt = _RKTable;
@@ -3762,7 +3762,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception ex)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取入库记录数据失败，{0}", ex.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("查看数据审核历史数据时失败：取入库记录数据失败，{0}", ex.Message), "ERROR");
                 }
                 #endregion
 
@@ -3847,7 +3847,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             SqlDataReader _dr = _cmd.ExecuteReader();
             DataTable _dt = new DataTable();
             _dt.TableName = _hisTname;
-            DBHelper.FillTableByReader(_dt, _dr);
+            SqlHelper.FillTableByReader(_dt, _dr);
             _dr.Close();
             return _dt;
         }

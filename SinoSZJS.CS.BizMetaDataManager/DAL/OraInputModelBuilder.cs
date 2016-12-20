@@ -193,7 +193,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool WriteEntity(MD_InputEntity _entity)
         {
             bool _ret = false;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -239,7 +239,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     _txn.Rollback();
                     string _errmsg = string.Format("采用录入模型写入数据出错！错误信息:{0}!", ex.Message);
-                    ////OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    //LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return false;
                 }
                 cn.Close();
@@ -429,11 +429,11 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
                     if (_newData != null && _newData.Rows.Count > 0)
                     {
-                        DBHelper.UpdateData(cn, _sql, _newData.GetChanges());
+                        SqlHelper.UpdateData(cn, _sql, _newData.GetChanges());
                     }
                     if (_modifyData != null && _modifyData.Rows.Count > 0)
                     {
-                        DBHelper.UpdateData(cn, _sql, _modifyData.GetChanges());
+                        SqlHelper.UpdateData(cn, _sql, _modifyData.GetChanges());
                     }
                 }
             }
@@ -444,7 +444,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     MD_InputModel_SaveTable _table = _child.ChildModel.WriteTableNames[i - 1];
                     string _sql = string.Format("select * from {0} ", _table.TableName);
-                    DBHelper.UpdateData(cn, _sql, _delData.GetChanges());
+                    SqlHelper.UpdateData(cn, _sql, _delData.GetChanges());
 
                 }
             }
@@ -508,7 +508,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
             }
             SqlParameter[] _params=  _plist.ToArray();
-            DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _params);
+            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _params);
          
         }
 

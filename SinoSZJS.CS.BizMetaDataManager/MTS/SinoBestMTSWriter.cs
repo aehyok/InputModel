@@ -17,7 +17,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         public static bool SaveBufferData(string PKGuid, string DEPLOYID_TX, string DEPLOYID_RX, string PROSTATUS, string MSG, int TRANTIME, string DataPKG, string PROCMETHOD)
         {
             decimal _checkret = 0;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
 
@@ -61,7 +61,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         private const string SQL_ChangeStatus = @"update CM_MSG_RECIVEBUFFER set PROSTATUS=:PROSTATUS,PROCMSG=:PROCMSG where PKGUID=:PKGUID";
         public static void ChangeStatus(string status, string PkGuid, string Message)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
 

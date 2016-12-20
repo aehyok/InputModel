@@ -34,7 +34,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         {
             try
             {
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_GetAdapterDLLFile, cn);
                     _cmd.Parameters.Add(":CSNAME", MethodName);
@@ -60,7 +60,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
             }
             catch (Exception ex)
             {
-                ////OralceLogWriter.WriteSystemLog(string.Format("取消息报文接收处理器时出错！MethodName={0} {1}", MethodName, ex.Message), "ERROR");
+                //LogWriter.WriteSystemLog(string.Format("取消息报文接收处理器时出错！MethodName={0} {1}", MethodName, ex.Message), "ERROR");
                 return null;
             }
         }

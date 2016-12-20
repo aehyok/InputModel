@@ -40,9 +40,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param[0].Value = _ctNames[0];
             }
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sb.ToString(), _param))
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text, _sb.ToString(), _param))
                 {
                     while (dr.Read())
                     {
@@ -67,7 +67,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string[] _fnames = _refCodeName.Split('.');
 
             string _sql = string.Format("select DM,MC,PYZT,PX,SFYX,BZ,FATHERCODE,SFXS,SFLR,SFYJD from JSODS.{0} order by PX,DM", _fnames[_fnames.Length - 1]);
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql);
 
             while (dr.Read())
             {
@@ -108,9 +108,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                 new SqlParameter(":FCODE",SqlDbType.NVarChar,50)};
             _param[0].Value = _fatherCode;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, _sql, _param))
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text, _sql, _param))
                 {
                     while (dr.Read())
                     {
@@ -147,7 +147,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                 new SqlParameter(":CODE",SqlDbType.NVarChar,50)};
             _param[0].Value = _value;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
 
             while (dr.Read())
             {

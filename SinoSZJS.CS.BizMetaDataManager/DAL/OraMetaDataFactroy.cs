@@ -42,7 +42,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                 _param[0].Value = modelName;
 
-                SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetQueryModelByName, _param);
+                SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetQueryModelByName, _param);
 
                 IList<MD_QueryModel> nodeItems = new List<MD_QueryModel>();
 
@@ -75,9 +75,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = nameSpace;
             _param[1].Value = modelName;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, SQL_GetQueryModelByName2, _param))
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text, SQL_GetQueryModelByName2, _param))
                 {
                     IList<MD_QueryModel> nodeItems = new List<MD_QueryModel>();
 
@@ -134,7 +134,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             }
 
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
 
             while (dr.Read())
             {
@@ -169,7 +169,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public IList<MD_Nodes> GetNodeList()
         {
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNodeList);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNodeList);
 
             IList<MD_Nodes> nodeItems = new List<MD_Nodes>();
 
@@ -193,7 +193,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _nodeDWDM;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNameSpaceAtNode, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNameSpaceAtNode, _param);
 
             IList<MD_Namespace> nodeItems = new List<MD_Namespace>();
 
@@ -247,7 +247,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[7].Value = _ns.Concepts;
 
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -275,7 +275,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[3].Value = _nodes.DWDM;
             _param[4].Value = _nodes.ID;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -305,7 +305,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[4].Value = _nodes.DWDM;
 
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -321,7 +321,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                  new SqlParameter("@ID", SqlDbType.NVarChar, 100)   
                         };
             _param[0].Value = _nodeID;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_DelNodes, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_DelNodes, _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -358,7 +358,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[7].Value = _ns.NameSpace;
 
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -371,7 +371,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelNamespace = "delete MD_TBNAMESPACE where NAMESPACE=@NAMESPACE  ";
         public bool DelNamespace(MD_Namespace _ns)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -380,7 +380,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                          new SqlParameter("@NAMESPACE", SqlDbType.NVarChar, 100)   
                                                 };
                     _param[0].Value = _ns.NameSpace;
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_DelNamespace, _param);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_DelNamespace, _param);
                     txn.Commit();
                     OraMetaDataQueryFactroy.ModelLib.Clear();
                     return true;
@@ -402,10 +402,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public IList<DB_TableMeta> GetDBTableList()
         {
             string cmdStr = "select TC.table_name TNAME,TC.comments COMMENTS,tc.table_type TYPE,tc.OWNER from ALL_TAB_COMMENTS TC where OWNER ='ZHTJ' or OWNER='JSODS'";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 IList<DB_TableMeta> tableList = new List<DB_TableMeta>();
-                using (SqlDataReader dr = DBHelper.ExecuteReader(cn, CommandType.Text, cmdStr))
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(cn, CommandType.Text, cmdStr))
                 {
 
                     while (dr.Read())
@@ -432,7 +432,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string cmdStr = "select TC.table_name TNAME,TC.comments COMMENTS,tc.table_type TYPE,tc.OWNER from ALL_TAB_COMMENTS TC where (OWNER='JSODS') ";
             cmdStr += " and TABLE_NAME LIKE 'DM%' ";
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, cmdStr);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, cmdStr);
 
             IList<DB_TableMeta> tableList = new List<DB_TableMeta>();
 
@@ -477,7 +477,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[4].Value = _tm.TableName;
             _param[5].Value = _ns.DWDM;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -495,7 +495,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = NsName;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTablesAtNamespace, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTablesAtNamespace, _param);
 
             IList<MD_Table> nodeItems = new List<MD_Table>();
 
@@ -527,7 +527,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_tid);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTableByTableID, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTableByTableID, _param);
 
 
 
@@ -557,7 +557,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = NsName;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetQueryModelAtNamespace, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetQueryModelAtNamespace, _param);
 
             IList<MD_QueryModel> nodeItems = new List<MD_QueryModel>();
 
@@ -600,7 +600,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _ns;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
 
             IList<MD_RefTable> nodeItems = new List<MD_RefTable>();
 
@@ -637,7 +637,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_tcid);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetColumnOfTable, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetColumnOfTable, _param);
             while (dr.Read())
             {
                 nodeInfo = new MD_TableColumn(
@@ -683,7 +683,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_tid);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
 
             IList<MD_TableColumn> nodeItems = new List<MD_TableColumn>();
 
@@ -742,7 +742,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(QueryModelID);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetMainTableOfQueryModel, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetMainTableOfQueryModel, _param);
 
             while (dr.Read())
             {
@@ -779,7 +779,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             IList<MD_ViewTableColumn> nodeItems = new List<MD_ViewTableColumn>();
             MD_ViewTableColumn nodeInfo;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetColumnsOfViewTable, cn);
                 _cmd.Parameters.Add("@VTID", _vt.ViewTableID);
@@ -829,7 +829,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
                         _param[0].Value = decimal.Parse(_vtid);
 
-                        SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+                        SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
 
                         IList<MD_ViewTableColumn> nodeItems = new List<MD_ViewTableColumn>();
 
@@ -895,7 +895,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[2].Value = _selectedTable.DisplayTitle;
             _param[3].Value = _selectedTable.DWDM;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
             return true;
         }
 
@@ -916,7 +916,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[3].Value = _selectedTable.DWDM;
             _param[4].Value = decimal.Parse(_mainTableID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, InsertStr, _param);
             return true;
 
 
@@ -955,7 +955,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param[0].Value = _names[0];
                 _param[1].Value = _names[1];
             }
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetDBColumnsOfTable, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetDBColumnsOfTable, _param);
 
             IList<DB_ColumnMeta> nodeItems = new List<DB_ColumnMeta>();
 
@@ -980,7 +980,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         private string GetConnectionUser()
         {
-            string[] _ss = DBHelper.ConnectionStringProfile.Split(';');
+            string[] _ss = SqlHelper.ConnectionStringProfile.Split(';');
             foreach (string _s in _ss)
             {
                 string[] _cs = _s.Split('=');
@@ -999,7 +999,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public string GetNewID()
         {
             string flag = string.Empty;
-            using (SqlConnection conn = DBHelper.OpenConnection())
+            using (SqlConnection conn = SqlHelper.OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = "GetSequence";
@@ -1052,9 +1052,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[9].Value = (_table.ResourceType == null) ? "" : string.Join(",", _table.ResourceType);
             _param[10].Value = Convert.ToDecimal(_table.TID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveTableDefine, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveTableDefine, _param);
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 //取所有TCID的状态,如果不需要的TCID,则删除
                 SqlCommand cmd = new SqlCommand("begin ZHTJ_META.CheckTCID(:1, :2, :3); end;", cn);
@@ -1125,7 +1125,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 OracleString[] _TCIDActions = null;
                 //保存表定义信息
 
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlTransaction _txn = cn.BeginTransaction();
                     SqlCommand _cmdInsert = new SqlCommand(SQL_ImportTableDefine, cn);
@@ -1199,7 +1199,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             }
             catch (Exception ex)
             {
-                //OralceLogWriter.WriteSystemLog(string.Format("导入表{0}的元数据失败!错误信息：{1}", _table.TableName, ex.Message), "ERROR");
+                LogWriter.WriteSystemLog(string.Format("导入表{0}的元数据失败!错误信息：{1}", _table.TableName, ex.Message), "ERROR");
                 return false;
             }
         }
@@ -1263,7 +1263,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param3[19].Value = _tc.RefWordTableName;
             _param3[20].Value = Convert.ToDecimal(_tc.ColumnID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param3);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param3);
             OraMetaDataQueryFactroy.ModelLib.Clear();
         }
 
@@ -1330,7 +1330,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param3[20].Value = _tc.RefWordTableName;
 
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb_insert.ToString(), _param3);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb_insert.ToString(), _param3);
 
             OraMetaDataQueryFactroy.ModelLib.Clear();
         }
@@ -1377,7 +1377,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[8].Value = _queryModel.NamespaceName;
             _param[9].Value = _queryModel.EXTMeta;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
 
             OraMetaDataQueryFactroy.ModelLib.Clear();
 
@@ -1420,7 +1420,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[9].Value = _queryModel.EXTMeta;
             _param[10].Value = Convert.ToDecimal(_queryModel.QueryModelID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -1432,7 +1432,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool ImportQueryModelDefine(MD_QueryModel _qv)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -1473,7 +1473,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     _param[8].Value = _qv.NamespaceName;
                     _param[9].Value = Convert.ToDecimal(_qv.QueryModelID);
                     _param[10].Value = _qv.EXTMeta;
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param);
                     #endregion
 
                     #region 导入子表定义
@@ -1525,7 +1525,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                             _param5[9].Value = _vtable.DWDM;
                             _param5[10].Value = (decimal)0;
 
-                            DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param5);
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param5);
 
                             //清除所有字段定义
                             string _del = "delete from MD_VIEWTABLECOLUMN where VTID=@VTID";
@@ -1533,7 +1533,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 						                        new SqlParameter("@VTID",OracleDbType.Decimal)
 					                         };
                             _param2[0].Value = Convert.ToDecimal(_vtable.ViewTableID);
-                            DBHelper.ExecuteNonQuery(cn, CommandType.Text, _del, _param2);
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _del, _param2);
 
                             _sb = new StringBuilder();
                             _sb.Append(" insert into MD_VIEWTABLECOLUMN (VTCID,VTID,TCID,");
@@ -1567,7 +1567,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 _param3[7].Value = _tc.IsFixQueryItem ? 1 : 0;
                                 _param3[8].Value = _tc.CanModify ? 1 : 0;
                                 _param3[9].Value = Convert.ToDecimal(_tc.Priority);
-                                DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param3);
+                                SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param3);
                             }
                         }
 
@@ -1589,7 +1589,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                             _pv2vg[1].Value = Convert.ToDecimal(_qv.QueryModelID);
                             _pv2vg[2].Value = Convert.ToDecimal(_group.DisplayOrder);
                             _pv2vg[3].Value = _group.DisplayTitle;
-                            DBHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2ViewGroup, _pv2vg);
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2ViewGroup, _pv2vg);
 
                             foreach (MD_View2View _v2v in _group.View2Views)
                             {
@@ -1609,7 +1609,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 _pv2v[4].Value = Convert.ToDecimal(_v2v.DisplayOrder);
                                 _pv2v[5].Value = _v2v.DisplayTitle;
                                 _pv2v[6].Value = _group.ID;
-                                DBHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2View, _pv2v);
+                                SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2View, _pv2v);
                             }
                         }
                     }
@@ -1698,14 +1698,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[1].Value = _viewtable.IntegratedApp;
             _param[2].Value = Convert.ToDecimal(_viewtable.ViewTableID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Update, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Update, _param);
 
             //清除所有字段定义
             SqlParameter[] _param2 = {
                                new SqlParameter("@VTID",OracleDbType.Decimal)
                         };
             _param2[0].Value = Convert.ToDecimal(_viewtable.ViewTableID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Delete, _param2);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Delete, _param2);
 
 
             //保存字段定义信息
@@ -1735,7 +1735,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param3[8].Value = _tc.CanModify ? 1 : 0;
                 _param3[9].Value = Convert.ToDecimal(_tc.Priority);
                 _param3[10].Value = Convert.ToDecimal(_tc.DisplayOrder);
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Insert, _param3);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewMainTable_Insert, _param3);
             }
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
@@ -1758,7 +1758,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(QueryModelID);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetChildTableOfQueryModel, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetChildTableOfQueryModel, _param);
 
             while (dr.Read())
             {
@@ -1825,14 +1825,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[5].Value = _viewtable.IntegratedApp;
             _param[6].Value = Convert.ToDecimal(_viewtable.ViewTableID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Update, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Update, _param);
 
             //清除所有字段定义
             SqlParameter[] _param2 = {
                                new SqlParameter("@VTID",OracleDbType.Decimal)
                         };
             _param2[0].Value = Convert.ToDecimal(_viewtable.ViewTableID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Delete, _param2);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Delete, _param2);
 
 
             //保存字段定义信息
@@ -1862,7 +1862,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param3[8].Value = _tc.CanModify ? 1 : 0;
                 _param3[9].Value = Convert.ToDecimal(_tc.Priority);
                 _param3[10].Value = Convert.ToDecimal(_tc.DisplayOrder);
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Insert, _param3);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_SaveViewChildTable_Insert, _param3);
             }
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
@@ -1876,7 +1876,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 new SqlParameter(":FID",OracleDbType.Decimal)                                
                         };
             _param[0].Value = decimal.Parse(_viewTableID);
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
             return (_count > 0);
         }
 
@@ -1894,8 +1894,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param2[0].Value = decimal.Parse(_viewTableID);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _del, _param);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _del2, _param2);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del2, _param2);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -1908,13 +1908,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_queryModelID);
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _querystr, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _querystr, _param);
             return (_count > 0);
         }
 
         public bool DelViewMeta(string QueryModelID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -1942,7 +1942,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errStr = string.Format("删除查询模型及其子对象定义时发生错误! QueryModelID={0} \n\r ErrorMsg:{1}  ",
                                     QueryModelID, ex.Message);
-                    //OralceLogWriter.WriteSystemLog(_errStr, "ERROR");
+                    LogWriter.WriteSystemLog(_errStr, "ERROR");
                     txn.Rollback();
                     return false;
                 }
@@ -1961,7 +1961,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string DelView_View2Application = "delete from md_view2app where viewid=@VIEWID";
         public bool DelViewAndChildren(string QueryModelID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -2005,7 +2005,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errStr = string.Format("删除查询模型及其子对象定义时发生错误! QueryModelID={0} \n\r ErrorMsg:{1}  ",
                                     QueryModelID, ex.Message);
-                    //OralceLogWriter.WriteSystemLog(_errStr, "ERROR");
+                    LogWriter.WriteSystemLog(_errStr, "ERROR");
                     txn.Rollback();
                     return false;
                 }
@@ -2021,7 +2021,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_tableID);
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _querystr, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _querystr, _param);
             return (_count > 0);
         }
 
@@ -2029,7 +2029,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string _del2 = "delete MD_TABLECOLUMN where TID=@TID ";
             string _del = "delete MD_TABLE where TID =@TID";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -2049,7 +2049,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     string _errStr = string.Format("删除表定义时发生错误! TableID={0} \n\r ErrorMsg:{1}  ",
                                     _tableID, ex.Message);
-                    ////OralceLogWriter.WriteSystemLog(_errStr, "ERROR");
+                    //LogWriter.WriteSystemLog(_errStr, "ERROR");
                     txn.Rollback();
                     return false;
                 }
@@ -2079,7 +2079,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[1].Value = _tnames[_tnames.Length - 1];
             _param[2].Value = (_tm.TableComment == "") ? _tm.TableName : _tm.TableComment;
             _param[3].Value = _namespace.DWDM;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _insertStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _insertStr.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -2093,7 +2093,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             string cmdStr = string.Format("select * from JSODS.{0} ", _refTableName);
             using (SqlConnection cn = OpenConnection())
             {
-                _metadata = DBHelper.FillDataTable(cn, CommandType.Text, cmdStr);
+                _metadata = SqlHelper.FillDataTable(cn, CommandType.Text, cmdStr);
                 _metadata.TableName = "RefTable";
                 _metadata.CaseSensitive = true;
                 cn.Close();
@@ -2121,7 +2121,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[3].Value = Convert.ToDecimal((int)_refTable.RefParamMode);
             _param[4].Value = _refTable.HideCode ? (decimal)1 : (decimal)0;
             _param[5].Value = decimal.Parse(_refTable.RefTableID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
 
             if (_refData != null && _refData.Rows.Count > 0)
             {
@@ -2130,7 +2130,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
 
                     SqlTransaction txn = cn.BeginTransaction();
-                    DBHelper.UpdateData(cn, _cmdStr, _refData);
+                    SqlHelper.UpdateData(cn, _cmdStr, _refData);
                     txn.Commit();
                     cn.Close();
                     return true;
@@ -2171,7 +2171,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[7].Value = _rt.DWDM;
             _param[8].Value = _rt.HideCode ? (decimal)1 : (decimal)0;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _insertStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _insertStr.ToString(), _param);
             return true;
         }
 
@@ -2189,7 +2189,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _nodeCode;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetMenuDefineOfNode, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetMenuDefineOfNode, _param);
 
             while (dr.Read())
             {
@@ -2225,7 +2225,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 new SqlParameter("@FID",OracleDbType.Decimal)
                         };
             _param[0].Value = decimal.Parse(_fmenuID);
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetSubMenuDefine, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetSubMenuDefine, _param);
             while (dr.Read())
             {
                 MD_Menu _vt = new MD_Menu();
@@ -2274,7 +2274,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[5].Value = _menu.MenuIcon;
             _param[6].Value = _menu.ShowInToolBar ? "Y" : "N";
             _param[7].Value = decimal.Parse(_menu.MenuID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
             return true;
         }
 
@@ -2293,7 +2293,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
             _param[0].Value = _nodeCode;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_AddSystemMenu, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_AddSystemMenu, _param);
             return true;
         }
 
@@ -2313,7 +2313,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = decimal.Parse(_fatherMenuID);
             _param[1].Value = SystemID;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_AddSystemSubMenu, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_AddSystemSubMenu, _param);
             return true;
         }
 
@@ -2326,7 +2326,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 new SqlParameter("@FID",OracleDbType.Decimal)
                         };
             _param2[0].Value = decimal.Parse(_menuid);
-            decimal _countnum = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _select, _param2);
+            decimal _countnum = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _select, _param2);
             if (_countnum > 0) return false;
             //删除
             StringBuilder _delStr = new StringBuilder();
@@ -2338,7 +2338,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_menuid);
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _delStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _delStr.ToString(), _param);
             return true;
         }
 
@@ -2357,7 +2357,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[1].Value = decimal.Parse(_guideLineGroupType);
 
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -2397,7 +2397,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[2].Value = Convert.ToDecimal(_GuideLineGroup.QXLX);
             _param[3].Value = _GuideLineGroup.NamespaceName;
             _param[4].Value = _GuideLineGroup.ZBZTMC;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _updateStr.ToString(), _param);
             return true;
         }
 
@@ -2414,7 +2414,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -2450,7 +2450,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_fatherGuildLineID);
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
 
             while (dr.Read())
             {
@@ -2482,7 +2482,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                  new SqlParameter("@ZBZTMC", SqlDbType.NVarChar, 100)   
                         };
             _param[0].Value = _guideLineGroupName;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2496,7 +2496,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
             return (_count > 0);
         }
 
@@ -2511,7 +2511,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _guideLineGroupName;
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
             return (_count > 0);
         }
 
@@ -2538,7 +2538,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[4].Value = _guideLineGroup.NamespaceName;
             _param[5].Value = _guideLineGroup.SSDW;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2558,7 +2558,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[1].Value = _guideLineGroupName;
             _param[2].Value = _fid;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2574,7 +2574,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_guideLineID);
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
             return (_count > 0);
 
         }
@@ -2591,7 +2591,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = decimal.Parse(_guideLineID);
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString(), _param);
             return (_count > 0);
         }
 
@@ -2605,7 +2605,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                  new SqlParameter("@ID", OracleDbType.Decimal)
                         };
             _param[0].Value = decimal.Parse(_guideLineID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2646,14 +2646,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[4].Value = _metaStr2;
             _param[5].Value = _guideLine.Description;
             _param[6].Value = decimal.Parse(_guideLine.ID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
         private void SplitMetaString(string fullString, ref string _metaStr1, ref string _metaStr2)
         {
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -2675,7 +2675,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     string _errmsg = string.Format("执行ZHTJ_COMM.SplitString出错,错误信息为:{0}!",
                                ex.Message);
 
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     throw ex;
                 }
             }
@@ -2720,7 +2720,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[6].Value = _guideLine.GuideLineMethod;
             _param[7].Value = _metaStr2;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2751,7 +2751,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = _ConceptGroup.Description;
             _param[1].Value = Convert.ToDecimal(_ConceptGroup.DisplayOrder);
             _param[2].Value = _ConceptGroup.Name;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -2764,7 +2764,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
             return (_count > 0);
         }
 
@@ -2779,7 +2779,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2793,7 +2793,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -2806,7 +2806,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _groupName;
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
             return (_count > 0);
         }
 
@@ -2818,7 +2818,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = _TagName;
 
-            decimal _count = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            decimal _count = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
             return (_count > 0);
         }
 
@@ -2837,7 +2837,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[1].Value = _description;
             _param[2].Value = _groupName;
 
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             return true;
         }
 
@@ -2855,7 +2855,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = _ConceptItem.Description;
             _param[1].Value = Convert.ToDecimal(_ConceptItem.DisplayOrder);
             _param[2].Value = _ConceptItem.CTag;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -2869,7 +2869,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 new SqlParameter("@CTAG", SqlDbType.NVarChar)
                         };
             _param[0].Value = _CTag;
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
@@ -2890,7 +2890,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sql.Append(" select QXID,QXMC,QXMS,QXLX,QXMETA,XH,MENUID,SJQXID ");
             _sql.Append(" from qx_qxdyb order by xh");
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString());
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql.ToString());
 
             while (dr.Read())
             {
@@ -2922,7 +2922,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         };
             _param[0].Value = SystemID;
 
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetRightData, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetRightData, _param);
             while (dr.Read())
             {
                 MD_RightDefine _rd = new MD_RightDefine(dr.IsDBNull(0) ? "" : dr.GetDouble(0).ToString(),
@@ -2951,7 +2951,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                              where qxid=@QXID";
         public bool SaveRightDefine(List<MD_RightDefine> _rightList)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -3126,7 +3126,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _isParam[0].Value = decimal.Parse(_tableID);
             _isParam[1].Value = _modelName;
 
-            decimal _isResult = (decimal)DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _isExistSql, _isParam);
+            decimal _isResult = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _isExistSql, _isParam);
             if (_isResult > 0)
             {
                 return string.Format("此表对应查询模型[{0}]的关联定义已经存在!", _modelName);
@@ -3141,7 +3141,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 new SqlParameter("@TID",decimal.Parse(_tableID)),
                                 new SqlParameter("@VIEWNAME",_modelName)
                         };
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _Param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _Param);
             return "";
         }
 
@@ -3149,7 +3149,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<string> GetAllQueryModelNames()
         {
             List<string> _ret = new List<string>();
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetAllQueryModelNames);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetAllQueryModelNames);
 
             while (dr.Read())
             {
@@ -3168,7 +3168,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             List<MD_Table2View> _ret = new List<MD_Table2View>();
             SqlParameter[] _Param = { new SqlParameter("@TID", decimal.Parse(_tid)) };
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTable2ViewList, _Param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetTable2ViewList, _Param);
 
             while (dr.Read())
             {
@@ -3189,7 +3189,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             List<MD_View_GuideLine> _ret = new List<MD_View_GuideLine>();
             SqlParameter[] _Param = { new SqlParameter("@VID", QueryModelID) };
-            SqlDataReader dr = DBHelper.ExecuteReader(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetView2GuideLineList, _Param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetView2GuideLineList, _Param);
             while (dr.Read())
             {
                 MD_View_GuideLine _mvg = new MD_View_GuideLine();
@@ -3220,7 +3220,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _params[1].Value = _descript;
                 _params[2].Value = decimal.Parse(_queryModelID);
 
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _ups, _params);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _ups, _params);
                 return true;
             }
             catch (Exception e)
@@ -3242,7 +3242,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _param[0].Value = _displayString;
             _param[1].Value = (_displayType == MDType_DisplayType.FormType) ? (decimal)1 : (decimal)0;
             _param[2].Value = decimal.Parse(_viewTableID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _ups, _param);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _ups, _param);
 
             #endregion
 
@@ -3265,7 +3265,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param4[3].Value = Convert.ToDecimal(_tc.DisplayOrder);
                 _param4[4].Value = Convert.ToDecimal(_tc.TableColumn.ColWidth);
                 _param4[5].Value = decimal.Parse(_tc.ColumnID);
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _up, _param4);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _up, _param4);
             }
             #endregion
 
@@ -3277,7 +3277,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                new SqlParameter("@VTID",OracleDbType.Decimal)
                         };
             _param2[0].Value = Convert.ToDecimal(_viewTableID);
-            DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _del, _param2);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del, _param2);
 
             StringBuilder _sb = new StringBuilder();
             _sb.Append(" insert into MD_VIEWTABLECOLUMN (VTCID,VTID,TCID,");
@@ -3313,7 +3313,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _param3[8].Value = _tc.CanModify ? 1 : 0;
                 _param3[9].Value = Convert.ToDecimal(_tc.Priority);
                 _param3[10].Value = Convert.ToDecimal(_tc.DisplayOrder);
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param3);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param3);
             }
             #endregion
 
@@ -3326,7 +3326,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string _ups = "update md_viewtable set DISPLAYORDER=@DISPLAYORDER where VTID=@VTID";
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -3345,7 +3345,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     txn.Rollback();
                     string _errmsg = string.Format("执行保存查询模型子表的顺序数据时出错,错误信息为:{0}!",
                              e.Message);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                 }
                 cn.Close();
             }
@@ -3358,7 +3358,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             IList<MD_InputModel> _ret = new List<MD_InputModel>();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelOfNamespace, cn);
                 _cmd.Parameters.Add("@NAMESPACE", _namespace);
@@ -3439,7 +3439,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model)
         {
             List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
                 _cmd.Parameters.Add("@IVID", _model.ID);
@@ -3467,7 +3467,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID";
         private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
                 _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
@@ -3499,7 +3499,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             _sb.Append("");
             _sb.Append(" ");
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModel, cn);
                 _cmd.Parameters.Add("@NAMESPACE", _namespace);
@@ -3549,7 +3549,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_InputModel_Child> GetChildInputModel(MD_InputModel _model)
         {
             List<MD_InputModel_Child> _ret = new List<MD_InputModel_Child>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetChildInputModel, cn);
                 _cmd.Parameters.Add("@IVID", _model.ID);
@@ -3594,7 +3594,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             try
             {
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_SaveInputModel, cn);
                     _cmd.Parameters.Add("@IV_NAME", SaveModel.ModelName);
@@ -3639,7 +3639,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             try
             {
 
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_SaveNewInputModel, cn);
                     _cmd.Parameters.Add("@IV_ID", GetNewID());
@@ -3678,7 +3678,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             try
             {
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand("delete MD_INPUTVIEW  where IV_ID=@IV_ID", cn);
                     _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
@@ -3699,7 +3699,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             try
             {
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_InputModel_MoveColumnToGroup, cn);
                     _cmd.Parameters.Add("@IVGID", decimal.Parse(InputModelColumnGroup.GroupID));
@@ -3720,7 +3720,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelInputModelColumnGroup_del = @"delete md_inputgroup where IVG_ID=@IVID";
         public bool DelInputModelColumnGroup(string InputModelID, string GroupID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -3753,7 +3753,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             try
             {
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelGroup, cn);
                     _cmd.Parameters.Add("@IVG_ID", Group.GroupID);
@@ -3788,7 +3788,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             SqlCommand _cmd;
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -3863,7 +3863,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             try
             {
 
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_FindInputModelColumnByName, cn);
                     _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
@@ -3891,7 +3891,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             try
             {
 
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelColumn, cn);
                     _cmd.Parameters.Add("@IVC_ID", decimal.Parse(GetNewID()));
@@ -3931,7 +3931,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
 
 
-                using (SqlConnection cn = DBHelper.OpenConnection())
+                using (SqlConnection cn = SqlHelper.OpenConnection())
                 {
                     SqlCommand _cmd = new SqlCommand(SQL_DelInputModelColumn, cn);
                     _cmd.Parameters.Add("@IVC_ID", decimal.Parse(ColumnID));
@@ -3952,7 +3952,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                                 (@ID,@TABLENAME,@IV_ID,1,@TABLETITLE,0)     ";
         public bool AddNewInputModelSavedTable(string InputModelID, string TableName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -3978,7 +3978,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool DelInputModelSavedTable(string TableID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -4010,7 +4010,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                             (@ID,@IVT_ID,@DESCOL,@SRCCOL,@METHOD,@DESDES)  ";
         public bool SaveInputModelSaveTable(MD_InputModel_SaveTable _newTable)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -4056,13 +4056,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool AddInputModelTableColumn(string TableName, string AddFieldName, string DataType)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
                 {
                     string _sql = string.Format("Alter Table {0} add {1} {2} ", TableName, AddFieldName, DataType);
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
                     _txn.Commit();
                     return true;
                 }
@@ -4077,13 +4077,13 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool DelInputModelTableColumn(string TableName, string DelFieldName)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
                 {
                     string _sql = string.Format("Alter Table {0} drop column {1} ", TableName, DelFieldName);
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
                     _txn.Commit();
                     return true;
                 }
@@ -4102,7 +4102,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             List<string> _ret = new List<string>();
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
 
                 try
@@ -4110,7 +4110,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     SqlParameter[] _param = {
                                         new SqlParameter("@NAME", SqlDbType.NVarChar)};
                     _param[0].Value = TableName;
-                    using (SqlDataReader _dr = DBHelper.ExecuteReader(cn, CommandType.Text, SQL_GetDBPrimayKeyList, _param))
+                    using (SqlDataReader _dr = SqlHelper.ExecuteReader(cn, CommandType.Text, SQL_GetDBPrimayKeyList, _param))
                     {
                         while (_dr.Read())
                         {
@@ -4121,7 +4121,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在取数据表的主键时发生错误，错误信息：{0}", e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在取数据表的主键时发生错误，错误信息：{0}", e.Message), "ERROR");
                     return _ret;
                 }
             }
@@ -4131,7 +4131,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool AddChildInputModel(string MainModelID, string ChildModelID)
         {
             string _sql = "insert into md_inputviewchild (id,iv_id,civ_id,param,displayorder) values (sequences_meta.nextval,@IV_ID,@CIV_ID,'',0)";
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4157,7 +4157,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 _pstr += string.Format("<PARAM>{0}:{1}:{2}</PARAM>", _p.Name, _p.DataType, _p.Value);
             }
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4180,7 +4180,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelRefTable = @"delete from md_reftablelist  where RTID=@RTID";
         public bool DelRefTable(string RefTableID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4202,7 +4202,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         #region 私有方法
         private SqlConnection OpenConnection()
         {
-            SqlConnection conn = new SqlConnection(DBHelper.ConnectionStringProfile);
+            SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringProfile);
             conn.Open();
             return conn;
         }
@@ -4221,7 +4221,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public DataSet GetInputModelDefineData(string InputModelID)
         {
             DataSet _ret = new DataSet();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4264,7 +4264,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在导出录入模型时取录入模型定义数据时发生错误，错误信息：{0}", e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在导出录入模型时取录入模型定义数据时发生错误，错误信息：{0}", e.Message), "ERROR");
                     return null;
                 }
             }
@@ -4273,7 +4273,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelInputModelChild = @"delete from md_inputviewchild  where ID=@IVID";
         public bool DelInputModelChild(string ChildModelID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4284,7 +4284,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在删除子录入模型时发生错误，错误信息：{0}", e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在删除子录入模型时发生错误，错误信息：{0}", e.Message), "ERROR");
                     return false;
                 }
             }
@@ -4298,18 +4298,18 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool IsExistID(string _oldid, string _tname, string _colname)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
                     string _sql = string.Format("select count({0}) from {1} where {2}='{3}'", _colname, _tname, _colname, _oldid);
-                    decimal _ret = (decimal)DBHelper.ExecuteScalar(cn, CommandType.Text, _sql);
+                    decimal _ret = (decimal)SqlHelper.ExecuteScalar(cn, CommandType.Text, _sql);
 
                     return (_ret > 0);
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在检查{0}表中是否存在{1}的序列值为{2}时发生错误，错误信息：{3}", _tname, _colname, _oldid, e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在检查{0}表中是否存在{1}的序列值为{2}时发生错误，错误信息：{3}", _tname, _colname, _oldid, e.Message), "ERROR");
                     return false;
                 }
             }
@@ -4320,7 +4320,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_View2ViewGroup> GetView2ViewGroupOfQueryModel(string ViewID)
         {
             List<MD_View2ViewGroup> _ret = new List<MD_View2ViewGroup>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4340,7 +4340,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在取查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", ViewID, e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在取查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", ViewID, e.Message), "ERROR");
                     return null;
                 }
             }
@@ -4350,7 +4350,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_AddView2ViewGroup = "insert into MD_VIEW2VIEWGROUP (ID,VIEWID,DISPLAYORDER,DISPLAYTITLE) values (@ID,@VIEWID,0,'未命名分组')";
         public string AddView2ViewGroup(string ViewID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4363,7 +4363,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在新建查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", ViewID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4373,7 +4373,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_SaveView2ViewGroup = "update MD_VIEW2VIEWGROUP set DISPLAYORDER=@DISPLAYORDER,DISPLAYTITLE=@DISPLAYTITLE where ID=@ID";
         public bool SaveView2ViewGroup(MD_View2ViewGroup View2ViewGroup)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4387,7 +4387,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在保存查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", View2ViewGroup.QueryModelID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return false;
                 }
             }
@@ -4397,7 +4397,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_View2View> GetView2ViewList(string GroupID, string ViewID)
         {
             List<MD_View2View> _ret = new List<MD_View2View>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4420,7 +4420,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 }
                 catch (Exception e)
                 {
-                    //OralceLogWriter.WriteSystemLog(string.Format("在取查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", ViewID, e.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("在取查询模型{0}相关联模型分组信息时发生错误，错误信息：{1} ", ViewID, e.Message), "ERROR");
                     return null;
                 }
             }
@@ -4431,7 +4431,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelView2ViewGroup2 = @"delete from MD_VIEW2VIEW where GROUPID=@ID";
         public string DelView2ViewGroup(string GroupID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction txn = cn.BeginTransaction();
                 try
@@ -4450,7 +4450,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 {
                     txn.Rollback();
                     string _msg = string.Format("删除查询相关联模型分组{0}信息时发生错误，错误信息：{1} ", GroupID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4459,7 +4459,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_AddView2View = @"insert into MD_VIEW2VIEW (ID,VIEWID,DISPLAYORDER,DISPLAYTITLE,GROUPID) values (@ID,@VIEWID,0,'未设置的关联模型',@GROUPID)";
         public string AddView2View(string ViewID, string GroupID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4473,7 +4473,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在新建查询模型{0}相关联的模型信息时发生错误，错误信息：{1} ", ViewID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4482,7 +4482,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_SaveView2View = @"update MD_VIEW2VIEW set TARGETVIEWNAME=@VIEWNAME,RELATIONSTR=@STR,DISPLAYORDER=@DISPORDER,DISPLAYTITLE=@TITLE where ID=@ID";
         public bool SaveView2View(MD_View2View View2View)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4498,7 +4498,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在保存关联的模型信息{0}时发生错误，错误信息：{1} ", View2View.ID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return false;
                 }
             }
@@ -4507,7 +4507,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelView2View = @"delete from MD_VIEW2VIEW where ID=@ID";
         public string CMD_DelView2View(string v2vid)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4519,7 +4519,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在删除查询模型相关联的模型信息{0}时发生错误，错误信息：{1} ", v2vid, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4528,7 +4528,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_QueryModel_ExRight> GetQueryModelExRights(string QueryModelID, string FatherID)
         {
             List<MD_QueryModel_ExRight> _ret = new List<MD_QueryModel_ExRight>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4552,7 +4552,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("在取查询模型[{0}]相关联的模型扩展权限信息时发生错误，错误信息：{1} ", QueryModelID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                 }
             }
             return _ret;
@@ -4562,7 +4562,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_AddNewViewExRight = "insert into md_view_exright (id,rvalue,rtitle,viewid,fid,displayorder) values (@ID,@RVALUE,@RTITLE,@VIEWID,@FID,0)";
         public bool AddNewViewExRight(string RightValue, string RightTitle, string ViewID, MD_QueryModel_ExRight FatherRight)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4579,7 +4579,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("新建查询模型[{0}]相关联的模型扩展权限信息时发生错误，错误信息：{1} ", ViewID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return false;
                 }
             }
@@ -4589,7 +4589,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_SaveQueryModelExRight = "update md_view_exright  set rvalue=@RVALUE,rtitle=@RTITLE,displayorder=@DISPLAYORDER where ID=@ID";
         public bool SaveQueryModelExRight(MD_QueryModel_ExRight ExRight)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4605,7 +4605,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("保存查询模型[{0}]相关联的模型扩展权限信息时发生错误，错误信息：{1} ", ExRight.ModelID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return false;
                 }
             }
@@ -4616,7 +4616,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_DelViewExRight = @"DELETE from md_view_exright where ID=@ID";
         public string CMD_DelViewExRight(MD_QueryModel_ExRight ExRight)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4633,7 +4633,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("删除查询模型[{0}]的模型扩展权限信息时发生错误，错误信息：{1} ", ExRight.ModelID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4646,7 +4646,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool SaveView2GL(string V2GID, string VIEWID, string GuideLineID, string Params, int DisplayOrder, string DisplayTitle)
         {
             SqlCommand SaveCmd;
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -4682,7 +4682,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _msg = string.Format("保存查询模型的关联指标定义时发生错误，错误信息：{0} ", ex.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     _txn.Rollback();
                     return false;
                 }
@@ -4693,7 +4693,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_CMD_DelView2GL = @"delete from md_view2gl where ID=@ID";
         public string CMD_DelView2GL(MD_View_GuideLine View2GL)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4705,7 +4705,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _msg = string.Format("删除查询模型[{0}]的关联指标扩展信息时发生错误，错误信息：{1} ", View2GL.ViewID, e.Message);
-                    //OralceLogWriter.WriteSystemLog(_msg, "ERROR");
+                    LogWriter.WriteSystemLog(_msg, "ERROR");
                     return _msg;
                 }
             }
@@ -4718,7 +4718,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public List<MD_View2App> GetView2ApplicationList(string QueryModelID)
         {
             List<MD_View2App> _ret = new List<MD_View2App>();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4746,7 +4746,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _err = string.Format("在获取查询模型的集成应用展示定义时发生错误，错误信息：{0}", e.Message);
-                    //OralceLogWriter.WriteSystemLog(_err, "ERROR");
+                    LogWriter.WriteSystemLog(_err, "ERROR");
 
                 }
             }
@@ -4757,7 +4757,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                             values (@ID,@VIEWID,@TITLE,@INTEGRATEDAPP,@DISPLAYHEIGHT,@URL,@DISPLAYORDER,@META)";
         public bool SaveView2App(string V2AID, MD_View2App View2AppData)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -4783,7 +4783,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _err = string.Format("在保存查询模型的集成应用展示定义时发生错误，错误信息：{0}", e.Message);
-                    //OralceLogWriter.WriteSystemLog(_err, "ERROR");
+                    LogWriter.WriteSystemLog(_err, "ERROR");
                     return false;
                 }
             }
@@ -4792,7 +4792,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_CMD_DelView2App = @"DELETE FROM MD_VIEW2APP where id=@ID";
         public string CMD_DelView2App(string V2AID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4804,7 +4804,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _err = string.Format("在删除查询模型的集成应用展示定义时发生错误，错误信息：{0}", e.Message);
-                    //OralceLogWriter.WriteSystemLog(_err, "ERROR");
+                    LogWriter.WriteSystemLog(_err, "ERROR");
                     return _err;
                 }
             }
@@ -4813,7 +4813,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_CMD_ClearView2App = @"DELETE FROM MD_VIEW2APP where VIEWID=@VIEWID";
         public string CMD_ClearView2App(string QueryModelID)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -4825,7 +4825,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception e)
                 {
                     string _err = string.Format("在清空查询模型的集成应用展示定义时发生错误，错误信息：{0}", e.Message);
-                    //OralceLogWriter.WriteSystemLog(_err, "ERROR");
+                    LogWriter.WriteSystemLog(_err, "ERROR");
                     return _err;
                 }
             }

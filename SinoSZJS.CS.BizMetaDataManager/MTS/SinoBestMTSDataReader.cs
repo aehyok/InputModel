@@ -37,7 +37,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
                 _param[1].Size = 50;
                 _param[2].Size = 1000;
                 _param[4].Size = 40000;
-                DBHelper.ExecuteNonQuery(DBHelper.ConnectionStringProfile, CommandType.StoredProcedure, SQL_GetNextMTSMessage, _param);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.StoredProcedure, SQL_GetNextMTSMessage, _param);
                 decimal _ret = (((OracleDecimal)_param[3].Value).IsNull) ? (decimal)1 : (decimal)(OracleDecimal.SetPrecision((OracleDecimal)_param[3].Value, 28));
                 if (_ret > 0)
                 {
@@ -61,7 +61,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
             }
             catch (Exception ex)
             {
-                //OralceLogWriter.WriteSystemLog(ex.Message, "ERROR");
+                LogWriter.WriteSystemLog(ex.Message, "ERROR");
                 throw ex;
             }
 
@@ -73,7 +73,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         private static MTSMessage GetMTSMessgeByID(string _id)
         {
             MTSMessage _msg = new MTSMessage();
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _tx = cn.BeginTransaction();
                 try
@@ -102,7 +102,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
                 }
                 catch (Exception ex)
                 {
-                    ////OralceLogWriter.WriteSystemLog(ex.Message, "ERROR");
+                    //LogWriter.WriteSystemLog(ex.Message, "ERROR");
                     _tx.Rollback();
                     return null;
                 }
@@ -113,7 +113,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
         private const string SQL_WriteMTSStatus = @"update CM_MSG_Sendbuffer set PROSTATUS=:ST,PROCMSG=:MSG where PKGUID=:ID";      
         public static bool WriteMTSStatus(string PKGUID, string STATUS, string MSG)
         {
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _tx = cn.BeginTransaction();
                 try
@@ -128,7 +128,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.MTS
                 }
                 catch (Exception ex)
                 {
-                    //OralceLogWriter.WriteSystemLog(ex.Message, "ERROR");
+                    LogWriter.WriteSystemLog(ex.Message, "ERROR");
                     _tx.Rollback();
                     return false;
                 }

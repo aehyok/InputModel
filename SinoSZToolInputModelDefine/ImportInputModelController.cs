@@ -104,7 +104,7 @@ namespace SinoSZToolInputModelDefine
 			}
 
 			//写入数据库
-			using (SqlConnection cn = DBHelper.OpenConnection())
+			using (SqlConnection cn = SqlHelper.OpenConnection())
 			{
 				SqlTransaction _txn = cn.BeginTransaction();
 				try
@@ -146,7 +146,7 @@ namespace SinoSZToolInputModelDefine
 				catch (Exception e)
 				{
 					_txn.Rollback();
-					//OralceLogWriter.WriteSystemLog(string.Format("在导入录入模型时出错，错误信息:{0}", e.Message), "ERROR");
+					LogWriter.WriteSystemLog(string.Format("在导入录入模型时出错，错误信息:{0}", e.Message), "ERROR");
 					throw e;
 				}
 			}

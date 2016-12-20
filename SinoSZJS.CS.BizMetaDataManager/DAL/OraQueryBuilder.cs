@@ -564,7 +564,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private static string GetViewIDByName(string _viewName)
         {
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -579,7 +579,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _errmsg = string.Format("执行不错查询模型ID的命令出错,错误信息为:{0}!SQL语句：{1}", ex.Message, SQL_GetViewIDByName);
-                    //OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     return "";
                 }
             }
@@ -645,7 +645,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private static string ExcuteProcedure(string _pStr)
         {
 
-            using (SqlConnection cn = DBHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlTransaction _txn = cn.BeginTransaction();
                 try
@@ -653,7 +653,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     SqlParameter _p1 = new SqlParameter(":1", SqlDbType.NVarChar, 1000);
                     _p1.Direction = ParameterDirection.Output;
                     string _sql = _pStr.Substring(5, _pStr.Length - 7);
-                    DBHelper.ExecuteNonQuery(cn, CommandType.Text, _sql, _p1);
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sql, _p1);
 
                     _txn.Commit();
                     return _p1.Value.ToString();
@@ -661,7 +661,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 catch (Exception ex)
                 {
                     string _errmsg = string.Format("执行命令嵌入的命令出错,错误信息为:{0}!SQL语句：{1}", ex.Message, _pStr);
-                    ////OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    //LogWriter.WriteSystemLog(_errmsg, "ERROR");
                     _txn.Rollback();
                     return "";
                 }
@@ -682,7 +682,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             {
                 string _fun = _retstr.Substring(_pos, _pos2 - _pos + 1);
                 string _sql = string.Format("select {0} RETVALUE from dual", _fun.Replace("&", ""));
-                _retValue = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, _sql, null); ;
+                _retValue = SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, null); ;
                 if (_retValue != null)
                 {
                     _res = _retstr.Replace(_fun, _retValue.ToString());

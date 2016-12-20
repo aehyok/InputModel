@@ -15,6 +15,7 @@ using SinoSZJS.Base.MetaData.EnumDefine;
 using SinoSZJS.Base.IMetaData;
 using SinoSZJS.DataAccess.Sql;
 using System.Data.SqlClient;
+using aehyok.BizMetaData;
 
 namespace SinoSZJS.CS.BizMetaDataManager.DAL
 {
@@ -164,237 +165,67 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             throw new Exception("The method or operation is not implemented.");
         }
+        #endregion
 
-        private const string SQL_GetNodeList = @"SELECT ID,NODENAME,DISPLAYTITLE,DESCRIPT,DWDM FROM MD_NODES";
+
+        #region IMetaDataFactroy Members
+
+        #endregion
+
+        #region aehyok.BizMetaData
         public IList<MD_Nodes> GetNodeList()
         {
-
-            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNodeList);
-
-            IList<MD_Nodes> nodeItems = new List<MD_Nodes>();
-
-            while (dr.Read())
-            {
-                MD_Nodes nodeInfo = new MD_Nodes(dr.GetString(0), dr.GetString(1),
-                                dr.GetString(2), dr.GetString(3), dr.GetString(4));
-                nodeItems.Add(nodeInfo);
-            }
-            dr.Close();
-            return nodeItems;
+            return NodeAccessor.GetNodeList();
         }
 
-        private const string SQL_GetNameSpaceAtNode = @"SELECT NAMESPACE,DESCRIPTION,MENUPOSITION,DISPLAYTITLE,OWNER,DISPLAYORDER,DWDM,CONCEPTS FROM MD_TBNAMESPACE
-                                                        where DWDM = @DWDM order by DISPLAYORDER ASC";
         public IList<MD_Namespace> GetNameSpaceAtNode(string _nodeDWDM)
         {
-
-            SqlParameter[] _param = {
-                                new SqlParameter("@DWDM", SqlDbType.NVarChar, 12),
-                        };
-            _param[0].Value = _nodeDWDM;
-
-            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNameSpaceAtNode, _param);
-
-            IList<MD_Namespace> nodeItems = new List<MD_Namespace>();
-
-            while (dr.Read())
-            {
-                MD_Namespace nodeInfo = new MD_Namespace();
-                nodeInfo.NameSpace = dr.GetString(0);
-                nodeInfo.Description = dr.IsDBNull(1) ? "" : dr.GetString(1);
-                nodeInfo.MenuPosition = dr.IsDBNull(2) ? "" : dr.GetString(2);
-                nodeInfo.DisplayTitle = dr.IsDBNull(3) ? "" : dr.GetString(3);
-                nodeInfo.Owner = dr.IsDBNull(4) ? "" : dr.GetString(4);
-                nodeInfo.DisplayOrder = dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5));
-                nodeInfo.DWDM = dr.IsDBNull(6) ? "" : dr.GetString(6);
-                nodeInfo.Concepts = dr.IsDBNull(7) ? "" : dr.GetString(7);
-                nodeItems.Add(nodeInfo);
-            }
-            dr.Close();
-            return nodeItems;
+            return NameSpaceAccessor.GetNameSpace(_nodeDWDM);
         }
-
-
-        #endregion
-
-
-        #region IMetaDataFactroy Members
-
-
-        public bool SaveNewNameSapce(MD_Namespace _ns)
-        {
-            StringBuilder _sb = new StringBuilder();
-            _sb.Append("insert into  MD_TBNAMESPACE (NAMESPACE,DESCRIPTION,MENUPOSITION,DISPLAYTITLE,OWNER,DISPLAYORDER,DWDM,CONCEPTS) ");
-            _sb.Append(" values (@NAMESPACE,@DESCRIPTION,@MENUPOSITION,@DISPLAYTITLE,@OWNER,@DISPLAYORDER,@DWDM,@CONCEPTS) ");
-            SqlParameter[] _param = {
-                                 new SqlParameter("@NAMESPACE", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 100),
-                                new SqlParameter("@MENUPOSITION", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@OWNER", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@DISPLAYORDER", OracleDbType.Decimal),
-                                new SqlParameter("@DWDM", SqlDbType.NVarChar, 12),
-                                new SqlParameter("@CONCEPTS", SqlDbType.NVarChar, 1000)
-                               
-                        };
-            _param[0].Value = _ns.NameSpace;
-            _param[1].Value = _ns.Description;
-            _param[2].Value = _ns.MenuPosition;
-            _param[3].Value = _ns.DisplayTitle;
-            _param[4].Value = _ns.Owner;
-            _param[5].Value = _ns.DisplayOrder;
-            _param[6].Value = _ns.DWDM;
-            _param[7].Value = _ns.Concepts;
-
-
-            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
-            OraMetaDataQueryFactroy.ModelLib.Clear();
-            return true;
-        }
-
-        #endregion
-
-        #region IMetaDataFactroy Members
-
 
         public bool SaveNodes(MD_Nodes _nodes)
         {
-            StringBuilder _sb = new StringBuilder();
-            _sb.Append("update MD_NODES set NODENAME=@NODENAME,DISPLAYTITLE=@DISPLAYTITLE,DESCRIPT=@DESCRIPT,DWDM=@DWDM ");
-            _sb.Append(" where ID = @ID");
-            SqlParameter[] _param = {
-                                new SqlParameter("@NODENAME", SqlDbType.NVarChar, 100),
-                                new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 200),
-                                new SqlParameter("@DESCRIPT", SqlDbType.NVarChar, 2000),
-                                new SqlParameter("@DWDM", SqlDbType.NVarChar, 100),
-                                 new SqlParameter("@ID", SqlDbType.NVarChar, 100)
-                        };
-            _param[0].Value = _nodes.NodeName;
-            _param[1].Value = _nodes.DisplayTitle;
-            _param[2].Value = _nodes.Descript;
-            _param[3].Value = _nodes.DWDM;
-            _param[4].Value = _nodes.ID;
-
-            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            NodeAccessor.SaveNodes(_nodes);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
-
-        #endregion
-
-        #region IMetaDataFactroy Members
-
-
-        public bool SaveNewNodes(MD_Nodes _nodes)
-        {
-            StringBuilder _sb = new StringBuilder();
-            _sb.Append("insert into  MD_NODES (ID,NODENAME,DISPLAYTITLE,DESCRIPT,DWDM) ");
-            _sb.Append(" values (@ID,@NODENAME,@DISPLAYTITLE,@DESCRIPT,@DWDM) ");
-            SqlParameter[] _param = {
-                                 new SqlParameter("@ID", SqlDbType.NVarChar, 100),
-                                new SqlParameter("@NODENAME", SqlDbType.NVarChar, 100),
-                                new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 200),
-                                new SqlParameter("@DESCRIPT", SqlDbType.NVarChar, 2000),
-                                new SqlParameter("@DWDM", SqlDbType.NVarChar, 100)
-                                
-                        };
-            _param[0].Value = _nodes.ID;
-            _param[1].Value = _nodes.NodeName;
-            _param[2].Value = _nodes.DisplayTitle;
-            _param[3].Value = _nodes.Descript;
-            _param[4].Value = _nodes.DWDM;
-
-
-            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
-            OraMetaDataQueryFactroy.ModelLib.Clear();
-            return true;
-        }
-
-        #endregion
-
-        #region IMetaDataFactroy Members
-
-        private const string SQL_DelNodes = @"delete  MD_NODES where ID=@ID ";
-        public bool DelNodes(string _nodeID)
-        {
-            SqlParameter[] _param = {
-                                 new SqlParameter("@ID", SqlDbType.NVarChar, 100)   
-                        };
-            _param[0].Value = _nodeID;
-            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, SQL_DelNodes, _param);
-            OraMetaDataQueryFactroy.ModelLib.Clear();
-            return true;
-        }
-
-        #endregion
-
-        #region IMetaDataFactroy Members
-
 
         public bool SaveNameSapce(MD_Namespace _ns)
         {
-            StringBuilder _sb = new StringBuilder();
-            _sb.Append("update MD_TBNAMESPACE set DESCRIPTION = @DESCRIPTION,MENUPOSITION=@MENUPOSTION,");
-            _sb.Append(" DISPLAYTITLE = @DISPLAYTITLE,OWNER = @OWNER,DISPLAYORDER =@DISPLAYORDER,DWDM =@DWDM,CONCEPTS =@CONCEPTS ");
-            _sb.Append(" where NAMESPACE =@NAMESPACE");
-            SqlParameter[] _param = {                                
-                                new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 100),
-                                new SqlParameter("@MENUPOSTION", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@OWNER", SqlDbType.NVarChar, 50),
-                                new SqlParameter("@DISPLAYORDER", OracleDbType.Decimal),
-                                new SqlParameter("@DWDM", SqlDbType.NVarChar, 12),
-                                new SqlParameter("@CONCEPTS", SqlDbType.NVarChar, 1000),
-                                new SqlParameter("@NAMESPACE", SqlDbType.NVarChar, 50)                         
-                        };
-
-            _param[0].Value = _ns.Description;
-            _param[1].Value = _ns.MenuPosition;
-            _param[2].Value = _ns.DisplayTitle;
-            _param[3].Value = _ns.Owner;
-            _param[4].Value = _ns.DisplayOrder;
-            _param[5].Value = _ns.DWDM;
-            _param[6].Value = _ns.Concepts;
-            _param[7].Value = _ns.NameSpace;
-
-
-            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _sb.ToString(), _param);
+            NameSpaceAccessor.UpdateNameSapce(_ns);
             OraMetaDataQueryFactroy.ModelLib.Clear();
             return true;
         }
 
-        #endregion
-
-        #region IMetaDataFactroy Members
-
-
-        private const string SQL_DelNamespace = "delete MD_TBNAMESPACE where NAMESPACE=@NAMESPACE  ";
-        public bool DelNamespace(MD_Namespace _ns)
+        public bool SaveNewNodes(MD_Nodes _nodes)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction txn = cn.BeginTransaction();
-                try
-                {
-                    SqlParameter[] _param = {
-                                                         new SqlParameter("@NAMESPACE", SqlDbType.NVarChar, 100)   
-                                                };
-                    _param[0].Value = _ns.NameSpace;
-                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_DelNamespace, _param);
-                    txn.Commit();
-                    OraMetaDataQueryFactroy.ModelLib.Clear();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    txn.Rollback();
-                    return false;
-                }
-            }
-
+            NodeAccessor.AddNewNode(_nodes);
+            OraMetaDataQueryFactroy.ModelLib.Clear();
+            return true;
         }
 
+        public bool DelNodes(string _nodeID)
+        {
+            NodeAccessor.DelelteNode(_nodeID);
+            OraMetaDataQueryFactroy.ModelLib.Clear();
+            return true;
+        }
+
+        public bool DelNamespace(MD_Namespace _ns)
+        {
+            NameSpaceAccessor.DelelteNamespace(_ns);
+            OraMetaDataQueryFactroy.ModelLib.Clear();
+            return true;
+        }
+
+        public bool SaveNewNameSapce(MD_Namespace _ns)
+        {
+            NameSpaceAccessor.AddNewNameSapce(_ns);
+            OraMetaDataQueryFactroy.ModelLib.Clear();
+            return true;
+        }
         #endregion
+
 
         #region IMetaDataFactroy Members
 
@@ -3356,394 +3187,45 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                                  from MD_INPUTVIEW where NAMESPACE = @NAMESPACE order by DISPLAYORDER";
         public IList<MD_InputModel> GetInputModelOfNamespace(string _namespace)
         {
-            IList<MD_InputModel> _ret = new List<MD_InputModel>();
-
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlCommand _cmd = new SqlCommand(SQL_GetInputModelOfNamespace, cn);
-                _cmd.Parameters.Add("@NAMESPACE", _namespace);
-
-                SqlDataReader _dr = _cmd.ExecuteReader();
-                while (_dr.Read())
-                {
-                    MD_InputModel _model = new MD_InputModel(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                                    _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
-                                    _dr.IsDBNull(6) ? "" : _dr.GetString(6),
-                                    _dr.IsDBNull(8) ? "" : _dr.GetString(8),
-                                    _dr.IsDBNull(9) ? "" : _dr.GetString(9),
-                                    _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                                    _dr.IsDBNull(11) ? "" : _dr.GetString(11)
-                    );
-                    _ret.Add(_model);
-                }
-                _dr.Close();
-
-                foreach (MD_InputModel _model in _ret)
-                {
-                    string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
-                    string _orderField = StrUtils.GetMetaByName2("ORDER", _model.Param);
-                    string _modelType = StrUtils.GetMetaByName2("TYPE", _model.Param);
-                    string _paramType = StrUtils.GetMetaByName2("PARAMTYPE", _model.Param);
-                    _model.ModelType = (_modelType == "") ? "GRID" : _modelType.ToUpper();
-                    _model.ParamterType = (_paramType == "") ? "OTHER" : _paramType.ToUpper();
-                    _model.InitGuideLine = StrUtils.GetMetaByName2("INITZB", _model.Param);
-                    _model.GetDataGuideLine = StrUtils.GetMetaByName2("GETZB", _model.Param);
-                    _model.GetNewRecordGuideLine = StrUtils.GetMetaByName2("NEWZB", _model.Param);
-                    _model.OrderField = _orderField;
-                    _model.TableName = _tname;
-                    _model.Groups = GetInputColumnGroups(_model, cn);
-                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model);
-                    _model.ChildInputModel = GetChildInputModel(_model);
-
-                }
-                cn.Close();
-            }
-
-            return _ret;
+            return InputModelAccessor.GetInputModelOfNamespace(_namespace);
         }
-
-        private const string SQL_GetInputColumnGroups = @"select  IVG_ID,IV_ID,DISPLAYTITLE,DISPLAYORDER,GROUPTYPE,APPREGURL,GROUPCS
-                                                            from md_inputgroup where IV_ID = @IVID order by DISPLAYORDER";
-        private List<MD_InputModel_ColumnGroup> GetInputColumnGroups(MD_InputModel _model, SqlConnection cn)
-        {
-            List<MD_InputModel_ColumnGroup> _ret = new List<MD_InputModel_ColumnGroup>();
-            StringBuilder _sb = new StringBuilder();
-            SqlCommand _cmd = new SqlCommand(SQL_GetInputColumnGroups, cn);
-            _cmd.Parameters.Add("@IVID", _model.ID);
-            SqlDataReader _dr = _cmd.ExecuteReader();
-            while (_dr.Read())
-            {
-                MD_InputModel_ColumnGroup _g = new MD_InputModel_ColumnGroup(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                _model.ID,
-                                _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                _dr.IsDBNull(3) ? 0 : Convert.ToInt32(_dr.GetDouble(3))
-                );
-                _g.GroupType = _dr.IsDBNull(4) ? "DEFAULT" : _dr.GetString(4).ToUpper();
-                _g.AppRegUrl = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
-                _g.GroupParam = _dr.IsDBNull(6) ? "" : _dr.GetString(6);
-                _ret.Add(_g);
-
-            }
-            _dr.Close();
-            return _ret;
-        }
-
-        private const string SQL_GetWriteDesTableOfInputModel = @"select  ID,TABLENAME,TABLETITLE,ISLOCK,DISPLAYORDER,SAVEMODE
-                                                                    from MD_INPUTTABLE where IV_ID = @IVID order by DISPLAYORDER";
-        private List<MD_InputModel_SaveTable> GetWriteDesTableOfInputModel(MD_InputModel _model)
-        {
-            List<MD_InputModel_SaveTable> _ret = new List<MD_InputModel_SaveTable>();
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlCommand _cmd = new SqlCommand(SQL_GetWriteDesTableOfInputModel, cn);
-                _cmd.Parameters.Add("@IVID", _model.ID);
-                SqlDataReader _dr = _cmd.ExecuteReader();
-                while (_dr.Read())
-                {
-                    MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
-                                    _model.ID,
-                                    _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4)),
-                                    _dr.IsDBNull(5) ? "" : _dr.GetString(5)
-                    );
-                    GetInputModelSaveTableColumn(_tb);
-                    _ret.Add(_tb);
-
-                }
-                _dr.Close();
-            }
-            return _ret;
-        }
-
-        private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID";
-        private void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
-        {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
-                _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
-                SqlDataReader _dr = _cmd.ExecuteReader();
-                if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
-                while (_dr.Read())
-                {
-                    MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                                     _dr.IsDBNull(4) ? "" : _dr.GetString(4)
-                    );
-                    _tb.Columns.Add(_col);
-                }
-                _dr.Close();
-            }
-
-        }
-
 
         private const string SQL_GetInputModel = @"select IV_ID,NAMESPACE,IV_NAME,DESCRIPTION,DISPLAYNAME,DISPLAYORDER,IV_CS,TID,DELRULE,DWDM,INTEGRATEDAPP,RESTYPE
                                                     from MD_INPUTVIEW where NAMESPACE = @NAMESPACE and IV_NAME=@IVNAME order by DISPLAYORDER";
         public MD_InputModel GetInputModel(string _namespace, string ModelName)
         {
-            MD_InputModel _model = null;
-            StringBuilder _sb = new StringBuilder();
-            _sb.Append("");
-            _sb.Append(" ");
-
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlCommand _cmd = new SqlCommand(SQL_GetInputModel, cn);
-                _cmd.Parameters.Add("@NAMESPACE", _namespace);
-                _cmd.Parameters.Add("@IVNAME", ModelName);
-
-                SqlDataReader _dr = _cmd.ExecuteReader();
-                while (_dr.Read())
-                {
-                    _model = new MD_InputModel(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    _dr.IsDBNull(1) ? "" : _dr.GetString(1),
-                                    _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                                    _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
-                                    _dr.IsDBNull(6) ? "" : _dr.GetString(6),
-                                    _dr.IsDBNull(8) ? "" : _dr.GetString(8),
-                                    _dr.IsDBNull(9) ? "" : _dr.GetString(9),
-                                    _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                                    _dr.IsDBNull(11) ? "" : _dr.GetString(11)
-                    );
-
-                    string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
-                    string _orderField = StrUtils.GetMetaByName2("ORDER", _model.Param);
-                    string _modelType = StrUtils.GetMetaByName2("TYPE", _model.Param);
-                    string _paramType = StrUtils.GetMetaByName2("PARAMTYPE", _model.Param);
-                    _model.ModelType = (_modelType == "") ? "GRID" : _modelType.ToUpper();
-                    _model.ParamterType = (_paramType == "") ? "OTHER" : _paramType.ToUpper();
-                    _model.InitGuideLine = StrUtils.GetMetaByName2("INITZB", _model.Param);
-                    _model.GetDataGuideLine = StrUtils.GetMetaByName2("GETZB", _model.Param);
-                    _model.GetNewRecordGuideLine = StrUtils.GetMetaByName2("NEWZB", _model.Param);
-                    _model.OrderField = _orderField;
-                    _model.TableName = _tname;
-                    _model.WriteTableNames = GetWriteDesTableOfInputModel(_model);
-                    _model.ChildInputModel = GetChildInputModel(_model);
-                }
-                _dr.Close();
-                cn.Close();
-            }
-
-            return _model;
+            return InputModelAccessor.GetInputModel(_namespace, ModelName);
         }
 
-        private const string SQL_GetChildInputModel = @"select  t.ID,t.IV_ID,t.CIV_ID,t.PARAM, iv.NAMESPACE CNS ,iv.IV_NAME CIVNAME,t. DISPLAYORDER,t.SHOWCONDITION,t.SELECTMODE
-                                                        from MD_INPUTVIEWCHILD t,MD_INPUTVIEW iv  where t.IV_ID = @IVID and t.CIV_ID =iv.IV_ID 
-                                                        order by t.DISPLAYORDER";
         public List<MD_InputModel_Child> GetChildInputModel(MD_InputModel _model)
         {
-            List<MD_InputModel_Child> _ret = new List<MD_InputModel_Child>();
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlCommand _cmd = new SqlCommand(SQL_GetChildInputModel, cn);
-                _cmd.Parameters.Add("@IVID", _model.ID);
-                SqlDataReader _dr = _cmd.ExecuteReader();
-                while (_dr.Read())
-                {
-                    string _cns = _dr.IsDBNull(4) ? "" : _dr.GetString(4);
-                    string _cname = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
-                    string _paramstring = _dr.IsDBNull(3) ? "" : _dr.GetString(3);
-                    MD_InputModel_Child _child = new MD_InputModel_Child(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    string.Format("{0}.{1}", _model.NameSpace, _model.ModelName),
-                                    string.Format("{0}.{1}", _cns, _cname),
-                                    _dr.IsDBNull(6) ? 0 : Convert.ToInt32(_dr.GetDouble(6))
-                    );
-                    _child.ShowCondition = _dr.IsDBNull(7) ? "" : _dr.GetString(7);
-                    _child.SelectMode = _dr.IsDBNull(8) ? 0 : Convert.ToInt16(_dr.GetDouble(8));
-                    _child.ChildModel = GetInputModel(_cns, _cname);
-                    if (_child.Parameters == null) _child.Parameters = new List<MD_InputModel_ChildParam>();
-                    foreach (string _pstr in StrUtils.GetMetasByName2("PARAM", _paramstring))
-                    {
-                        string[] _s = _pstr.Split(':');
-                        MD_InputModel_ChildParam _p = new MD_InputModel_ChildParam(_s[0], _s[1], _s[2]);
-                        _child.Parameters.Add(_p);
-                    }
-
-                    _ret.Add(_child);
-
-                }
-                _dr.Close();
-            }
-            return _ret;
+            return InputModelAccessor.GetChildInputModel(_model);
         }
 
-        private const string SQL_SaveInputModel = @"update MD_INPUTVIEW
-                                                    set IV_NAME=@IV_NAME,DESCRIPTION=@DESCRIPTION,
-                                                    DISPLAYNAME=@DISPLAYNAME,DISPLAYORDER=@DISPLAYORDER,IV_CS=@IV_CS,
-                                                    DELRULE=@DELRULE,DWDM=@DWDM,INTEGRATEDAPP=@INTEGRATEDAPP,RESTYPE=@RESTYPE,
-                                                    BEFOREWRITE=@BEFOREWRITE,AFTERWRITE=@AFTERWRITE
-                                                    where IV_ID =@IV_ID ";
         public bool SaveInputModel(MD_InputModel SaveModel)
         {
-            try
-            {
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_SaveInputModel, cn);
-                    _cmd.Parameters.Add("@IV_NAME", SaveModel.ModelName);
-                    _cmd.Parameters.Add("@DESCRIPTION", SaveModel.Descript);
-                    _cmd.Parameters.Add("@DISPLAYNAME", SaveModel.DisplayName);
-                    _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(SaveModel.DisplayOrder));
-                    StringBuilder _cs = new StringBuilder();
-                    _cs.Append(string.Format("<TABLE>{0}</TABLE>", SaveModel.TableName));
-                    _cs.Append(string.Format("<ORDER>{0}</ORDER>", SaveModel.OrderField));
-                    _cs.Append(string.Format("<TYPE>{0}</TYPE>", SaveModel.ModelType));
-                    _cs.Append(string.Format("<PARAMTYPE>{0}</PARAMTYPE>", SaveModel.ParamterType));
-                    _cs.Append(string.Format("<INITZB>{0}</INITZB>", SaveModel.InitGuideLine));
-                    _cs.Append(string.Format("<GETZB>{0}</GETZB>", SaveModel.GetDataGuideLine));
-                    _cs.Append(string.Format("<NEWZB>{0}</NEWZB>", SaveModel.GetNewRecordGuideLine));
-                    _cmd.Parameters.Add("@IV_CS", _cs.ToString());
-                    _cmd.Parameters.Add("@DELRULE", SaveModel.DeleteRule);
-                    _cmd.Parameters.Add("@DWDM", SaveModel.DWDM);
-                    _cmd.Parameters.Add("@INTEGRATEDAPP", SaveModel.IntegretedApplication);
-                    _cmd.Parameters.Add("@RESTYPE", SaveModel.ResourceType);
-                    _cmd.Parameters.Add("@BEFOREWRITE", SaveModel.BeforeWrite);
-                    _cmd.Parameters.Add("@AFTERWRITE", SaveModel.AfterWrite);
-                    _cmd.Parameters.Add("@IV_ID", SaveModel.ID);
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            return InputModelAccessor.SaveInputModel(SaveModel);
         }
 
-        private const string SQL_SaveNewInputModel = @"INSERT INTO MD_INPUTVIEW
-                                                        (IV_ID,NAMESPACE,IV_NAME,DESCRIPTION,
-                                                        DISPLAYNAME,DISPLAYORDER,IV_CS,TID,
-                                                        DELRULE,DWDM ) values 
-                                                        (@IV_ID,@NAMESPACE,@IV_NAME,@DESCRIPTION,
-                                                        @DISPLAYNAME,@DISPLAYORDER,@IV_CS,null,
-                                                        @DELRULE,@DWDM ) ";
         public bool SaveNewInputModel(string _namespace, MD_InputModel SaveModel)
         {
-            try
-            {
-
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_SaveNewInputModel, cn);
-                    _cmd.Parameters.Add("@IV_ID", GetNewID());
-                    _cmd.Parameters.Add("@NAMESPACE", _namespace);
-                    _cmd.Parameters.Add("@IV_NAME", SaveModel.ModelName);
-                    _cmd.Parameters.Add("@DESCRIPTION", SaveModel.Descript);
-
-                    _cmd.Parameters.Add("@DISPLAYNAME", SaveModel.DisplayName);
-                    _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(SaveModel.DisplayOrder));
-
-                    StringBuilder _cs = new StringBuilder();
-                    _cs.Append(string.Format("<TABLE>{0}</TABLE>", SaveModel.TableName));
-                    _cs.Append(string.Format("<ORDER>{0}</ORDER>", SaveModel.OrderField));
-                    _cs.Append(string.Format("<TYPE>{0}</TYPE>", SaveModel.ModelType));
-                    _cs.Append(string.Format("<PARAMTYPE>{0}</PARAMTYPE>", SaveModel.ParamterType));
-                    _cs.Append(string.Format("<INITZB>{0}</INITZB>", SaveModel.InitGuideLine));
-                    _cs.Append(string.Format("<GETZB>{0}</GETZB>", SaveModel.GetDataGuideLine));
-                    _cs.Append(string.Format("<NEWZB>{0}</NEWZB>", SaveModel.GetNewRecordGuideLine));
-
-                    _cmd.Parameters.Add("@IV_CS", _cs.ToString());
-                    _cmd.Parameters.Add("@DELRULE", SaveModel.DeleteRule);
-                    _cmd.Parameters.Add("@DWDM", SaveModel.DWDM);
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                SystemLogWriter.WriteLog(e.Message, EventLogEntryType.Error);
-                return false;
-            }
+            return InputModelAccessor.SaveNewInputModel(_namespace, SaveModel);
         }
-
 
         public bool DelInputModel(string InputModelID)
         {
-            try
-            {
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand("delete MD_INPUTVIEW  where IV_ID=@IV_ID", cn);
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
-
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-
-                return false;
-            }
+            return InputModelAccessor.DelInputModel(InputModelID);
         }
 
         private const string SQL_InputModel_MoveColumnToGroup = @"update MD_INPUTVIEWCOLUMN set IVG_ID=@IVGID where IVC_ID=@IVCID ";
         public bool InputModel_MoveColumnToGroup(MD_InputModel_Column _col, MD_InputModel_ColumnGroup InputModelColumnGroup)
         {
-            try
-            {
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_InputModel_MoveColumnToGroup, cn);
-                    _cmd.Parameters.Add("@IVGID", decimal.Parse(InputModelColumnGroup.GroupID));
-                    _cmd.Parameters.Add("@IVCID", decimal.Parse(_col.ColumnID));
-
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-
-                return false;
-            }
+            return InputModelAccessor.InputModel_MoveColumnToGroup(_col, InputModelColumnGroup);
         }
 
-        private const string SQL_DelInputModelColumnGroup_ups = @"update MD_INPUTVIEWCOLUMN set IVG_ID=0 where IV_ID=@IVID and IVG_ID=@IVGID";
-        private const string SQL_DelInputModelColumnGroup_del = @"delete md_inputgroup where IVG_ID=@IVID";
         public bool DelInputModelColumnGroup(string InputModelID, string GroupID)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_ups, cn,_txn);
-                    _cmd.Parameters.Add("@IVID", decimal.Parse(InputModelID));
-                    _cmd.Parameters.Add("@IVGID", decimal.Parse(GroupID));
-                    _cmd.ExecuteNonQuery();
-
-
-                    _cmd = new SqlCommand(SQL_DelInputModelColumnGroup_del, cn,_txn);
-                    _cmd.Parameters.Add("@IVID", decimal.Parse(GroupID));
-                    _cmd.ExecuteNonQuery();
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
-
+            return InputModelAccessor.DelInputModelColumnGroup(InputModelID, GroupID);
         }
 
         private const string SQL_AddNewInputModelGroup = @"INSERT INTO MD_INPUTGROUP
@@ -3751,165 +3233,23 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                             (@IVG_ID,@IV_ID,@DISPLAYTITLE,@DISPLAYORDER,@GROUPTYPE,@APPREGURL,@GROUPCS)";
         public bool AddNewInputModelGroup(MD_InputModel_ColumnGroup Group)
         {
-            try
-            {
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelGroup, cn);
-                    _cmd.Parameters.Add("@IVG_ID", Group.GroupID);
-                    _cmd.Parameters.Add("@IV_ID", Group.ModelID);
-                    _cmd.Parameters.Add("@DISPLAYTITLE", Group.DisplayTitle);
-                    _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(Group.DisplayOrder));
-                    _cmd.Parameters.Add("@GROUPTYPE", string.Empty);
-                    _cmd.Parameters.Add("@APPREGURL", string.Empty);
-                    _cmd.Parameters.Add("@GROUPCS", string.Empty);
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                SystemLogWriter.WriteLog(string.Format("插入录入模型的分组[{0}]记录时出错！{1}", Group.GroupID, e.Message), EventLogEntryType.Error);
-                return false;
-            }
+            return InputModelAccessor.AddNewInputModelGroup(Group);
         }
 
-
-        private const string SQL_SaveInputModelColumnGroup = @"update  MD_INPUTGROUP set  DISPLAYTITLE=@DISPLAYTITLE,GROUPTYPE=@GROUPTYPE,APPREGURL=@APPREGURL,GROUPCS=@GROUPCS,
-                                                                        DISPLAYORDER=@DISPLAYORDER where IVG_ID=@IVG_ID ";
-        private const string SQL_SaveInputModelColumnGroup_ups = @"update MD_INPUTVIEWCOLUMN 
-                                    set DWDM=@DWDM,INPUTDEFAULT=@INPUTDEFAULT,INPUTRULE=@INPUTRULE,CANEDITRULE=@CANEDITRULE ,
-                                    CANDISPLAY=@CANDISPLAY,COLUMNNAME=@COLUMNNAME,COLUMNORDER=@COLUMNORDER,COLUMNTYPE=@COLUMNTYPE ,
-                                    READONLY=@READONLY,DISPLAYNAME=@DISPLAYNAME,ISCOMPUTE=@ISCOMPUTE,COLUMNWIDTH=@COLUMNWIDTH,
-                                    COLUMNHEIGHT=@COLUMNHEIGHT,TEXTALIGNMENT=@TEXTALIGNMENT,EDITFORMAT=@EDITFORMAT,DISPLAYFORMAT=@DISPLAYFORMAT,
-                                    REQUIRED=@REQUIRED,TOOLTIP=@TOOLTIP,DATACHANGEDEVENT=@DATACHANGEDEVENT,MAXLENGTH=@MAXLENGTH,DEFAULTSHOW=@DEFAULTSHOW 
-                                     where IVC_ID=@IVC_ID";
         public bool SaveInputModelColumnGroup(MD_InputModel_ColumnGroup Group)
         {
-            SqlCommand _cmd;
-
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-
-                    if (Group.GroupID != "0")
-                    {
-                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup, cn,_txn);
-                        _cmd.Parameters.Add("@DISPLAYTITLE", Group.DisplayTitle);
-                        _cmd.Parameters.Add("@GROUPTYPE", Group.GroupType);
-                        _cmd.Parameters.Add("@APPREGURL", Group.AppRegUrl);
-                        _cmd.Parameters.Add("@GROUPCS", Group.GroupParam);
-                        _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(Group.DisplayOrder));
-
-                        _cmd.Parameters.Add("@IVG_ID", decimal.Parse(Group.GroupID));
-                        _cmd.ExecuteNonQuery();
-                    }
-
-
-                    foreach (MD_InputModel_Column _col in Group.Columns)
-                    {
-                        _cmd = new SqlCommand(SQL_SaveInputModelColumnGroup_ups, cn,_txn);
-                        _cmd.Parameters.Add("@DWDM", _col.DWDM);
-                        _cmd.Parameters.Add("@INPUTDEFAULT", _col.DefaultValue);
-                        _cmd.Parameters.Add("@INPUTRULE", _col.InputRule);
-                        _cmd.Parameters.Add("@CANEDITRULE", _col.CanEditRule);
-
-                        _cmd.Parameters.Add("@CANDISPLAY", (_col.CanDisplay) ? "Y" : "N");
-                        _cmd.Parameters.Add("@COLUMNNAME", _col.ColumnName);
-                        _cmd.Parameters.Add("@COLUMNORDER", Convert.ToInt32(_col.DisplayOrder));
-                        _cmd.Parameters.Add("@COLUMNTYPE", _col.ColumnType);
-
-                        _cmd.Parameters.Add("@READONLY", (_col.ReadOnly) ? (decimal)1 : (decimal)0);
-                        _cmd.Parameters.Add("@DISPLAYNAME", _col.DisplayName);
-                        _cmd.Parameters.Add("@ISCOMPUTE", (_col.IsCompute) ? (decimal)1 : (decimal)0);
-                        _cmd.Parameters.Add("@COLUMNWIDTH", Convert.ToInt32(_col.Width));
-
-                        _cmd.Parameters.Add("@COLUMNHEIGHT", Convert.ToInt32(_col.LineHeight));
-                        _cmd.Parameters.Add("@TEXTALIGNMENT", Convert.ToInt32(_col.TextAlign));
-                        _cmd.Parameters.Add("@EDITFORMAT", _col.EditFormat);
-                        _cmd.Parameters.Add("@DISPLAYFORMAT", _col.DisplayFormat);
-
-                        _cmd.Parameters.Add("@REQUIRED", (_col.Required) ? (decimal)1 : (decimal)0);
-                        _cmd.Parameters.Add("@TOOLTIP", _col.ToolTipText);
-                        _cmd.Parameters.Add("@DATACHANGEDEVENT", _col.DataChangedEvent);
-                        _cmd.Parameters.Add("@MAXLENGTH", Convert.ToDecimal(_col.MaxInputLength));
-                        _cmd.Parameters.Add("@DEFAULTSHOW", _col.DefaultShow ? (decimal)1 : (decimal)0);
-
-                        _cmd.Parameters.Add("@IVC_ID", decimal.Parse(_col.ColumnID));
-                        _cmd.ExecuteNonQuery();
-
-                    }
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
-
-
-
+            return InputModelAccessor.SaveInputModelColumnGroup(Group);
         }
 
-        private const string SQL_FindInputModelColumnByName = @"select count(*) from  md_inputviewcolumn
-                                                                where IV_ID=@IVID AND COLUMNNAME=@CNAME  ";
         public bool FindInputModelColumnByName(string InputModelID, string ColumnName)
         {
-            decimal _ret = 0;
-            try
-            {
-
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_FindInputModelColumnByName, cn);
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
-                    _cmd.Parameters.Add("@CNAME", ColumnName);
-                    _ret = (decimal)_cmd.ExecuteScalar();
-                }
-                return _ret > 0;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            return InputModelAccessor.FindInputModelColumnByName(InputModelID, ColumnName);
         }
-        private const string SQL_AddNewInputModelColumn = @"INSERT INTO md_inputviewcolumn
-                                                            (IVC_ID,IV_ID,TCID,COLUMNNAME,
-                                                            CANDISPLAY,COLUMNORDER,COLUMNTYPE,READONLY,
-                                                            DISPLAYNAME,ISCOMPUTE,COLUMNWIDTH,COLUMNHEIGHT,
-                                                            TEXTALIGNMENT,IVG_ID ) values
-                                                             (@IVC_ID,@IV_ID,0,@COLUMNNAME,
-                                                             'Y',0,'VARCHAR',0,
-                                                             @DISPLAYNAME,0,1,1,
-                                                            0,@IVG_ID ) ";
+
         public bool AddNewInputModelColumn(string InputModelID, string GroupID, string ColumnName)
         {
-            try
-            {
-
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelColumn, cn);
-                    _cmd.Parameters.Add("@IVC_ID", decimal.Parse(GetNewID()));
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
-                    _cmd.Parameters.Add("@COLUMNNAME", ColumnName);
-                    _cmd.Parameters.Add("@DISPLAYNAME", ColumnName);
-                    _cmd.Parameters.Add("@IVG_ID", decimal.Parse(GroupID));
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-
-                return false;
-            }
+            return InputModelAccessor.AddNewInputModelColumn(InputModelID, GroupID, ColumnName);
         }
-
 
         public bool OracleTableExist(string TableName)
         {
@@ -3924,131 +3264,24 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             }
         }
 
-        private const string SQL_DelInputModelColumn = @"DELETE  FROM md_inputviewcolumn WHERE IVC_ID=@IVC_ID";
         public bool DelInputModelColumn(string ColumnID)
         {
-            try
-            {
-
-
-                using (SqlConnection cn = SqlHelper.OpenConnection())
-                {
-                    SqlCommand _cmd = new SqlCommand(SQL_DelInputModelColumn, cn);
-                    _cmd.Parameters.Add("@IVC_ID", decimal.Parse(ColumnID));
-
-                    _cmd.ExecuteNonQuery();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-
-                return false;
-            }
+            return InputModelAccessor.DelInputModelColumn(ColumnID);
         }
 
-        private const string SQL_AddNewInputModelSavedTable = @"insert into  md_inputtable
-                                                                (ID,TABLENAME,IV_ID,ISLOCK,TABLETITLE,DISPLAYORDER) values 
-                                                                (@ID,@TABLENAME,@IV_ID,1,@TABLETITLE,0)     ";
         public bool AddNewInputModelSavedTable(string InputModelID, string TableName)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-
-                    SqlCommand _cmd = new SqlCommand(SQL_AddNewInputModelSavedTable, cn,_txn);
-                    _cmd.Parameters.Add("@ID", decimal.Parse(GetNewID()));
-                    _cmd.Parameters.Add("@TABLENAME", TableName);
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(InputModelID));
-                    _cmd.Parameters.Add("@TABLETITLE", TableName);
-
-                    _cmd.ExecuteNonQuery();
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
+            return InputModelAccessor.AddNewInputModelSavedTable(InputModelID, TableName);
         }
 
         public bool DelInputModelSavedTable(string TableID)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-                    SqlCommand _delCmd = new SqlCommand("delete from md_inputtablecolumn where IVT_ID=@ID", cn);
-                    _delCmd.Parameters.Add("@ID", decimal.Parse(TableID));
-                    _delCmd.ExecuteNonQuery();
-
-                    SqlCommand _cmd = new SqlCommand("delete from  md_inputtable where id=@ID", cn);
-                    _cmd.Parameters.Add("@ID", decimal.Parse(TableID));
-                    _cmd.ExecuteNonQuery();
-
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
+            return InputModelAccessor.DelInputModelSavedTable(TableID);
         }
 
-        private const string SQL_SaveInputModelSaveTable = @"update MD_INPUTTABLE
-                                                                    set TABLETITLE=:TABLETITLE,DISPLAYORDER=:DISPLAYORDER,ISLOCK=:ISLOCK,SAVEMODE=:SAVEMODE
-                                                                    where ID=@ID ";
-        private const string SQL_SaveInputModelSaveTable_ins = @"insert into MD_INPUTTABLECOLUMN
-                                                            (ID,IVT_ID,DESCOL,SRCCOL,METHOD,DESDES) values
-                                                            (@ID,@IVT_ID,@DESCOL,@SRCCOL,@METHOD,@DESDES)  ";
         public bool SaveInputModelSaveTable(MD_InputModel_SaveTable _newTable)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-                    SqlCommand _upCmd = new SqlCommand(SQL_SaveInputModelSaveTable, cn);
-                    _upCmd.Parameters.Add("@TABLETITLE", _newTable.TableTitle);
-                    _upCmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(_newTable.DisplayOrder));
-                    _upCmd.Parameters.Add("@ISLOCK", _newTable.IsLock ? (decimal)1 : (decimal)0);
-                    _upCmd.Parameters.Add("@SAVEMODE", _newTable.SaveMode);
-                    _upCmd.Parameters.Add("@ID", decimal.Parse(_newTable.ID));
-                    _upCmd.ExecuteNonQuery();
-
-
-                    SqlCommand _cmd = new SqlCommand("delete from  MD_INPUTTABLECOLUMN where IVT_ID=@ID", cn);
-                    _cmd.Parameters.Add("@ID", decimal.Parse(_newTable.ID));
-                    _cmd.ExecuteNonQuery();
-
-                    foreach (MD_InputModel_SaveTableColumn _col in _newTable.Columns)
-                    {
-                        SqlCommand _insCmd = new SqlCommand(SQL_SaveInputModelSaveTable_ins, cn);
-                        _insCmd.Parameters.Add("@ID", decimal.Parse(_col.ID));
-                        _insCmd.Parameters.Add("@IVT_ID", decimal.Parse(_newTable.ID));
-                        _insCmd.Parameters.Add("@DESCOL", _col.DesColumn);
-                        _insCmd.Parameters.Add("@SRCCOL", _col.SrcColumn);
-                        _insCmd.Parameters.Add("@METHOD", _col.Method);
-                        _insCmd.Parameters.Add("@DESDES", _col.Descript);
-                        _insCmd.ExecuteNonQuery();
-
-                    }
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
+            return InputModelAccessor.SaveInputModelSaveTable(_newTable);
         }
 
 
@@ -4056,43 +3289,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public bool AddInputModelTableColumn(string TableName, string AddFieldName, string DataType)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-                    string _sql = string.Format("Alter Table {0} add {1} {2} ", TableName, AddFieldName, DataType);
-                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
+            return InputModelAccessor.AddInputModelTableColumn(TableName, AddFieldName, DataType);
         }
-
 
         public bool DelInputModelTableColumn(string TableName, string DelFieldName)
         {
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                SqlTransaction _txn = cn.BeginTransaction();
-                try
-                {
-                    string _sql = string.Format("Alter Table {0} drop column {1} ", TableName, DelFieldName);
-                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sql);
-                    _txn.Commit();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _txn.Rollback();
-                    return false;
-                }
-            }
+            return InputModelAccessor.DelInputModelTableColumn(TableName, DelFieldName);
         }
 
 
@@ -4100,81 +3302,17 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                         WHERE T.TABLE_NAME=UPPER(@TNAME) )";
         public List<string> GetDBPrimayKeyList(string TableName)
         {
-            List<string> _ret = new List<string>();
-
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-
-                try
-                {
-                    SqlParameter[] _param = {
-                                        new SqlParameter("@NAME", SqlDbType.NVarChar)};
-                    _param[0].Value = TableName;
-                    using (SqlDataReader _dr = SqlHelper.ExecuteReader(cn, CommandType.Text, SQL_GetDBPrimayKeyList, _param))
-                    {
-                        while (_dr.Read())
-                        {
-                            string _cname = _dr.IsDBNull(1) ? "" : _dr.GetString(1);
-                            _ret.Add(_cname);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    LogWriter.WriteSystemLog(string.Format("在取数据表的主键时发生错误，错误信息：{0}", e.Message), "ERROR");
-                    return _ret;
-                }
-            }
-            return _ret;
+            return InputModelAccessor.GetDBPrimayKeyList(TableName);
         }
 
         public bool AddChildInputModel(string MainModelID, string ChildModelID)
         {
-            string _sql = "insert into md_inputviewchild (id,iv_id,civ_id,param,displayorder) values (sequences_meta.nextval,@IV_ID,@CIV_ID,'',0)";
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                try
-                {
-                    SqlCommand _cmd = new SqlCommand(_sql, cn);
-                    _cmd.Parameters.Add("@IV_ID", decimal.Parse(MainModelID));
-                    _cmd.Parameters.Add("@CIV_ID", decimal.Parse(ChildModelID));
-                    _cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
-            }
+            return InputModelAccessor.AddChildInputModel(MainModelID, ChildModelID);
         }
 
         public bool SaveInputModelChildDefine(MD_InputModel_Child InputModelChild)
         {
-            string _sql = "update md_inputviewchild  set param=@PARAM ,displayorder=@DISPLAYORDER,SHOWCONDITION=@SHOWCONDITION,SELECTMODE=@SELECTMODE where ID=@ID";
-            string _pstr = "";
-            foreach (MD_InputModel_ChildParam _p in InputModelChild.Parameters)
-            {
-                _pstr += string.Format("<PARAM>{0}:{1}:{2}</PARAM>", _p.Name, _p.DataType, _p.Value);
-            }
-
-            using (SqlConnection cn = SqlHelper.OpenConnection())
-            {
-                try
-                {
-                    SqlCommand _cmd = new SqlCommand(_sql, cn);
-                    _cmd.Parameters.Add("@PARAM", _pstr);
-                    _cmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(InputModelChild.DisplayOrder));
-                    _cmd.Parameters.Add("@SHOWCONDITION", InputModelChild.ShowCondition);
-                    _cmd.Parameters.Add("@SELECTMODE", Convert.ToDecimal(InputModelChild.SelectMode));
-                    _cmd.Parameters.Add("@ID", decimal.Parse(InputModelChild.ID));
-                    _cmd.ExecuteNonQuery();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
-            }
+            return InputModelAccessor.SaveInputModelChildDefine(InputModelChild);
         }
 
         private const string SQL_DelRefTable = @"delete from md_reftablelist  where RTID=@RTID";

@@ -78,6 +78,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\aehyok.BizMetaData\aehyok.BizMetaData.csproj">
+      <Project>{D7168857-3587-4BA9-8C2F-1D53390109AF}</Project>
+      <Name>aehyok.BizMetaData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SinoSZJS.Base\SinoSZJS.Base.csproj">
       <Project>{29F48920-647F-48A2-A222-34276057D81A}</Project>
       <Name>SinoSZJS.Base</Name>

@@ -7,32 +7,32 @@ using SinoSZJS.CS.BizMetaDataManager.DAL;
 
 namespace SinoSZToolInputModelDefine
 {
-        public class DAConfig
+    public class DAConfig
+    {
+        private static IMetaDataFactroy _dataAccess = null;
+        public static IMetaDataFactroy DataAccess
         {
-                private static IMetaDataFactroy _dataAccess = null;
-                public static IMetaDataFactroy DataAccess
+            get
+            {
+                if (_dataAccess == null)
                 {
-                        get
-                        {
-                                if (_dataAccess == null)
-                                {
-                                        _dataAccess = new OraMetaDataFactroy();
-                                }
-                                return _dataAccess;
-                        }
+                    _dataAccess = new OraMetaDataFactroy();
                 }
-
-                private static IMetaDataQueryFactroy _queryDataAccess = null;
-                public static IMetaDataQueryFactroy QueryDataAccess
-                {
-                        get
-                        {
-                                if (_queryDataAccess == null)
-                                {
-                                        _queryDataAccess = new OraMetaDataQueryFactroy();
-                                }
-                                return _queryDataAccess;
-                        }
-                }
+                return _dataAccess;
+            }
         }
+
+        private static IMetaDataQueryFactroy _queryDataAccess = null;
+        public static IMetaDataQueryFactroy QueryDataAccess
+        {
+            get
+            {
+                if (_queryDataAccess == null)
+                {
+                    _queryDataAccess = new OraMetaDataQueryFactroy();
+                }
+                return _queryDataAccess;
+            }
+        }
+    }
 }

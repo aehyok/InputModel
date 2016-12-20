@@ -98,12 +98,12 @@ namespace SinoSZToolInputModelDefine
             this.bt_ImportModel,
             this.bt_ExportModel});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
-            this.ribbon.Margin = new System.Windows.Forms.Padding(4);
+            this.ribbon.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ribbon.MaxItemId = 20;
             this.ribbon.Name = "ribbon";
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
-            this.ribbon.Size = new System.Drawing.Size(1355, 164);
+            this.ribbon.Size = new System.Drawing.Size(1186, 147);
             this.ribbon.StatusBar = this.ribbonStatusBar;
             // 
             // bt_AddInputModel
@@ -344,33 +344,33 @@ namespace SinoSZToolInputModelDefine
             // 
             // ribbonStatusBar
             // 
-            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 1091);
-            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
+            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 681);
+            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ribbonStatusBar.Name = "ribbonStatusBar";
             this.ribbonStatusBar.Ribbon = this.ribbon;
-            this.ribbonStatusBar.Size = new System.Drawing.Size(1355, 33);
+            this.ribbonStatusBar.Size = new System.Drawing.Size(1186, 31);
             // 
             // clientPanel
             // 
             this.clientPanel.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
             this.clientPanel.Controls.Add(this.splitContainerControl1);
             this.clientPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clientPanel.Location = new System.Drawing.Point(0, 164);
-            this.clientPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.clientPanel.Location = new System.Drawing.Point(0, 147);
+            this.clientPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.clientPanel.Name = "clientPanel";
-            this.clientPanel.Size = new System.Drawing.Size(1355, 927);
+            this.clientPanel.Size = new System.Drawing.Size(1186, 534);
             this.clientPanel.TabIndex = 2;
             // 
             // splitContainerControl1
             // 
             this.splitContainerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerControl1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.splitContainerControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainerControl1.Name = "splitContainerControl1";
             this.splitContainerControl1.Panel1.Controls.Add(this.treeList1);
             this.splitContainerControl1.Panel1.Text = "Panel1";
             this.splitContainerControl1.Panel2.Text = "Panel2";
-            this.splitContainerControl1.Size = new System.Drawing.Size(1355, 927);
+            this.splitContainerControl1.Size = new System.Drawing.Size(1186, 534);
             this.splitContainerControl1.SplitterPosition = 406;
             this.splitContainerControl1.TabIndex = 1;
             this.splitContainerControl1.Text = "splitContainerControl1";
@@ -386,14 +386,14 @@ namespace SinoSZToolInputModelDefine
             this.treeListColumn1});
             this.treeList1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeList1.Location = new System.Drawing.Point(0, 0);
-            this.treeList1.Margin = new System.Windows.Forms.Padding(4);
+            this.treeList1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.treeList1.Name = "treeList1";
             this.treeList1.OptionsBehavior.Editable = false;
             this.treeList1.OptionsView.ShowColumns = false;
             this.treeList1.OptionsView.ShowHorzLines = false;
             this.treeList1.OptionsView.ShowVertLines = false;
             this.treeList1.SelectImageList = this.imageList1;
-            this.treeList1.Size = new System.Drawing.Size(406, 927);
+            this.treeList1.Size = new System.Drawing.Size(406, 534);
             this.treeList1.TabIndex = 4;
             this.treeList1.BeforeExpand += new DevExpress.XtraTreeList.BeforeExpandEventHandler(this.treeList1_BeforeExpand);
             this.treeList1.FocusedNodeChanged += new DevExpress.XtraTreeList.FocusedNodeChangedEventHandler(this.treeList1_FocusedNodeChanged);
@@ -424,14 +424,14 @@ namespace SinoSZToolInputModelDefine
             // frmInputModelDefine
             // 
             this.AllowFormGlass = DevExpress.Utils.DefaultBoolean.True;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1355, 1124);
+            this.ClientSize = new System.Drawing.Size(1186, 712);
             this.Controls.Add(this.clientPanel);
             this.Controls.Add(this.ribbonStatusBar);
             this.Controls.Add(this.ribbon);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "frmInputModelDefine";
             this.Ribbon = this.ribbon;
             this.StatusBar = this.ribbonStatusBar;

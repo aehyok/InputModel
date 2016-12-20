@@ -47,9 +47,7 @@ namespace SinoSZToolInputModelDefine
 		private void InitNodes()
 		{
 			treeList1.Nodes.Clear();
-
-                OraMetaDataFactroy _of = new OraMetaDataFactroy();
-                IList<MD_Nodes> _nodes = _of.GetNodeList();
+                IList<MD_Nodes> _nodes = DAConfig.DataAccess.GetNodeList();
                 foreach (MD_Nodes _node in _nodes)
                 {
                     TreeListNode _fnode = treeList1.AppendNode(null, null);

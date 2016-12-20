@@ -996,7 +996,6 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         #region IMetaDataFactroy Members
 
 
-        private const string SQL_GetNewID = @"SELECT sequences_meta.nextval FROM DUAL";
         public string GetNewID()
         {
             string flag = string.Empty;
@@ -1014,9 +1013,6 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 flag = p6.Value.ToString();
             }
             return flag;
-
-            //object _ret = DBHelper.ExecuteScalar(DBHelper.ConnectionStringProfile, CommandType.Text, SQL_GetNewID);
-            //return _ret.ToString();
         }
 
         #endregion

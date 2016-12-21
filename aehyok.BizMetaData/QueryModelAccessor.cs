@@ -5,6 +5,8 @@ using System.Text;
 using System.Data.SqlClient;
 using SinoSZJS.DataAccess.Sql;
 using SinoSZJS.Base.MetaData.Define;
+using System.Data;
+using SinoSZJS.Base.MetaData.EnumDefine;
 
 namespace aehyok.BizMetaData
 {
@@ -517,6 +519,247 @@ namespace aehyok.BizMetaData
                     return _err;
                 }
             }
+        }
+
+
+        private const string SQL_Insert_MD_View2ViewGroup = @"insert into MD_VIEW2VIEWGROUP (ID,VIEWID,DISPLAYORDER,DISPLAYTITLE) values (@ID,@VIEWID,@DISPLAYORDER,@DISPLAYTITLE)";
+        private const string SQL_Insert_MD_View2View = @"insert into MD_VIEW2VIEW (ID,VIEWID,TARGETVIEWNAME,RELATIONSTR,DISPLAYORDER,DISPLAYTITLE,GROUPID)
+                                                                                                values (@ID,@VIEWID,@TARGETVIEWNAME,@RELATIONSTR,@DISPLAYORDER,@DISPLAYTITLE,@GROUPID)";
+        public static bool ImportQueryModelDefine(MD_QueryModel _qv)
+        {
+            using (SqlConnection cn = SqlHelper.OpenConnection())
+            {
+                SqlTransaction txn = cn.BeginTransaction();
+                try
+                {
+                    #region  保存查询模型定义信息
+                    StringBuilder _sb = new StringBuilder();
+                    _sb.Append(" insert into MD_VIEW (");
+                    _sb.Append(" VIEWNAME,DESCRIPTION,DISPLAYNAME, ");
+                    _sb.Append(" DWDM,IS_GDCX,IS_GLCX,IS_SJSH,");
+                    _sb.Append(" DISPLAYORDER,NAMESPACE,VIEWID,EXTMETA )");
+                    _sb.Append(" values ( ");
+                    _sb.Append(" @VIEWNAME,@DESCRIPTION,@DISPLAYNAME, ");
+                    _sb.Append(" @DWDM,@IS_GDCX,@IS_GLCX,@IS_SJSH,");
+                    _sb.Append(" @DISPLAYORDER,@NAMESPACE,@VIEWID,@EXTMETA)");
+
+                    SqlParameter[] _param = {
+                                                        new SqlParameter("@VIEWNAME", SqlDbType.NVarChar, 50),
+                                                        new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 100),
+                                                        new SqlParameter("@DISPLAYNAME", SqlDbType.NVarChar, 100),
+                                                        new SqlParameter("@DWDM", SqlDbType.NVarChar, 12),
+                                                        new SqlParameter("@IS_GDCX", SqlDbType.Decimal),
+                                                        new SqlParameter("@IS_GLCX",SqlDbType.Decimal),
+                                                        new SqlParameter("@IS_SJSH",SqlDbType.Decimal),
+                                                        new SqlParameter("@DISPLAYORDER",SqlDbType.Decimal),
+                                                        new SqlParameter("@NAMESPACE",SqlDbType.NVarChar,50),
+                                                        new SqlParameter("@VIEWID",SqlDbType.Decimal),
+                                                        new SqlParameter("@EXTMETA",SqlDbType.NVarChar,4000),
+                                                };
+
+                    _param[0].Value = _qv.QueryModelName;
+                    _param[1].Value = _qv.Description;
+                    _param[2].Value = _qv.DisplayTitle;
+                    _param[3].Value = _qv.DWDM;
+                    _param[4].Value = _qv.IsFixQuery ? (decimal)1 : (decimal)0;
+                    _param[5].Value = _qv.IsRelationQuery ? (decimal)1 : (decimal)0;
+                    _param[6].Value = _qv.IsDataAuditing ? (decimal)1 : (decimal)0;
+                    _param[7].Value = Convert.ToDecimal(_qv.DisplayOrder);
+                    _param[8].Value = _qv.NamespaceName;
+                    _param[9].Value = Convert.ToDecimal(_qv.QueryModelID);
+                    _param[10].Value = _qv.EXTMeta;
+                    SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param);
+                    #endregion
+
+                    #region 导入子表定义
+                    foreach (MD_ViewTable _vtable in _qv.ChildTables)
+                    {
+                        if (_vtable != null)
+                        {
+
+                            _sb = new StringBuilder();
+                            _sb.Append(" insert into MD_VIEWTABLE ");
+                            _sb.Append(" (VTID,FATHERID,VIEWID,TID,");
+                            _sb.Append(" TABLETYPE,TABLERELATION,CANCONDITION,DISPLAYNAME,");
+                            _sb.Append(" DISPLAYORDER,DWDM,PRIORITY) ");
+                            _sb.Append(" values ");
+                            _sb.Append(" (@VTID,@FATHERID,@VIEWID,@TID,");
+                            _sb.Append(" @TABLETYPE,@TABLERELATION,@CANCONDITION,@DISPLAYNAME,");
+                            _sb.Append(" @DISPLAYORDER,@DWDM,@PRIORITY) ");
+
+                            SqlParameter[] _param5 = {            
+                                                                                new SqlParameter("@VTID",SqlDbType.Decimal),
+                                                                                new SqlParameter("@FATHERID",SqlDbType.Decimal),
+                                                                                new SqlParameter("@VIEWID",SqlDbType.Decimal),
+                                                                                new SqlParameter("@TID",SqlDbType.Decimal),
+                                                                                 new SqlParameter("@TABLETYPE",SqlDbType.NVarChar,20),                                        
+                                                                                new SqlParameter("@TABLERELATION",SqlDbType.NVarChar,300),
+                                                                                new SqlParameter("@CANCONDITION",SqlDbType.NVarChar,10),
+                                                                                new SqlParameter("@DISPLAYNAME",SqlDbType.NVarChar,100),
+                                                                                new SqlParameter("@DISPLAYORDER",SqlDbType.Decimal),
+                                                                                new SqlParameter("@DWDM",SqlDbType.NVarChar,12),
+                                                                                new SqlParameter("@PRIORITY",SqlDbType.Decimal)
+                                                                                 };
+                            _param5[0].Value = Convert.ToDecimal(_vtable.ViewTableID);
+                            if (_vtable.FatherTableID == "")
+                            {
+                                _param5[1].Value = DBNull.Value;
+                            }
+                            else
+                            {
+                                _param5[1].Value = Convert.ToDecimal(_vtable.FatherTableID);
+                            }
+                            _param5[2].Value = Convert.ToDecimal(_qv.QueryModelID);
+                            _param5[3].Value = Convert.ToDecimal(_vtable.TableID);
+
+                            _param5[4].Value = (_vtable.ViewTableType == MDType_ViewTable.MainTable) ? "M" : "F";
+                            _param5[5].Value = _vtable.RelationString;
+                            _param5[6].Value = (_vtable.ViewTableRelationType == MDType_ViewTableRelation.SingleChildRecord) ? 1 : 0;
+                            _param5[7].Value = _vtable.DisplayTitle;
+                            _param5[8].Value = Convert.ToDecimal(_vtable.DisplayOrder);
+                            _param5[9].Value = _vtable.DWDM;
+                            _param5[10].Value = (decimal)0;
+
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param5);
+
+                            //清除所有字段定义
+                            string _del = "delete from MD_VIEWTABLECOLUMN where VTID=@VTID";
+                            SqlParameter[] _param2 = {
+						                        new SqlParameter("@VTID",SqlDbType.Decimal)
+					                         };
+                            _param2[0].Value = Convert.ToDecimal(_vtable.ViewTableID);
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _del, _param2);
+
+                            _sb = new StringBuilder();
+                            _sb.Append(" insert into MD_VIEWTABLECOLUMN (VTCID,VTID,TCID,");
+                            _sb.Append(" CANCONDITIONSHOW,CANRESULTSHOW,DEFAULTSHOW,");
+                            _sb.Append(" DWDM,FIXQUERYITEM,CANMODIFY,PRIORITY) ");
+                            _sb.Append(" VALUES (@VTCID,@VTID,@TCID,");
+                            _sb.Append(" @CANCONDITIONSHOW,@CANRESULTSHOW,@DEFAULTSHOW,");
+                            _sb.Append(" @DWDM,@FIXQUERYITEM,@CANMODIFY,@PRIORITY) ");
+                            //保存字段定义信息
+                            foreach (MD_ViewTableColumn _tc in _vtable.Columns)
+                            {
+                                SqlParameter[] _param3 = {
+                                                                        new SqlParameter("@VTCID",SqlDbType.Decimal),
+                                                                        new SqlParameter("@VTID", SqlDbType.Decimal),
+                                                                        new SqlParameter("@TCID", SqlDbType.Decimal),
+                                                                        new SqlParameter("@CANCONDITIONSHOW", SqlDbType.Decimal),
+                                                                        new SqlParameter("@CANRESULTSHOW", SqlDbType.Decimal),
+                                                                        new SqlParameter("@DEFAULTSHOW", SqlDbType.Decimal),
+                                                                        new SqlParameter("@DWDM",SqlDbType.NVarChar,12),
+                                                                        new SqlParameter("@FIXQUERYITEM",SqlDbType.Decimal),
+                                                                        new SqlParameter("@CANMODIFY",SqlDbType.Decimal),
+                                                                        new SqlParameter("@PRIORITY",SqlDbType.Decimal)
+                                                                };
+                                _param3[0].Value = Convert.ToDecimal(_tc.ViewTableColumnID);
+                                _param3[1].Value = Convert.ToDecimal(_vtable.ViewTableID);
+                                _param3[2].Value = Convert.ToDecimal(_tc.ColumnID);
+                                _param3[3].Value = _tc.CanShowAsCondition ? 1 : 0;
+                                _param3[4].Value = _tc.CanShowAsResult ? 1 : 0;
+                                _param3[5].Value = _tc.DefaultResult ? 1 : 0;
+                                _param3[6].Value = _tc.DWDM;
+                                _param3[7].Value = _tc.IsFixQueryItem ? 1 : 0;
+                                _param3[8].Value = _tc.CanModify ? 1 : 0;
+                                _param3[9].Value = Convert.ToDecimal(_tc.Priority);
+                                SqlHelper.ExecuteNonQuery(cn, CommandType.Text, _sb.ToString(), _param3);
+                            }
+                        }
+
+                    }
+                    #endregion
+
+                    #region 导入模型关联定义
+                    if (_qv.View2ViewGroup != null)
+                    {
+                        foreach (MD_View2ViewGroup _group in _qv.View2ViewGroup)
+                        {
+                            SqlParameter[] _pv2vg = {
+                                                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50),
+                                                                        new SqlParameter("@VIEWID", SqlDbType.Decimal),
+                                                                        new SqlParameter("@DISPLAYORDER", SqlDbType.Decimal),
+                                                                        new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 200)                                                    
+                                                                };
+                            _pv2vg[0].Value = _group.ID;
+                            _pv2vg[1].Value = Convert.ToDecimal(_qv.QueryModelID);
+                            _pv2vg[2].Value = Convert.ToDecimal(_group.DisplayOrder);
+                            _pv2vg[3].Value = _group.DisplayTitle;
+                            SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2ViewGroup, _pv2vg);
+
+                            foreach (MD_View2View _v2v in _group.View2Views)
+                            {
+                                SqlParameter[] _pv2v = {
+                                                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50),
+                                                                        new SqlParameter("@VIEWID", SqlDbType.Decimal),
+                                                                        new SqlParameter("@TARGETVIEWNAME", SqlDbType.NVarChar,300),
+                                                                        new SqlParameter("@RELATIONSTR", SqlDbType.NVarChar,4000),
+                                                                        new SqlParameter("@DISPLAYORDER", SqlDbType.Decimal),
+                                                                        new SqlParameter("@DISPLAYTITLE", SqlDbType.NVarChar, 200),
+                                                                        new SqlParameter("@GROUPID", SqlDbType.NVarChar, 50)
+                                                                };
+                                _pv2v[0].Value = _v2v.ID;
+                                _pv2v[1].Value = Convert.ToDecimal(_qv.QueryModelID);
+                                _pv2v[2].Value = _v2v.TargetViewName;
+                                _pv2v[3].Value = _v2v.RelationString;
+                                _pv2v[4].Value = Convert.ToDecimal(_v2v.DisplayOrder);
+                                _pv2v[5].Value = _v2v.DisplayTitle;
+                                _pv2v[6].Value = _group.ID;
+                                SqlHelper.ExecuteNonQuery(cn, CommandType.Text, SQL_Insert_MD_View2View, _pv2v);
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region 导入关联指标定义
+                    if (_qv.View2GuideLines != null)
+                    {
+                        foreach (MD_View_GuideLine _v2g in _qv.View2GuideLines)
+                        {
+                            SqlCommand SaveCmd = new SqlCommand(SQL_InsertV2G, cn);
+                            SaveCmd.Parameters.Add("@ID", _v2g.ID);
+                            SaveCmd.Parameters.Add("@VIEWID", _v2g.ViewID);
+                            SaveCmd.Parameters.Add("@TARGETGL", _v2g.TargetGuideLineID);
+                            SaveCmd.Parameters.Add("@TARGETCS", _v2g.RelationParam);
+                            SaveCmd.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(_v2g.DisplayOrder));
+                            SaveCmd.Parameters.Add("@DISPLAYTITLE", _v2g.DisplayTitle);
+                            SaveCmd.ExecuteNonQuery();
+                        }
+
+                    }
+                    #endregion
+
+                    #region 导入关联集成应用定义
+                    if (_qv.View2Application != null)
+                    {
+                        foreach (MD_View2App _v2a in _qv.View2Application)
+                        {
+                            SqlCommand _ins = new SqlCommand(SQL_SaveView2App_Insert, cn);
+                            _ins.Parameters.Add("@ID", decimal.Parse(_v2a.ID));
+                            _ins.Parameters.Add("@VIEWID", decimal.Parse(_v2a.ViewID));
+                            _ins.Parameters.Add("@TITLE", _v2a.Title);
+                            _ins.Parameters.Add("@INTEGRATEDAPP", _v2a.AppName);
+                            _ins.Parameters.Add("@DISPLAYHEIGHT", Convert.ToDecimal(_v2a.DisplayHeight));
+                            _ins.Parameters.Add("@URL", _v2a.RegURL);
+                            _ins.Parameters.Add("@DISPLAYORDER", Convert.ToDecimal(_v2a.DisplayOrder));
+                            _ins.Parameters.Add("@META", _v2a.Meta);
+                            _ins.ExecuteNonQuery();
+
+                        }
+                    }
+                    #endregion
+
+                    txn.Commit();
+                    return true;
+
+                }
+                catch (Exception ex)
+                {
+                    txn.Rollback();
+                    return false;
+                }
+            }
+
+
         }
     }
 }

@@ -9,12 +9,13 @@ using SinoSZBizAuthorize;
 using SinoSZAuthorizeDC.OraSignOn;
 using Oracle.DataAccess.Client;
 using System.Data;
-using SinoSZDataAccessBase;
 using SinoSZBaseClass.Config;
 using SinoSZBaseClass.UserLog;
 using SinoSZBaseClass.SystemLog;
 using System.Diagnostics;
 using SinoSZAuthorizeDC.Cuppa;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZAuthorizeDC
 {
@@ -250,15 +251,15 @@ namespace SinoSZAuthorizeDC
         {
 
             string _sql = "zhtj_zzjg2.get_tree_js_qx";
-            OracleParameter[] _param = {
-                              new OracleParameter("nParent",OracleDbType.Decimal),
-                               new OracleParameter("nLevel",OracleDbType.Decimal),
-                               new OracleParameter("curTree",OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output)
+            SqlParameter[] _param = {
+                              new SqlParameter("nParent",SqlDbType.Decimal),
+                               new SqlParameter("nLevel",SqlDbType.Decimal),
+                               //new SqlParameter("curTree",OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output)
                            };
             _param[0].Value = decimal.Parse(_rootDwid);
             _param[1].Value = _levelNum;
 
-            OracleDataReader dr = OracleHelper.ExecuteReader(OracleHelper.ConnectionStringProfile, CommandType.StoredProcedure, _sql, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.StoredProcedure, _sql, _param);
             List<SinoOrganize> _ret = new List<SinoOrganize>();
 
             while (dr.Read())
@@ -284,9 +285,9 @@ namespace SinoSZAuthorizeDC
         public decimal GetDWIDByDWDM(string _dwdm)
         {
             string _sql = "select zhtj_zzjg2.GETDWID_hgjs(:DWDM) from dual";
-            OracleParameter[] _param = { new OracleParameter("nParent", OracleDbType.Decimal) };
+            SqlParameter[] _param = { new SqlParameter("nParent", SqlDbType.Decimal) };
             _param[0].Value = _dwdm;
-            object _ret = OracleHelper.ExecuteScalar(OracleHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
+            object _ret = SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _sql, _param);
             if (_ret == DBNull.Value) return -1;
             return (decimal)_ret;
         }
@@ -361,17 +362,17 @@ namespace SinoSZAuthorizeDC
         public List<SinoOrganize> GetRootDwListEx(string _rootDwid, decimal _levelNum, string _type)
         {
             string _sql = "zhtj_zzjg2.get_tree_qx2jg";
-            OracleParameter[] _param = {
-                              new OracleParameter("nParent",OracleDbType.Decimal),
-                               new OracleParameter("nLevel",OracleDbType.Decimal),
-				new OracleParameter("strcs",OracleDbType.Varchar2),
-                               new OracleParameter("curTree",OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output)
+            SqlParameter[] _param = {
+                              new SqlParameter("nParent",SqlDbType.Decimal),
+                               new SqlParameter("nLevel",SqlDbType.Decimal),
+				new SqlParameter("strcs",SqlDbType.NVarChar),
+                               //new SqlParameter("curTree",OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output)
                            };
             _param[0].Value = decimal.Parse(_rootDwid);
             _param[1].Value = _levelNum;
             _param[2].Value = _type;
 
-            OracleDataReader dr = OracleHelper.ExecuteReader(OracleHelper.ConnectionStringProfile, CommandType.StoredProcedure, _sql, _param);
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.StoredProcedure, _sql, _param);
             List<SinoOrganize> _ret = new List<SinoOrganize>();
 
             while (dr.Read())
@@ -398,7 +399,7 @@ namespace SinoSZAuthorizeDC
 
         public void WriteExportLog(int _exportRowCount, string ExportDataMsg)
         {
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -414,18 +415,18 @@ namespace SinoSZAuthorizeDC
                     }
                     if (ExportDataMsg == null || ExportDataMsg.Trim() == "")
                     {
-                        OralceLogWriter.WriteUserLog(decimal.Parse(SinoUserCtx.CurUser.UserID), "导出数据", string.Format("导了数据成功! 导出记录数：{0}", _exportRowCount),
+                        LogWriter.WriteUserLog(decimal.Parse(SinoUserCtx.CurUser.UserID), "导出数据", string.Format("导了数据成功! 导出记录数：{0}", _exportRowCount),
                          1, _ipaddr, _hostName, ConfigFile.SystemID);
                     }
                     else
                     {
-                        OralceLogWriter.WriteUserLog(decimal.Parse(SinoUserCtx.CurUser.UserID), "导出数据", string.Format("导了数据成功! 导出记录数：{0}  导出数据说明：{1}", _exportRowCount, ExportDataMsg),
+                        LogWriter.WriteUserLog(decimal.Parse(SinoUserCtx.CurUser.UserID), "导出数据", string.Format("导了数据成功! 导出记录数：{0}  导出数据说明：{1}", _exportRowCount, ExportDataMsg),
                       1, _ipaddr, _hostName, ConfigFile.SystemID);
                     }
                 }
                 catch (Exception ex)
                 {
-                    OralceLogWriter.WriteSystemLog(string.Format("写入导出日志失败！导出内容：{0} 导出行数：{1} 错误信息：{2}", ExportDataMsg, _exportRowCount, ex.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("写入导出日志失败！导出内容：{0} 导出行数：{1} 错误信息：{2}", ExportDataMsg, _exportRowCount, ex.Message), "ERROR");
                 }
             }
         }

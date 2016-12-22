@@ -4,7 +4,7 @@ using System.Text;
 using SinoSZBizAuthorize;
 using SinoSZBaseClass.Misc;
 using System.Configuration;
-using SinoSZDataAccessBase;
+using SinoSZJS.DataAccess.Sql;
 
 namespace SinoSZAuthorizeDC.OraSignOn
 {
@@ -48,7 +48,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 }
                 catch (Exception ex)
                 {
-                    OralceLogWriter.WriteSystemLog(string.Format("使用QDHBSerivce验证时出错，{0}", ex.Message), "ERROR");
+                    LogWriter.WriteSystemLog(string.Format("使用QDHBSerivce验证时出错，{0}", ex.Message), "ERROR");
                 }
 
             }

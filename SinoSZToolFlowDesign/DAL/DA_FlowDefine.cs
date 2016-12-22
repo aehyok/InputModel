@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using SinoSZToolFlowDesign.Interface;
 using SinoSZToolFlowDesign.DOL;
-using SinoSZDataAccessBase;
 using System.Data;
 using Oracle.DataAccess.Client;
+using System.Data.SqlClient;
+using SinoSZJS.DataAccess.Sql;
 
 namespace SinoSZToolFlowDesign.DAL
 {
@@ -14,7 +15,7 @@ namespace SinoSZToolFlowDesign.DAL
                 private string connectString = "";
                 public DA_FlowDefine()
                 {
-                        connectString = OracleHelper.ConnectionStringProfile;
+                        connectString = SqlHelper.ConnectionStringProfile;
                 }
 
                 public DA_FlowDefine(string _connectString)
@@ -25,14 +26,14 @@ namespace SinoSZToolFlowDesign.DAL
                 public bool SaveFlowProperties(Flow_BaseDefine flow_BaseDefine)
                 {
                         string _updateStr = "update  FLOW_ENTITYTYPE";
-                        _updateStr += " set DESCRIPTION=:DESCRIPTION,FLOWNAME=:FLOWNAME,ROOTDWID=:ROOTDWID ";
-                        _updateStr += " where ID=:ID";
+                        _updateStr += " set DESCRIPTION=@DESCRIPTION,FLOWNAME=@FLOWNAME,ROOTDWID=@ROOTDWID ";
+                        _updateStr += " where ID=@ID";
 
-                        OracleParameter[] _param2 = {                                         
-                                        new OracleParameter(":DESCRIPTION", OracleDbType.Varchar2, 1000),
-                                        new OracleParameter(":FLOWNAME", OracleDbType.Varchar2, 100),
-                                        new OracleParameter(":ROOTDWID",OracleDbType.Decimal),
-                                        new OracleParameter(":ID", OracleDbType.Varchar2, 50)
+                        SqlParameter[] _param2 = {                                         
+                                        new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 1000),
+                                        new SqlParameter("@FLOWNAME", SqlDbType.NVarChar, 100),
+                                        new SqlParameter("@ROOTDWID",SqlDbType.Decimal),
+                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50)
                                  };
                         _param2[0].Value = flow_BaseDefine.Description;
                         _param2[1].Value = flow_BaseDefine.FlowName;
@@ -40,7 +41,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _param2[3].Value = flow_BaseDefine.ID;
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
                                 return true;
                         }
                         catch (Exception e)
@@ -54,14 +55,14 @@ namespace SinoSZToolFlowDesign.DAL
                 public bool SaveNewFlowProperties(Flow_BaseDefine flow_BaseDefine)
                 {
                         string _insertStr = "insert into FLOW_ENTITYTYPE";
-                        _insertStr += " (ID,FLOWNAME,DESCRIPTION,ROOTDWID) values (:ID,:FLOWNAME,:DESCRIPTION,:ROOTDWID) ";
+                        _insertStr += " (ID,FLOWNAME,DESCRIPTION,ROOTDWID) values (@ID,@FLOWNAME,@DESCRIPTION,@ROOTDWID) ";
 
 
-                        OracleParameter[] _param2 = {   
-                                new OracleParameter(":ID", OracleDbType.Varchar2, 50),                                              
-                                new OracleParameter(":FLOWNAME", OracleDbType.Varchar2, 100),
-                                new OracleParameter(":DESCRIPTION", OracleDbType.Varchar2, 1000),
-                                new OracleParameter(":ROOTDWID",OracleDbType.Decimal)        
+                        SqlParameter[] _param2 = {   
+                                new SqlParameter("@ID", SqlDbType.NVarChar, 50),                                              
+                                new SqlParameter("@FLOWNAME", SqlDbType.NVarChar, 100),
+                                new SqlParameter("@DESCRIPTION", SqlDbType.NVarChar, 1000),
+                                new SqlParameter("@ROOTDWID",SqlDbType.Decimal)        
                                  };
                         _param2[0].Value = flow_BaseDefine.ID;
                         _param2[1].Value = flow_BaseDefine.FlowName;
@@ -69,7 +70,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _param2[3].Value = decimal.Parse(flow_BaseDefine.RootDWID);
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
                                 return true;
                         }
                         catch
@@ -83,21 +84,21 @@ namespace SinoSZToolFlowDesign.DAL
                 {
                         Flow_BaseDefine _ret = null;
                         string _sql = "select ID,FLOWNAME,DESCRIPTION,ROOTDWID FROM FLOW_ENTITYTYPE";
-                        _sql += " where ID = :ID ";
+                        _sql += " where ID = @ID ";
 
-                        OracleParameter[] _param = { new OracleParameter(":ID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@ID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = _id;
 
                         try
                         {
-                                OracleDataReader dr = OracleHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
+                                SqlDataReader dr = SqlHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
 
                                 while (dr.Read())
                                 {
                                         _ret = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
+                                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
                                         );
                                 }
                                 dr.Close();
@@ -114,21 +115,21 @@ namespace SinoSZToolFlowDesign.DAL
                 {
                         Flow_BaseDefine _ret = null;
                         string _sql = "select ID,FLOWNAME,DESCRIPTION,ROOTDWID FROM FLOW_ENTITYTYPE";
-                        _sql += " where FLOWNAME = :FLOWNAME ";
+                        _sql += " where FLOWNAME = @FLOWNAME ";
 
-                        OracleParameter[] _param = { new OracleParameter(":FLOWNAME", OracleDbType.Varchar2, 100) };
+                        SqlParameter[] _param = { new SqlParameter("@FLOWNAME", SqlDbType.NVarChar, 100) };
                         _param[0].Value = _flowName;
 
                         try
                         {
-                                OracleDataReader dr = OracleHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
+                                SqlDataReader dr = SqlHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
 
                                 while (dr.Read())
                                 {
                                         _ret = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
+                                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
                                         );
                                 }
                                 dr.Close();
@@ -153,14 +154,14 @@ namespace SinoSZToolFlowDesign.DAL
 
                         try
                         {
-                                OracleDataReader dr = OracleHelper.ExecuteReader(connectString, CommandType.Text, _sql);
+                                SqlDataReader dr = SqlHelper.ExecuteReader(connectString, CommandType.Text, _sql);
 
                                 while (dr.Read())
                                 {
                                         Flow_BaseDefine _fd = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
+                                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
                                         );
                                         _ret.Add(_fd);
                                 }
@@ -182,14 +183,14 @@ namespace SinoSZToolFlowDesign.DAL
                 /// <returns></returns>
                 public bool DeleteFlow(string _flowID)
                 {
-                        string _sql = "Delete FROM FLOW_ENTITYTYPE where ID=:ID";
+                        string _sql = "Delete FROM FLOW_ENTITYTYPE where ID=@ID";
 
-                        OracleParameter[] _param = { new OracleParameter(":ID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@ID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = _flowID;
 
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
 
                                 return true;
                         }
@@ -210,17 +211,17 @@ namespace SinoSZToolFlowDesign.DAL
                 {
                         string _insertStr = "insert into FLOW_ENTITYSTATUS";
                         _insertStr += " (ID,FLOWID,STATENAME,STATEDISPLAYNAME,STATEDESCRIPT,STATETYPE,DISPLAYORDER) ";
-                        _insertStr += " values (:ID,:FLOWID,:STATENAME,:STATEDISPLAYNAME,:STATEDESCRIPT,:STATETYPE,:DISPLAYORDER) ";
+                        _insertStr += " values (@ID,@FLOWID,@STATENAME,@STATEDISPLAYNAME,@STATEDESCRIPT,@STATETYPE,@DISPLAYORDER) ";
 
 
-                        OracleParameter[] _param2 = {   
-                                new OracleParameter(":ID", OracleDbType.Varchar2, 50),    
-                                new OracleParameter(":FLOWID", OracleDbType.Varchar2, 50),                                         
-                                new OracleParameter(":STATENAME", OracleDbType.Varchar2, 50),
-                                new OracleParameter(":STATEDISPLAYNAME", OracleDbType.Varchar2, 100),
-                                new OracleParameter(":STATEDESCRIPT", OracleDbType.Varchar2, 1000),
-                                new OracleParameter(":STATETYPE", OracleDbType.Varchar2, 10),    
-                                new OracleParameter(":DISPLAYORDER",OracleDbType.Decimal)    
+                        SqlParameter[] _param2 = {   
+                                new SqlParameter("@ID", SqlDbType.NVarChar, 50),    
+                                new SqlParameter("@FLOWID", SqlDbType.NVarChar, 50),                                         
+                                new SqlParameter("@STATENAME", SqlDbType.NVarChar, 50),
+                                new SqlParameter("@STATEDISPLAYNAME", SqlDbType.NVarChar, 100),
+                                new SqlParameter("@STATEDESCRIPT", SqlDbType.NVarChar, 1000),
+                                new SqlParameter("@STATETYPE", SqlDbType.NVarChar, 10),    
+                                new SqlParameter("@DISPLAYORDER",SqlDbType.Decimal)    
                                  };
                         _param2[0].Value = flow_StateDefine.ID;
                         _param2[1].Value = flow_BaseDefine.ID;
@@ -232,7 +233,7 @@ namespace SinoSZToolFlowDesign.DAL
 
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
                                 return true;
                         }
                         catch
@@ -245,16 +246,16 @@ namespace SinoSZToolFlowDesign.DAL
                 public bool SaveFlowState(Flow_StateDefine flow_StateDefine)
                 {
                         string _updateStr = "update  FLOW_ENTITYSTATUS";
-                        _updateStr += " set STATENAME=:STATENAME,STATEDISPLAYNAME=:STATEDISPLAYNAME,STATEDESCRIPT=:STATEDESCRIPT,STATETYPE=:STATETYPE, ";
-                        _updateStr += " DISPLAYORDER=:DISPLAYORDER where ID=:ID";
+                        _updateStr += " set STATENAME=@STATENAME,STATEDISPLAYNAME=@STATEDISPLAYNAME,STATEDESCRIPT=@STATEDESCRIPT,STATETYPE=@STATETYPE, ";
+                        _updateStr += " DISPLAYORDER=@DISPLAYORDER where ID=@ID";
 
-                        OracleParameter[] _param2 = {                                         
-                                        new OracleParameter(":STATENAME", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":STATEDISPLAYNAME", OracleDbType.Varchar2, 100),
-                                        new OracleParameter(":STATEDESCRIPT", OracleDbType.Varchar2, 1000),
-                                        new OracleParameter(":STATETYPE", OracleDbType.Varchar2, 10),
-                                        new OracleParameter(":DISPLAYORDER",OracleDbType.Decimal),
-                                        new OracleParameter(":ID", OracleDbType.Varchar2, 50)
+                        SqlParameter[] _param2 = {                                         
+                                        new SqlParameter("@STATENAME", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@STATEDISPLAYNAME", SqlDbType.NVarChar, 100),
+                                        new SqlParameter("@STATEDESCRIPT", SqlDbType.NVarChar, 1000),
+                                        new SqlParameter("@STATETYPE", SqlDbType.NVarChar, 10),
+                                        new SqlParameter("@DISPLAYORDER",SqlDbType.Decimal),
+                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50)
                                  };
                         _param2[0].Value = flow_StateDefine.Name;
                         _param2[1].Value = flow_StateDefine.DisplayName;
@@ -264,7 +265,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _param2[5].Value = flow_StateDefine.ID;
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
                                 return true;
                         }
                         catch (Exception e)
@@ -280,13 +281,13 @@ namespace SinoSZToolFlowDesign.DAL
                         List<Flow_StateDefine> _ret = new List<Flow_StateDefine>();
 
                         string _sql = "select ID,STATENAME,STATEDISPLAYNAME,STATEDESCRIPT,STATETYPE,DISPLAYORDER ";
-                        _sql += " FROM FLOW_ENTITYSTATUS where FLOWID = :FLOWID";
+                        _sql += " FROM FLOW_ENTITYSTATUS where FLOWID = @FLOWID";
 
-                        OracleParameter[] _param = { new OracleParameter(":FLOWID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@FLOWID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = flow_BaseDefine.ID;
                         try
                         {
-                                OracleDataReader dr = OracleHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
+                                SqlDataReader dr = SqlHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
 
                                 while (dr.Read())
                                 {
@@ -295,7 +296,7 @@ namespace SinoSZToolFlowDesign.DAL
                                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
                                                 dr.IsDBNull(4) ? "" : dr.GetString(4),
-                                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDecimal(5))
+                                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5))
                                         );
                                         _ret.Add(_fd);
                                 }
@@ -316,14 +317,14 @@ namespace SinoSZToolFlowDesign.DAL
                 /// <returns></returns>
                 public bool DeleteFlowState(string flow_StateID)
                 {
-                        string _sql = "Delete FROM FLOW_ENTITYSTATUS where ID=:ID";
+                        string _sql = "Delete FROM FLOW_ENTITYSTATUS where ID=@ID";
 
-                        OracleParameter[] _param = { new OracleParameter(":ID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@ID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = flow_StateID;
 
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
 
                                 return true;
                         }
@@ -341,14 +342,14 @@ namespace SinoSZToolFlowDesign.DAL
                         string _sql = "select A.ID,A.ACTIONNAME,A.ACTIONTITLE, ";
                         _sql += "B.ID,B.STATENAME,B.STATEDISPLAYNAME,B.STATEDESCRIPT,B.STATETYPE,B.DISPLAYORDER, ";
                         _sql += "A.ACTIONTYPE,A.USERTYPE,A.DISPLAYORDER,A.ACTIONPARAM ";
-                        _sql += " FROM FLOW_STATETRANSITION A,FLOW_ENTITYSTATUS B where A.STATEID = :STATEID ";
+                        _sql += " FROM FLOW_STATETRANSITION A,FLOW_ENTITYSTATUS B where A.STATEID = @STATEID ";
                         _sql += " and B.ID = A.TARGETSTATEID ";
 
-                        OracleParameter[] _param = { new OracleParameter(":STATEID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@STATEID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = flow_StateDefine.ID;
                         try
                         {
-                                OracleDataReader dr = OracleHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
+                                SqlDataReader dr = SqlHelper.ExecuteReader(connectString, CommandType.Text, _sql, _param);
 
                                 while (dr.Read())
                                 {
@@ -357,7 +358,7 @@ namespace SinoSZToolFlowDesign.DAL
                                                 dr.IsDBNull(5) ? "" : dr.GetString(5),
                                                 dr.IsDBNull(6) ? "" : dr.GetString(6),
                                                 dr.IsDBNull(7) ? "" : dr.GetString(7),
-                                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDecimal(8))
+                                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDouble(8))
                                         );
 
                                         Flow_StateActionDefine _sa = new Flow_StateActionDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
@@ -366,8 +367,8 @@ namespace SinoSZToolFlowDesign.DAL
                                                 flow_StateDefine,
                                                 _endStateDefine,
                                                 dr.IsDBNull(9) ? "" : dr.GetString(9),
-                                                dr.IsDBNull(10) ? 0 : Convert.ToInt32(dr.GetDecimal(10)),
-                                                dr.IsDBNull(11) ? 0 : Convert.ToInt32(dr.GetDecimal(11)),
+                                                dr.IsDBNull(10) ? 0 : Convert.ToInt32(dr.GetDouble(10)),
+                                                dr.IsDBNull(11) ? 0 : Convert.ToInt32(dr.GetDouble(11)),
                                                 dr.IsDBNull(12) ? "" : dr.GetString(12)
                                         );
 
@@ -392,20 +393,20 @@ namespace SinoSZToolFlowDesign.DAL
                 public bool SaveStateAction(Flow_StateActionDefine flow_StateActionDefine)
                 {
                         string _updateStr = "update  FLOW_STATETRANSITION";
-                        _updateStr += " set STATEID=:STATEID,ACTIONNAME=:ACTIONNAME,ACTIONTITLE=:ACTIONTITLE,TARGETSTATEID=:TARGETSTATEID, ";
-                        _updateStr += " ACTIONTYPE=:ACTIONTYPE,USERTYPE=:USERTYPE,DISPLAYORDER=:DISPLAYORDER,ACTIONPARAM=:ACTIONPARAM ";
+                        _updateStr += " set STATEID=@STATEID,ACTIONNAME=@ACTIONNAME,ACTIONTITLE=@ACTIONTITLE,TARGETSTATEID=@TARGETSTATEID, ";
+                        _updateStr += " ACTIONTYPE=@ACTIONTYPE,USERTYPE=@USERTYPE,DISPLAYORDER=@DISPLAYORDER,ACTIONPARAM=@ACTIONPARAM ";
                         _updateStr += "  where ID=:ID";
 
-                        OracleParameter[] _param2 = {                                         
-                                        new OracleParameter(":STATEID", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":ACTIONNAME", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":ACTIONTITLE", OracleDbType.Varchar2, 100),
-                                        new OracleParameter(":TARGETSTATEID", OracleDbType.Varchar2, 50),     
-                                        new OracleParameter(":ACTIONTYPE", OracleDbType.Varchar2, 50), 
-                                        new OracleParameter(":USERTYPE", OracleDbType.Decimal), 
-                                        new OracleParameter(":DISPLAYORDER", OracleDbType.Decimal), 
-                                        new OracleParameter(":ACTIONPARAM", OracleDbType.Varchar2, 4000),    
-                                        new OracleParameter(":ID", OracleDbType.Varchar2, 50)
+                        SqlParameter[] _param2 = {                                         
+                                        new SqlParameter("@STATEID", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@ACTIONNAME", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@ACTIONTITLE", SqlDbType.NVarChar, 100),
+                                        new SqlParameter("@TARGETSTATEID", SqlDbType.NVarChar, 50),     
+                                        new SqlParameter("@ACTIONTYPE", SqlDbType.NVarChar, 50), 
+                                        new SqlParameter("@USERTYPE", SqlDbType.Decimal), 
+                                        new SqlParameter("@DISPLAYORDER", SqlDbType.Decimal), 
+                                        new SqlParameter("@ACTIONPARAM", SqlDbType.NVarChar, 4000),    
+                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50)
                                  };
                         _param2[0].Value = flow_StateActionDefine.BeginState.ID;
                         _param2[1].Value = flow_StateActionDefine.ActionName;
@@ -418,7 +419,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _param2[8].Value = flow_StateActionDefine.ActionID;
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _updateStr, _param2);
                                 return true;
                         }
                         catch (Exception e)
@@ -437,19 +438,19 @@ namespace SinoSZToolFlowDesign.DAL
                 {
                         string _insertStr = "insert into FLOW_STATETRANSITION";
                         _insertStr += " (ID,STATEID,ACTIONNAME,ACTIONTITLE,TARGETSTATEID,ACTIONTYPE,USERTYPE,DISPLAYORDER,ACTIONPARAM) ";
-                        _insertStr += " values (:ID,:STATEID,:ACTIONNAME,:ACTIONTITLE,:TARGETSTATEID,:ACTIONTYPE,:USERTYPE,:DISPLAYORDER,:ACTIONPARAM) ";
+                        _insertStr += " values (@ID,@STATEID,@ACTIONNAME,@ACTIONTITLE,@TARGETSTATEID,@ACTIONTYPE,@USERTYPE,@DISPLAYORDER,@ACTIONPARAM) ";
 
 
-                        OracleParameter[] _param2 = {   
-                                        new OracleParameter(":ID", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":STATEID", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":ACTIONNAME", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":ACTIONTITLE", OracleDbType.Varchar2, 100),
-                                        new OracleParameter(":TARGETSTATEID", OracleDbType.Varchar2, 50),
-                                        new OracleParameter(":ACTIONTYPE", OracleDbType.Varchar2, 50) ,  
-                                        new OracleParameter(":USERTYPE", OracleDbType.Decimal) ,
-                                        new OracleParameter(":DISPLAYORDER", OracleDbType.Decimal),
-                                        new OracleParameter(":ACTIONPARAM", OracleDbType.Varchar2,4000)          
+                        SqlParameter[] _param2 = {   
+                                        new SqlParameter("@ID", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@STATEID", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@ACTIONNAME", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@ACTIONTITLE", SqlDbType.NVarChar, 100),
+                                        new SqlParameter("@TARGETSTATEID", SqlDbType.NVarChar, 50),
+                                        new SqlParameter("@ACTIONTYPE", SqlDbType.NVarChar, 50) ,  
+                                        new SqlParameter("@USERTYPE", SqlDbType.Decimal) ,
+                                        new SqlParameter("@DISPLAYORDER", SqlDbType.Decimal),
+                                        new SqlParameter("@ACTIONPARAM", SqlDbType.NVarChar,4000)          
                                  };
                         _param2[1].Value = flow_StateActionDefine.BeginState.ID;
                         _param2[2].Value = flow_StateActionDefine.ActionName;
@@ -463,7 +464,7 @@ namespace SinoSZToolFlowDesign.DAL
 
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _insertStr, _param2);
                                 return true;
                         }
                         catch
@@ -478,14 +479,14 @@ namespace SinoSZToolFlowDesign.DAL
 
                 public bool DeleteStateAction(string _actionID)
                 {
-                        string _sql = "Delete FROM FLOW_STATETRANSITION where ID=:ID";
+                        string _sql = "Delete FROM FLOW_STATETRANSITION where ID=@ID";
 
-                        OracleParameter[] _param = { new OracleParameter(":ID", OracleDbType.Varchar2, 50) };
+                        SqlParameter[] _param = { new SqlParameter("@ID", SqlDbType.NVarChar, 50) };
                         _param[0].Value = _actionID;
 
                         try
                         {
-                                OracleHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
+                                SqlHelper.ExecuteNonQuery(connectString, CommandType.Text, _sql, _param);
 
                                 return true;
                         }

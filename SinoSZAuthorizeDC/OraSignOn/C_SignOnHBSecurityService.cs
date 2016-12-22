@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using SinoSZBizAuthorize;
-using SinoSZDataAccessBase;
+using SinoSZJS.DataAccess.Sql;
 
 namespace SinoSZAuthorizeDC.OraSignOn
 {
@@ -64,7 +64,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
 				{
 					string _errmsg = string.Format("调用HB2004的AppSecurityCheckService进行用户身份认证时出错,错误信息为:{0}!\n name:{1}\n_pass:{2}\n",
 						e.Message, _name, _pass);
-					OralceLogWriter.WriteSystemLog(_errmsg, "ERROR");
+                    LogWriter.WriteSystemLog(_errmsg, "ERROR");
 				}
 			}
 			return _ret;

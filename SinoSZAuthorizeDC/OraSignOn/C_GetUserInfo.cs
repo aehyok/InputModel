@@ -3,12 +3,13 @@ using System.Collections;
 using System.Data;
 using System.Text;
 using Oracle.DataAccess.Client;
-using SinoSZDataAccessBase;
 using SinoSZBaseClass.Authorize;
 using System.Collections.Generic;
 using SinoSZBaseClass.Misc;
 using SinoSZBaseClass.SystemLog;
 using System.Diagnostics;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZAuthorizeDC.OraSignOn
 {
@@ -51,15 +52,15 @@ namespace SinoSZAuthorizeDC.OraSignOn
             StringBuilder _sb = new StringBuilder();
             _sb.Append("SELECT zhtj_zzjg2.GETDWDM_hgjs(:DWID) dwdm,zhtj_zzjg2.GETDWMC(:DWID2) DWMC ");
             _sb.Append("FROM DUAL ");
-            OracleParameter[] _param = {
-                                new OracleParameter(":DWID", OracleDbType.Decimal),
-                                new OracleParameter(":DWID2",OracleDbType.Decimal),
+            SqlParameter[] _param = {
+                                new SqlParameter(":DWID", SqlDbType.Decimal),
+                                new SqlParameter(":DWID2",SqlDbType.Decimal),
                            
                         };
             _param[0].Value = decimal.Parse(_adminPost.PostDwID);
             _param[1].Value = decimal.Parse(_adminPost.PostDwID);
 
-            OracleDataReader dr = OracleHelper.ExecuteReader(OracleHelper.ConnectionStringProfile, CommandType.Text,
+            SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringProfile, CommandType.Text,
                            _sb.ToString(), _param);
 
             while (dr.Read())
@@ -93,7 +94,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             if (_yhid == "0") return C_GetUserInfo.GetAdminInfo();
             SinoUser _su = new SinoUser();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 //取用户信息
                 DataTable _yhdt = new DataTable("YHTABLE");
@@ -103,10 +104,10 @@ namespace SinoSZAuthorizeDC.OraSignOn
                     _sb.Append("SELECT a.yhm,a.dwid,a.xm,b.xdjb,b.aqjb,zhtj_zzjg2.GETDWDM_hgjs(a.dwid) dwdm,");
                     _sb.Append("(select jgqc from qx2_zzjg c where c.zzjgid = a.dwid) DWMC FROM qx2_yhxx a ,qx_tjyhb b ");
                     _sb.Append(" where a.yhid = b.yhid and a.yhid=:YHID ");
-                    OracleCommand _cmd = new OracleCommand(_sb.ToString(), cn);
+                    SqlCommand _cmd = new SqlCommand(_sb.ToString(), cn);
                     _cmd.Parameters.Add(":YHID", decimal.Parse(_yhid));
                     
-                    OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                    SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                     _adapter.Fill(_yhdt);
                 }
                 catch (Exception ex)
@@ -179,17 +180,17 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             if (_userName == "Administrator") return C_GetUserInfo.GetAdminInfo();
             SinoUser _su = new SinoUser();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 //取用户信息
                 StringBuilder _sb = new StringBuilder();
                 _sb.Append("SELECT a.yhm,a.yhid,a.dwid,a.xm,b.xdjb,b.aqjb,zhtj_zzjg2.GETDWDM_hgjs(a.dwid) dwdm,");
                 _sb.Append("(select jgqc from qx2_zzjg c where c.zzjgid = a.dwid) DWMC FROM qx2_yhxx a ,qx_tjyhb b ");
                 _sb.Append(" where a.yhid = b.yhid and a.yhm=:YHM ");
-                OracleCommand _cmd = new OracleCommand(_sb.ToString(), cn);
+                SqlCommand _cmd = new SqlCommand(_sb.ToString(), cn);
                 _cmd.Parameters.Add(":YHM", _userName);
                 DataTable _yhdt = new DataTable("YHTABLE");
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_yhdt);
 
                 if (_yhdt.Rows.Count < 1)
@@ -244,7 +245,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             SinoUser _su = new SinoUser();
             string _select1 = string.Format("SELECT a.yhm,a.dwid,a.xm,b.xdjb,b.aqjb,zhtj_zzjg2.GETDWDM_hgjs(a.dwid) dwdm,(select jgqc from qx2_zzjg c where c.zzjgid = a.dwid) DWMC FROM qx2_yhxx a ,qx_tjyhb b where a.yhid = b.yhid and a.yhid={0} ", _yhid);
-            DataTable _yhdt = OracleHelper.Get_Data(_select1, "YHTABLE");
+            DataTable _yhdt = SqlHelper.Get_Data(_select1, "YHTABLE");
             if (_yhdt.Rows.Count < 1)
             {
                 //为未注册用户
@@ -275,22 +276,22 @@ namespace SinoSZAuthorizeDC.OraSignOn
         private static DataTable GetUserRightsByYHID(string _yhid, string _qxlx)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 _cmd.CommandText = "zhtj_zzjg2.Get_YHCZQX_own";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("nYHID", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("nYHID", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(_yhid);
 
-                OracleParameter _p2 = _cmd.Parameters.Add("strqxlx", OracleDbType.Varchar2, 1000);
+                SqlParameter _p2 = _cmd.Parameters.Add("strqxlx", SqlDbType.NVarChar, 1000);
                 _p2.Value = _qxlx;
 
-                _cmd.Parameters.Add("curQX", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curQX", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
                 cn.Close();
                 return _dt;
@@ -311,7 +312,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 _name = _name.PadRight(7, '0');
             }
             string _select = string.Format("SELECT a.YHID FROM qx2_yhxx a where a.hggh = '{0}'", _name);
-            DataTable _dt = OracleHelper.Get_Data(_select, "TABLE");
+            DataTable _dt = SqlHelper.Get_Data(_select, "TABLE");
             if (_dt.Rows.Count != 1) return "";
             return _dt.Rows[0]["YHID"].ToString();
         }
@@ -326,10 +327,10 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             string _select = string.Format("SELECT a.YHID FROM qx2_yhxx a where a.yhm = '{0}' or a.hggh ='{1}'", _name,
                                ((_name.Length < 7) ? _name.PadRight(7, '0') : _name));
-            DataTable _dt = OracleHelper.Get_Data(_select, "TABLE");
+            DataTable _dt = SqlHelper.Get_Data(_select, "TABLE");
             if (_dt == null || _dt.Rows.Count == 0)
             {
-                OralceLogWriter.WriteSystemLog(string.Format("取未注册用户[{0}]的YHID信息", _name), "INFO");
+                LogWriter.WriteSystemLog(string.Format("取未注册用户[{0}]的YHID信息", _name), "INFO");
                 return "-1";
             }
 
@@ -349,22 +350,22 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_DwTree(string _qxsjdwid, decimal _levelNum)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 _cmd.CommandText = "zhtj_zzjg2.get_tree_js_qx";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("nParent", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("nParent", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(_qxsjdwid);
 
-                OracleParameter _p2 = _cmd.Parameters.Add("nLevel", OracleDbType.Decimal);
+                SqlParameter _p2 = _cmd.Parameters.Add("nLevel", SqlDbType.Decimal);
                 _p2.Value = _levelNum;
 
-                _cmd.Parameters.Add("curTree", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curTree", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
                 cn.Close();
             }
@@ -380,22 +381,22 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_DwTreeByDWDM(string _dwdm, decimal _levelNum)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 _cmd.CommandText = "zhtj_zzjg2.get_tree_js_dwdm";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("strparentdwdm", OracleDbType.Varchar2);
+                SqlParameter _p1 = _cmd.Parameters.Add("strparentdwdm", SqlDbType.NVarChar);
                 _p1.Value = _dwdm;
 
-                OracleParameter _p2 = _cmd.Parameters.Add("nLevel", OracleDbType.Decimal);
+                SqlParameter _p2 = _cmd.Parameters.Add("nLevel", SqlDbType.Decimal);
                 _p2.Value = _levelNum;
 
-                _cmd.Parameters.Add("curtree", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curtree", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
                 cn.Close();
             }
@@ -412,15 +413,15 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             DataTable _dt = new DataTable();
             string _selectsql = "select a.*,b.yhm,b.xm,b.yjdz,b.ZZJGID,B.JGmc,b.zzjgdm from zfpg_kpz a,qx_yhxxst b where a.yhid = b.YHID and a.zfpgjb=:ZFPGJB";
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand(_selectsql, cn);
+                SqlCommand _cmd = new SqlCommand(_selectsql, cn);
                 //需要新的存贮过程
                 _cmd.CommandType = CommandType.Text;
 
-                OracleParameter _p1 = _cmd.Parameters.Add(":ZFPGJB", OracleDbType.Varchar2);
+                SqlParameter _p1 = _cmd.Parameters.Add(":ZFPGJB", SqlDbType.NVarChar);
                 _p1.Value = _dwid;
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
 
                 cn.Close();
@@ -438,23 +439,23 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_YH_InNode(string _dwid, decimal _levelNum)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 //需要新的存贮过程
                 _cmd.CommandText = "zhtj_zzjg2.Get_yhxx_JS_qx";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("nParent", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("nParent", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(_dwid);
 
-                OracleParameter _p2 = _cmd.Parameters.Add("nLevel", OracleDbType.Decimal);
+                SqlParameter _p2 = _cmd.Parameters.Add("nLevel", SqlDbType.Decimal);
                 _p2.Value = _levelNum;
 
-                _cmd.Parameters.Add("curyhxx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curyhxx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
 
                 cn.Close();
@@ -469,12 +470,12 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             DataTable _dt = new DataTable("QX_JSDYB");
             string _selectsql = "select * from qx_jsdyb where (ssdwid is null) or (ssdwid = :QXID) ";
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand(_selectsql, cn);
+                SqlCommand _cmd = new SqlCommand(_selectsql, cn);
                 _cmd.CommandType = CommandType.Text;
                 _cmd.Parameters.Add(":QXID", decimal.Parse(SinoUserCtx.CurUser.QxszDWID));
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
                 cn.Close();
                 return _dt;
@@ -490,20 +491,20 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_RightsByRoleID(string _jsid)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 //需要新的存贮过程
                 _cmd.CommandText = "zhtj_zzjg2.get_jslb";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("njsid", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("njsid", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(_jsid);
 
-                _cmd.Parameters.Add("curqx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curqx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
 
                 cn.Close();
@@ -536,12 +537,12 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 _fg = ",";
             }
             _sb.Append(" ) ORDER BY T1.DISPLAYORDER ");
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand(_sb.ToString(), cn);
+                SqlCommand _cmd = new SqlCommand(_sb.ToString(), cn);
                 _cmd.CommandType = CommandType.Text;
                 _cmd.Parameters.Add(":JSID", decimal.Parse(_jsid));
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
                 cn.Close();
                 return _dt;
@@ -558,11 +559,11 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static bool Update_RoleData(DataTable _savedt)
         {
             string cmdStr = "SELECT * FROM QX_JSDYB";
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleTransaction tx = cn.BeginTransaction();
-                OracleDataAdapter adapter = new OracleDataAdapter(cmdStr, cn);
-                OracleCommandBuilder builder = new OracleCommandBuilder(adapter);
+                SqlTransaction tx = cn.BeginTransaction();
+                SqlDataAdapter adapter = new SqlDataAdapter(cmdStr, cn);
+                SqlCommandBuilder builder = new SqlCommandBuilder(adapter);
                 adapter.Update(_savedt);
                 tx.Commit();
                 cn.Close();
@@ -579,7 +580,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         {
             string _sql = string.Format(" select a.jsid,a.jsmc,a.jssm,a.ssdwid from qx_yhjsgxb t,qx_jsdyb a ");
             _sql += string.Format("where a.jsid = t.jsid and yhid = {0}", yhid);
-            DataTable _dt = OracleHelper.Get_Data(_sql, "ROLES");
+            DataTable _dt = SqlHelper.Get_Data(_sql, "ROLES");
             ArrayList roles = new ArrayList();
             foreach (DataRow _dr in _dt.Rows)
             {
@@ -597,19 +598,19 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_RightsByYHID(string yhid)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 _cmd.CommandText = "zhtj_zzjg2.Get_YHCZQX";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("nYHID", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("nYHID", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(yhid);
 
-                _cmd.Parameters.Add("curQX", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curQX", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
 
                 cn.Close();
@@ -629,7 +630,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
             foreach (SinoRole _sr in _roles)
             {
                 string _ins = string.Format("insert into qx_yhjsgxb (id,yhid,jsid) values (seq_qx2.nextval,{0},{1}) ", yhid, _sr.RoleID);
-                OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _ins);
+                SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _ins);
             }
             return true;
         }
@@ -643,7 +644,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static bool Del_RoleFromYH(string yhid, string _jsid)
         {
             string _del = string.Format("delete from qx_yhjsgxb where yhid = {0} and jsid = {1} ", yhid, _jsid);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _del);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del);
             return true;
         }
 
@@ -656,22 +657,22 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static DataTable Get_RY_InNode(string _dwid, decimal levelnum)
         {
             DataTable _dt = new DataTable();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand();
+                SqlCommand _cmd = new SqlCommand();
                 _cmd.CommandText = "zhtj_zzjg2.Get_ryxx_JS_qx";
                 _cmd.CommandType = CommandType.StoredProcedure;
                 _cmd.Connection = cn;
 
-                OracleParameter _p1 = _cmd.Parameters.Add("nParent", OracleDbType.Decimal);
+                SqlParameter _p1 = _cmd.Parameters.Add("nParent", SqlDbType.Decimal);
                 _p1.Value = decimal.Parse(_dwid);
 
-                OracleParameter _p2 = _cmd.Parameters.Add("nLevel", OracleDbType.Decimal);
+                SqlParameter _p2 = _cmd.Parameters.Add("nLevel", SqlDbType.Decimal);
                 _p2.Value = levelnum;
 
-                _cmd.Parameters.Add("curryxx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
+                //_cmd.Parameters.Add("curryxx", OracleDbType.RefCursor, DBNull.Value, ParameterDirection.Output);
 
-                OracleDataAdapter _adapter = new OracleDataAdapter(_cmd);
+                SqlDataAdapter _adapter = new SqlDataAdapter(_cmd);
                 _adapter.Fill(_dt);
 
                 cn.Close();
@@ -691,11 +692,11 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static bool Add_User(string _name, string _pass, string _userid, string _xm, string _des)
         {
             string _selectStr = string.Format("select count(*) from QX_TJYHB WHERE YHID ={0} and YHM = '{1}'", _userid, _name);
-            Decimal i = (decimal)OracleHelper.ExecuteScalar(OracleHelper.ConnectionStringProfile, CommandType.Text, _selectStr);
+            Decimal i = (decimal)SqlHelper.ExecuteScalar(SqlHelper.ConnectionStringProfile, CommandType.Text, _selectStr);
             if (i > 0) return false;
 
             string _insertStr = string.Format("insert into QX_TJYHB (YHID,YHM,KL,XDJB,AQJB) values ({0},'{1}','{2}','科室级',0)", _userid, _name, _pass);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _insertStr);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _insertStr);
             return true;
         }
 
@@ -707,13 +708,13 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static bool Del_YHByID(string u_id)
         {
             string _del = string.Format("delete from qx_yhjsgxb where yhid={0}", u_id);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _del);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del);
 
             _del = string.Format("delete from qx_yhqxb where yhid = {0}", u_id);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _del);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del);
 
             _del = string.Format("delete from qx_tjyhb where yhid = {0}", u_id);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _del);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _del);
             return true;
         }
 
@@ -726,7 +727,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static bool Update_YHJB(string yhid, string _value)
         {
             string _update = string.Format("update qx_tjyhb set xdjb = '{1}' where yhid = {0}", yhid, _value);
-            OracleHelper.ExecuteNonQuery(OracleHelper.ConnectionStringProfile, CommandType.Text, _update);
+            SqlHelper.ExecuteNonQuery(SqlHelper.ConnectionStringProfile, CommandType.Text, _update);
             return true;
         }
 
@@ -739,11 +740,11 @@ namespace SinoSZAuthorizeDC.OraSignOn
         /// <returns></returns>
         public static bool Update_RoleToRightData(DataTable QxData, DataTable QvQxData, string _jsid)
         {
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleTransaction tx = cn.BeginTransaction();
+                SqlTransaction tx = cn.BeginTransaction();
                 string _del = "delete from qx_jsqxgxb where jsid =:JSID";
-                OracleCommand _cmd = new OracleCommand(_del, cn);
+                SqlCommand _cmd = new SqlCommand(_del, cn);
                 _cmd.Parameters.Add(":JSID", decimal.Parse(_jsid));
                 _cmd.ExecuteNonQuery();
 
@@ -751,7 +752,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 {
                     string _jbstr = _dr.IsNull("QXJB") ? "null" : _dr["QXJB"].ToString();
                     string _ins = "insert into qx_jsqxgxb (ID,JSID,QXID,QXJB) values (seq_qx2.nextval,:JSID,:QXID,:QXJB)";
-                    OracleCommand _cmd2 = new OracleCommand(_ins, cn);
+                    SqlCommand _cmd2 = new SqlCommand(_ins, cn);
                     _cmd2.Parameters.Add(":JSID", decimal.Parse(_jsid));
                     _cmd2.Parameters.Add(":QXID", decimal.Parse(_dr["QXID"].ToString()));
                     _cmd2.Parameters.Add(":QXJB", _jbstr);
@@ -759,14 +760,14 @@ namespace SinoSZAuthorizeDC.OraSignOn
 
                 }
                 string _delqv = string.Format("delete from qx_jscxmxgxb where jsid=:JSID", _jsid);
-                _cmd = new OracleCommand(_delqv, cn);
+                _cmd = new SqlCommand(_delqv, cn);
                 _cmd.Parameters.Add(":JSID", decimal.Parse(_jsid));
                 _cmd.ExecuteNonQuery();
 
                 foreach (DataRow _dr in QvQxData.Select("SFY=1"))
                 {
                     string _ins = "insert into qx_jscxmxgxb (ID,JSID,NAMESPACE,VIEWID) values (seq_qx2.nextval,:JSID,:NAMESPACE,:VIEWID)";
-                    OracleCommand _cmd2 = new OracleCommand(_ins, cn);
+                    SqlCommand _cmd2 = new SqlCommand(_ins, cn);
                     _cmd2.Parameters.Add(":JSID", decimal.Parse(_jsid));
                     _cmd2.Parameters.Add(":NAMESPACE", _dr["NAMESPACE"].ToString());
                     _cmd2.Parameters.Add(":VIEWID", decimal.Parse(_dr["VIEWID"].ToString()));
@@ -789,22 +790,22 @@ namespace SinoSZAuthorizeDC.OraSignOn
         /// <returns></returns>
         public static bool Update_RoleToRightData(string _jsid, string _jsmc, string _jssm, DataTable QxData, DataTable QvQxData)
         {
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleTransaction tx = cn.BeginTransaction();
+                SqlTransaction tx = cn.BeginTransaction();
 
                 string _del = "delete from qx_jsqxgxb where jsid = :JSID";
-                OracleCommand _cmd = new OracleCommand(_del, cn);
+                SqlCommand _cmd = new SqlCommand(_del, cn);
                 _cmd.Parameters.Add(":JSID", decimal.Parse(_jsid));
                 _cmd.ExecuteNonQuery();
 
                 string _delqv = "delete from qx_jscxmxgxb where jsid=:JSID";
-                _cmd = new OracleCommand(_delqv, cn);
+                _cmd = new SqlCommand(_delqv, cn);
                 _cmd.Parameters.Add(":JSID", decimal.Parse(_jsid));
                 _cmd.ExecuteNonQuery();
 
                 string _update = string.Format("update qx_jsdyb set JSMC=:JSMC,JSSM=:JSSM where JSID=:JSID");
-                OracleCommand _cmdupdate = new OracleCommand(_update, cn);
+                SqlCommand _cmdupdate = new SqlCommand(_update, cn);
                 _cmdupdate.Parameters.Add(":JSMC", _jsmc);
                 _cmdupdate.Parameters.Add(":JSSM", _jssm);
                 _cmdupdate.Parameters.Add(":JSID", decimal.Parse(_jsid));
@@ -814,7 +815,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 {
                     string _jbstr = _dr.IsNull("QXJB") ? "null" : _dr["QXJB"].ToString();
                     string _ins = "insert into qx_jsqxgxb (ID,JSID,QXID,QXJB) values (seq_qx2.nextval,:JSID,:QXID,:QXJB)";
-                    OracleCommand _cmd2 = new OracleCommand(_ins, cn);
+                    SqlCommand _cmd2 = new SqlCommand(_ins, cn);
                     _cmd2.Parameters.Add(":JSID", decimal.Parse(_jsid));
                     _cmd2.Parameters.Add(":QXID", decimal.Parse(_dr["QXID"].ToString()));
                     _cmd2.Parameters.Add(":QXJB", _jbstr);
@@ -824,7 +825,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 foreach (DataRow _dr in QvQxData.Select("SFY=1"))
                 {
                     string _ins = "insert into qx_jscxmxgxb (ID,JSID,NAMESPACE,VIEWID) values (seq_qx2.nextval,:JSID,:NAMESPACE,:VIEWID)";
-                    OracleCommand _cmd2 = new OracleCommand(_ins, cn);
+                    SqlCommand _cmd2 = new SqlCommand(_ins, cn);
                     _cmd2.Parameters.Add(":JSID", decimal.Parse(_jsid));
                     _cmd2.Parameters.Add(":NAMESPACE", _dr["NAMESPACE"].ToString());
                     _cmd2.Parameters.Add(":VIEWID", decimal.Parse(_dr["VIEWID"].ToString()));
@@ -855,9 +856,9 @@ namespace SinoSZAuthorizeDC.OraSignOn
             {
                 _insert.Append(_ssdwid);
             }
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand(_insert.ToString(), cn);
+                SqlCommand _cmd = new SqlCommand(_insert.ToString(), cn);
                 _cmd.Parameters.Add(":JSMC", _jsmc);
                 _cmd.ExecuteNonQuery();
                 cn.Close();
@@ -870,7 +871,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static SinoUser GetNoRegisterUserByUserID(decimal _yhid)
         {
             SinoUser _su = new SinoUser();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
                 {
@@ -880,10 +881,10 @@ namespace SinoSZAuthorizeDC.OraSignOn
                     _sb.Append(" join qx2_hgyh yh on hb.GUID=yh.YHGUID ");
                     _sb.Append(" where yh.YHID=:YHID and ROWNUM=1 ");
 
-                    OracleCommand _cmd = new OracleCommand(_sb.ToString(), cn);
+                    SqlCommand _cmd = new SqlCommand(_sb.ToString(), cn);
                     _cmd.Parameters.Add(":YHID", _yhid);
 
-                    OracleDataReader dr = _cmd.ExecuteReader();
+                    SqlDataReader dr = _cmd.ExecuteReader();
                     while (dr.Read())
                     {
                         _su.LoginName = dr.IsDBNull(0) ? "" : dr.GetString(0);
@@ -926,7 +927,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
         public static SinoUser GetNoRegisterUserByUserName(string _name)
         {
             SinoUser _su = new SinoUser();
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 StringBuilder _sb = new StringBuilder();
                 _sb.Append(" select yh.YHM,yh.YHID,yh.XM,jg.ZZJGID DWID,jg.ZZJGDM DWDM ,jg.JGQC DWMC from yw_qd_hbryxx hb ");
@@ -934,10 +935,10 @@ namespace SinoSZAuthorizeDC.OraSignOn
                 _sb.Append(" join qx2_hgyh yh on hb.GUID=yh.YHGUID ");
                 _sb.Append(" where hb.YHM=:LOGONNAME and ROWNUM=1 ");
 
-                OracleCommand _cmd = new OracleCommand(_sb.ToString(), cn);
+                SqlCommand _cmd = new SqlCommand(_sb.ToString(), cn);
                 _cmd.Parameters.Add(":LOGONNAME", _name);
 
-                OracleDataReader dr = _cmd.ExecuteReader();
+                SqlDataReader dr = _cmd.ExecuteReader();
                 while (dr.Read())
                 {
                     _su.LoginName = _name;

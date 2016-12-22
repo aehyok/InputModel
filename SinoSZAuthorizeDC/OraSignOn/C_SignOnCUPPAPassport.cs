@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SinoSZBizAuthorize;
-using SinoSZDataAccessBase;
 using System.Configuration;
 using System.IO;
 using SinoSZAuthorizeDC.Cuppa;
 using Oracle.DataAccess.Client;
+using SinoSZJS.DataAccess.Sql;
+using System.Data.SqlClient;
 
 namespace SinoSZAuthorizeDC.OraSignOn
 {
@@ -89,7 +90,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
             catch (Exception e1)
             {
                 string _error = string.Format("采用三统一平台验证口令出错:{0}\n Name={1} Pass={2}", e1.Message, _name, _pass);
-                OralceLogWriter.WriteSystemLog(_error, "ERROR");
+                LogWriter.WriteSystemLog(_error, "ERROR");
                 if (CUPPA_Check_WriteLog) WriteCUPPALog(_error);
                 return false;
             }
@@ -112,9 +113,9 @@ namespace SinoSZAuthorizeDC.OraSignOn
         private static string SQL_GetCSB = @"select CSDATA from zhtj_csb where CSNAME=:CSNAME";
         private static string GetCSB(string _csname)
         {
-            using (OracleConnection cn = OracleHelper.OpenConnection())
+            using (SqlConnection cn = SqlHelper.OpenConnection())
             {
-                OracleCommand _cmd = new OracleCommand(SQL_GetCSB, cn);
+                SqlCommand _cmd = new SqlCommand(SQL_GetCSB, cn);
                 _cmd.Parameters.Add(":CSNAME", _csname);
                 object _ret = _cmd.ExecuteScalar();
                 if (_ret == null) return "";

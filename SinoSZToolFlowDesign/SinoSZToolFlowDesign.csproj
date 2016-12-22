@@ -218,9 +218,9 @@
       <Project>{ABDD3C32-17A9-4EA0-BFF8-7FCBEDF38F5D}</Project>
       <Name>SinoSZClientBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SinoSZDataAccessBase\SinoSZDataAccessBase.csproj">
-      <Project>{9C92E27D-3DE0-4387-B9E3-9D2887414503}</Project>
-      <Name>SinoSZDataAccessBase</Name>
+    <ProjectReference Include="..\SinoSZJS.DataAccess.Sql\SinoSZJS.DataAccess.Sql.csproj">
+      <Project>{0CCDAD03-D337-4437-BD04-62FFFD03681A}</Project>
+      <Name>SinoSZJS.DataAccess.Sql</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

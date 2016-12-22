@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SinoSZBizAuthorize;
-using SinoSZDataAccessBase;
 using System.Data;
 using System.DirectoryServices;
 using System.Configuration;
+using SinoSZJS.DataAccess.Sql;
 
 namespace SinoSZAuthorizeDC.OraSignOn
 {
@@ -66,7 +66,7 @@ namespace SinoSZAuthorizeDC.OraSignOn
 			}
 			catch (Exception e1)
 			{
-				OralceLogWriter.WriteSystemLog(string.Format("验证口令出错:{0}\n Name={1} Pass={2}", e1.Message, _name, _pass), "ERROR");
+                LogWriter.WriteSystemLog(string.Format("验证口令出错:{0}\n Name={1} Pass={2}", e1.Message, _name, _pass), "ERROR");
 				return false;
 			}
 		}

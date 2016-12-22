@@ -95,7 +95,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CrystalDecisions.ReportSource, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Printing.v12.2.Core, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Data.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Utils.v12.2, Version=12.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -222,10 +221,6 @@
     <ProjectReference Include="..\SinoSZDataAccessBase\SinoSZDataAccessBase.csproj">
       <Project>{9C92E27D-3DE0-4387-B9E3-9D2887414503}</Project>
       <Name>SinoSZDataAccessBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SinoSZPluginFramework\SinoSZPluginFramework.csproj">
-      <Project>{C855A639-511E-4B4F-8A71-3224083C5D40}</Project>
-      <Name>SinoSZPluginFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="SinoSZMetaDataBase.Define.MD_Namespace" Collapsed="true">
+    <Position X="5.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_Namespace.cs</FileName>
+      <HashCode>EAAhwBDAAASoAAAGAAAQAAAAEBQQAACQAAAAAAAAKAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Nodes" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Nodes" Type="SinoSZMetaDataBase.Define.MD_Nodes">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.671" Y="0.352" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_Table" Collapsed="true">
+    <Position X="5.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_Table.cs</FileName>
+      <HashCode>AAADAUAkACQgQABEIAAAAAAAEAQAIAAiAAAIAQggDIA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Namespace" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Namespace" Type="SinoSZMetaDataBase.Define.MD_Namespace">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.961" Y="0.767" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_TableColumn" Collapsed="true">
+    <Position X="8.75" Y="6" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\MD_TableColumn.cs</FileName>
+      <HashCode>CAABQDAEBAQoIoAACANAQAhAkQQwQIAEFVEQAAEIMKg=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Table" />
+      <Property Name="RefTable" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Table" Type="SinoSZMetaDataBase.Define.MD_Table">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.225" Y="0.081" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="RefTable" Type="SinoSZMetaDataBase.Define.MD_RefTable">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.838" Y="0.935" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_QueryModel" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Define\MD_QueryModel.cs</FileName>
+      <HashCode>AAABwAAAACUgABAEAAAQBAAAEAQQIAAAgQAABEAAq0g=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Namespace" />
+    </ShowAsAssociation>
+    <AssociationLine Name="Namespace" Type="SinoSZMetaDataBase.Define.MD_Namespace" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.281" Y="6.25" />
+        <Point X="4.281" Y="5.731" />
+        <Point X="6.125" Y="5.731" />
+        <Point X="6.125" Y="4.509" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.173" Y="0.945" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_ViewTable" Collapsed="true">
+    <Position X="5.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_ViewTable.cs</FileName>
+      <HashCode>AQAFQQAAAIQEggAEAAQAQAAAEQQUAAAACEBAAUggEgQ=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="QueryModel" />
+      <Property Name="ViewTableType" />
+      <Property Name="ViewTableRelationType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_ViewTableColumn" Collapsed="true">
+    <Position X="8.75" Y="7.25" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\MD_ViewTableColumn.cs</FileName>
+      <HashCode>AQAAAQABQAQAIIAmAABIAAAAAAQAAAAAAQAIAIABCAI=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ViewTable" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_QueryModelGroup" Collapsed="true">
+    <Position X="2.75" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Define\MD_QueryModelGroup.cs</FileName>
+      <HashCode>AAAASAAAAAQAgAAAAAAAAAAAEAAAIACAAAAAAAEAAAU=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Namespace" />
+    </ShowAsAssociation>
+    <AssociationLine Name="Namespace" Type="SinoSZMetaDataBase.Define.MD_Namespace">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.266" Y="0.091" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_QueryModelGroupItem" Collapsed="true">
+    <Position X="2.5" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\MD_QueryModelGroupItem.cs</FileName>
+      <HashCode>AAAAAAgAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAIAAg=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="QueryModelGroup" />
+    </ShowAsAssociation>
+    <AssociationLine Name="QueryModelGroup" Type="SinoSZMetaDataBase.Define.MD_QueryModelGroup">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.348" Y="0.226" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_RefTable" Collapsed="true">
+    <Position X="8.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_RefTable.cs</FileName>
+      <HashCode>AAACAAIAACQgAAAEAAAAAAAgJgQAMAAABAAACAAACAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Namespace" />
+      <Property Name="RefDownloadMode" />
+      <Property Name="RefParamMode" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_Nodes" Collapsed="true">
+    <Position X="5.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_Nodes.cs</FileName>
+      <HashCode>AAAAAQAAAAQAgAEEQAABAAEAEAAIABAAAAAAAABAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_Menu" Collapsed="true">
+    <Position X="8.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_Menu.cs</FileName>
+      <HashCode>AAAAQBMIAACAAAAMAAECAAAQJCAQBBAAAAACIAQAQAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MD_Nodes" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_GuideLineGroup" Collapsed="true">
+    <Position X="2.5" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\MD_GuideLineGroup.cs</FileName>
+      <HashCode>CAACABgAACBAAAAEAAAAAAAAAAAAABQSQAAEAACgAKA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MD_Nodes" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_GuideLine" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MD_GuideLine.cs</FileName>
+      <HashCode>QAAARBAAAAAAgAAGAkFgAQgAAAAQAAgIABAEgAAAgIE=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MD_GuideLineGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_GuideLineFieldName" Collapsed="true">
+    <Position X="4.5" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\MD_GuideLineFieldName.cs</FileName>
+      <HashCode>AAABQAAAAAAEAAAAAAAAAAAAEACwAIAEIAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SinoSZMetaDataBase.Define.MD_GuideLineDetailDefine" Collapsed="true">
+    <Position X="7.25" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <FileName>Define\MD_GuideLineDetailDefine.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAACAQAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SinoSZMetaDataBase.Define.MDType_ViewTable" Collapsed="true">
+    <Position X="3" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Define\ViewTableType.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SinoSZMetaDataBase.Define.MDType_ViewTableRelation" Collapsed="true">
+    <Position X="5.25" Y="8.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Define\ViewTableRelationType.cs</FileName>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SinoSZMetaDataBase.Define.MDType_RefDownloadMode" Collapsed="true">
+    <Position X="11.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Define\MDType_RefDownloadMode.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SinoSZMetaDataBase.Define.MDType_RefParamMode" Collapsed="true">
+    <Position X="11.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Define\MDType_RefParamMode.cs</FileName>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+</ClassDiagram>

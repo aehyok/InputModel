@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'X86|AnyCPU' ">
+    <OutputPath>bin\X86\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SinoSZWebVss|x86' ">
+    <OutputPath>bin\x86\SinoSZWebVss\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>..\..\SinoSZWebVSS\BinLib\\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'JSCASys|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\JSCASys\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FsDiSys|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\FsDiSys\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FsDiSystem|x86' ">
+    <OutputPath>bin\x86\FsDiSystem\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SHThread|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\SHThread\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'OnlyFor32|x86' ">
+    <OutputPath>bin\x86\OnlyFor32\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F27910C8-F953-4997-A151-A9B57277CF4D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SinoSZBaseClass</RootNamespace>
+    <AssemblyName>SinoSZBaseClass</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SHThread|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\SHThread\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FsDiSystem|AnyCPU' ">
+    <OutputPath>bin\FsDiSystem\</OutputPath>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FsDiSys|AnyCPU' ">
+    <OutputPath>bin\FsDiSys\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'JSCASys|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\JSCASys\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SinoSZWebVss|AnyCPU' ">
+    <OutputPath>..\..\SinoSZWebVSS\BinLib\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>..\..\SinoSZWebVSS\BinLib\\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'OnlyFor32|AnyCPU' ">
+    <OutputPath>bin\OnlyFor32\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'X86|x86' ">
+    <OutputPath>bin\x86\X86\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\SinoSZBaseClass.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleAssemblies>
+    </CodeAnalysisRuleAssemblies>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Authorize\CSSinoRole.cs" />
+    <Compile Include="Authorize\FindOrgByStr.cs" />
+    <Compile Include="Authorize\IAuthorize.cs" />
+    <Compile Include="Authorize\IUserInfoCTX.cs" />
+    <Compile Include="Authorize\LogonUserLib.cs" />
+    <Compile Include="Authorize\RemotingUserCTX.cs" />
+    <Compile Include="Authorize\RightFunctions.cs" />
+    <Compile Include="Authorize\SessionClass.cs" />
+    <Compile Include="Authorize\SinoOrganize.cs" />
+    <Compile Include="Authorize\SinoOrganizeComparer.cs" />
+    <Compile Include="Authorize\SinoPost.cs" />
+    <Compile Include="Authorize\SinoPricipal.cs" />
+    <Compile Include="Authorize\SinoRightItem.cs" />
+    <Compile Include="Authorize\SinoRole.cs" />
+    <Compile Include="Authorize\SinoUser.cs" />
+    <Compile Include="Authorize\SinoUserCTX.cs" />
+    <Compile Include="Authorize\TicketLib.cs" />
+    <Compile Include="Authorize\UserRightItem.cs" />
+    <Compile Include="AutoUpdater\AutoUpdateConfig.cs" />
+    <Compile Include="Authorize\SinoSZTicketInfo.cs" />
+    <Compile Include="AutoUpdater\ClientPluginInfo.cs" />
+    <Compile Include="AutoUpdater\PluginConfigurationCollection.cs" />
+    <Compile Include="AutoUpdater\PluginConfigurationElement.cs" />
+    <Compile Include="AutoUpdater\PluginConfigurationSection.cs" />
+    <Compile Include="AutoUpdater\UpdateFileInfo.cs" />
+    <Compile Include="CalcMemory.cs" />
+    <Compile Include="CloneSerializeObject.cs" />
+    <Compile Include="CommonEventArgs.cs" />
+    <Compile Include="Config\LocalConfigData.cs" />
+    <Compile Include="Config\ServerConfig.cs" />
+    <Compile Include="CooperationWorkBench\Enum_ToDoStatus.cs" />
+    <Compile Include="CooperationWorkBench\IProjectExecutor.cs" />
+    <Compile Include="CooperationWorkBench\IProjectPlan.cs" />
+    <Compile Include="CooperationWorkBench\IProjectToDo.cs" />
+    <Compile Include="CooperationWorkBench\IProjectType.cs" />
+    <Compile Include="CooperationWorkBench\ProjectPlan.cs" />
+    <Compile Include="CooperationWorkBench\ProjectToDo.cs" />
+    <Compile Include="CooperationWorkBench\ProjectTransaction.cs" />
+    <Compile Include="CooperationWorkBench\ProjectType.cs" />
+    <Compile Include="CooperationWorkBench\ProjectUser.cs" />
+    <Compile Include="DataFormater\DateTimeHalfYearFormater.cs" />
+    <Compile Include="DataFormater\DateTimeSeasonFormater.cs" />
+    <Compile Include="DateTimeDefine\SinoSZ_Season.cs" />
+    <Compile Include="DeleteEntity\DeletedEntity.cs" />
+    <Compile Include="CooperationWorkBench\Enum_ExecutorType.cs" />
+    <Compile Include="Excel\ExcelColumnAlias.cs" />
+    <Compile Include="Expression\Expression.cs" />
+    <Compile Include="Expression\ExpressionException.cs" />
+    <Compile Include="Expression\ExpressionToken.cs" />
+    <Compile Include="Expression\FuncFactory.cs" />
+    <Compile Include="Expression\FunctionBase.cs" />
+    <Compile Include="Expression\Functions.cs" />
+    <Compile Include="Expression\OperatorType.cs" />
+    <Compile Include="Expression\QueryExpression.cs" />
+    <Compile Include="MenuType\firstPageItem.cs" />
+    <Compile Include="MenuType\ISinoMenu.cs" />
+    <Compile Include="MenuType\MenuTypeBase.cs" />
+    <Compile Include="MenuType\MenuTypeCollection.cs" />
+    <Compile Include="MenuType\MenuTypeCreator.cs" />
+    <Compile Include="MenuType\MTC_AJLL.cs" />
+    <Compile Include="MenuType\MTC_AJYJ.cs" />
+    <Compile Include="MenuType\MTC_BAJD.cs" />
+    <Compile Include="MenuType\MTC_NAMESPACE.cs" />
+    <Compile Include="MenuType\MTC_QD_QYXX.cs" />
+    <Compile Include="MenuType\MTC_QD_SJBD.cs" />
+    <Compile Include="MenuType\MTC_QD_SJJY.cs" />
+    <Compile Include="MenuType\MTC_QD_SJWH.cs" />
+    <Compile Include="MenuType\MTC_QD_TJBB.cs" />
+    <Compile Include="MenuType\MTC_REPORT.cs" />
+    <Compile Include="MenuType\MTC_StartPage.cs" />
+    <Compile Include="MenuType\MTC_WebFirstPage.cs" />
+    <Compile Include="MenuType\MTC_WFWGDA.cs" />
+    <Compile Include="MenuType\MTC_XTGL.cs" />
+    <Compile Include="MenuType\MTC_XXBL.cs" />
+    <Compile Include="MenuType\MTC_ZFPG.cs" />
+    <Compile Include="MenuType\SinoMenuComparer.cs" />
+    <Compile Include="MenuType\SinoMenuFatherFinder.cs" />
+    <Compile Include="MenuType\SinoMenuItem.cs" />
+    <Compile Include="MenuType\SinoMTC_MetaDataManager.cs" />
+    <Compile Include="Misc\BinDataTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Misc\CompressSink.cs" />
+    <Compile Include="Misc\ConfigFile.cs" />
+    <Compile Include="Misc\Config_IcsChannel.cs" />
+    <Compile Include="Misc\Date.cs" />
+    <Compile Include="Misc\MD5Base64.cs" />
+    <Compile Include="Misc\RemotingClientSvc.cs" />
+    <Compile Include="Misc\RemotingContextData.cs" />
+    <Compile Include="Misc\RemotingServerSvc.cs" />
+    <Compile Include="Misc\RemotingUtils.cs" />
+    <Compile Include="Misc\SHA256Base64.cs" />
+    <Compile Include="Misc\SinoSZClientSponsor.cs" />
+    <Compile Include="Misc\SinoSZRemoteObjectTracker.cs" />
+    <Compile Include="Misc\SinoSZServerEventClass.cs" />
+    <Compile Include="Misc\SinoSZServerObject.cs" />
+    <Compile Include="Misc\StrUtils.cs" />
+    <Compile Include="Misc\Time.cs" />
+    <Compile Include="Misc\Utils.cs" />
+    <Compile Include="Misc\Win32API.cs" />
+    <Compile Include="Notify\NotifyInfo.cs" />
+    <Compile Include="OrganizeExt\OrgExtComparer.cs" />
+    <Compile Include="OrganizeExt\OrgExtFieldDefine.cs" />
+    <Compile Include="OrganizeExt\OrgExtFinder.cs" />
+    <Compile Include="OrganizeExt\OrgExtInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RefCode\ICS_RefCode.cs" />
+    <Compile Include="RefCode\RefCodeData.cs" />
+    <Compile Include="RefCode\RefCodeTable.cs" />
+    <Compile Include="RefCode\RefCodeTablePropertie.cs" />
+    <Compile Include="RefCode\RefCodeTableSet.cs" />
+    <Compile Include="RefCode\RefCodeType.cs" />
+    <Compile Include="Report\ChangeReportDataAsXML.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="SharpZipLib\Checksums\Adler32.cs" />
+    <Compile Include="SharpZipLib\Checksums\CRC32.cs" />
+    <Compile Include="SharpZipLib\Checksums\IChecksum.cs" />
+    <Compile Include="SharpZipLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="SharpZipLib\GZip\GZIPConstants.cs" />
+    <Compile Include="SharpZipLib\GZip\GzipInputStream.cs" />
+    <Compile Include="SharpZipLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="SharpZipLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="SharpZipLib\Tar\TarArchive.cs" />
+    <Compile Include="SharpZipLib\Tar\TarBuffer.cs" />
+    <Compile Include="SharpZipLib\Tar\TarEntry.cs" />
+    <Compile Include="SharpZipLib\Tar\TarHeader.cs" />
+    <Compile Include="SharpZipLib\Tar\TarInputStream.cs" />
+    <Compile Include="SharpZipLib\Tar\TarOutputStream.cs" />
+    <Compile Include="SharpZipLib\ZipException.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipFile.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="SinoSZDateFunction.cs" />
+    <Compile Include="SinoSZNumberFunction.cs" />
+    <Compile Include="SinoSZStopWatch.cs" />
+    <Compile Include="SyntaxAnalyse\SyntaxException.cs" />
+    <Compile Include="SyntaxAnalyse\SyntaxTreeAnalyse.cs" />
+    <Compile Include="SyntaxAnalyse\TokenRecord\Method\TokenMethod.cs" />
+    <Compile Include="SyntaxAnalyse\TokenRecord\Symbol\TokenSymbol.cs" />
+    <Compile Include="SyntaxAnalyse\TokenRecord\TokenProperty.cs" />
+    <Compile Include="SyntaxAnalyse\TokenRecord\TokenRecord.cs" />
+    <Compile Include="SyntaxAnalyse\TokenRecord\TokenValue.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_DataTable.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_DownloadLog.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_Node.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_NodeComparer.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_NodeFinder.cs" />
+    <Compile Include="SystemInterface\SystemICS_SJJH_TableColumn.cs" />
+    <Compile Include="SystemLog\BlankSystemLog.cs" />
+    <Compile Include="SystemLog\DataBaseSystemLog.cs" />
+    <Compile Include="SystemLog\EventLogSystemLog.cs" />
+    <Compile Include="SystemLog\FileSystemLog.cs" />
+    <Compile Include="SystemLog\ISystemLog.cs" />
+    <Compile Include="SystemLog\QueryLogRecord.cs" />
+    <Compile Include="SystemLog\SystemLogRecord.cs" />
+    <Compile Include="SystemLog\SystemLogWriter.cs" />
+    <Compile Include="TaskInfo\SinoTaskInfo.cs" />
+    <Compile Include="UpdateProgessEventArgs.cs" />
+    <Compile Include="UserLog\IUserLog.cs" />
+    <Compile Include="UserLog\UserLogRecord.cs" />
+    <Compile Include="UserLog\UserLogWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AutoUpdater\UpdateConfigTemp.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CooperationWorkBench\Diagram_Base.cd" />
+    <None Include="Migrated rules for SinoSZBaseClass.ruleset" />
+    <None Include="SyntaxAnalyse\TokenRecord\TokenRecord.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CommonRight\" />
+    <Folder Include="Flow\" />
+    <Folder Include="PendingAlert\" />
+    <Folder Include="SyntaxAnalyse\TokenRecord\Symbol\Compart\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

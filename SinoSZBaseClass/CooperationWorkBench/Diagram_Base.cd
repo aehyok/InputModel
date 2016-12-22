@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Microsoft YaHei" Size="9" />
+  <Class Name="SinoSZBaseClass.CooperationWorkBench.ProjectType">
+    <Position X="6.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\ProjectType.cs</FileName>
+      <HashCode>AAAAAAAAAAAAgAEAAAABAAgAAAAAAAAAAGAAAAAgAgA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="FatherProject" />
+    </ShowAsAssociation>
+    <AssociationLine Name="FatherProject" Type="SinoSZBaseClass.CooperationWorkBench.ProjectType" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.5" Y="1.75" />
+        <Point X="5.628" Y="1.75" />
+        <Point X="5.628" Y="0.625" />
+        <Point X="7.667" Y="0.625" />
+        <Point X="7.667" Y="1" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.766" Y="0.529" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZBaseClass.CooperationWorkBench.ProjectTransaction">
+    <Position X="6.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\ProjectTransaction.cs</FileName>
+      <HashCode>BQAAFAgAAAAAgQAAAAAIAAAEAAAAAAAAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ProjectType" />
+      <Property Name="IProjectType" />
+    </ShowAsAssociation>
+    <AssociationLine Name="ProjectType" Type="SinoSZBaseClass.CooperationWorkBench.ProjectType" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.5" Y="4.218" />
+        <Point X="5.628" Y="4.218" />
+        <Point X="5.628" Y="2.812" />
+        <Point X="6.5" Y="2.812" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.495" Y="-0.721" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="SinoSZBaseClass.CooperationWorkBench.ProjectPlan">
+    <Position X="10.25" Y="1" Width="2" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\ProjectPlan.cs</FileName>
+      <HashCode>AAAAJAEAAEAAADAUAAAgACAAMAAwAAAAAABAAAAAgAQ=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="IProjectPlan" />
+      <Property Name="ProjectTransaction" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZBaseClass.CooperationWorkBench.ProjectExecutor">
+    <Position X="13.5" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\ProjectUser.cs</FileName>
+      <HashCode>AMgAgAAAAAAAQAEAQAABAEgAAIAAgACiQQAAAAFIAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Enum_ExecutorType" />
+      <Property Name="IProjectExecutor" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SinoSZBaseClass.CooperationWorkBench.ProjectToDo">
+    <Position X="10.25" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\ProjectToDo.cs</FileName>
+      <HashCode>AgQAAAIEAAEAABAAAAAQBAAAAAQAAAAEIgAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ProjectPlan" />
+      <Property Name="ProjectExecutor" />
+      <Property Name="Status" />
+      <Property Name="IProjectToDo" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="SinoSZBaseClass.CooperationWorkBench.IProjectType">
+    <Position X="3.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\IProjectType.cs</FileName>
+      <HashCode>AAAAFAgAAAAAAQAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SinoSZBaseClass.CooperationWorkBench.IProjectPlan">
+    <Position X="13.5" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\IProjectPlan.cs</FileName>
+      <HashCode>AAAAIAAAAAAAACAUAAAAAAAAEAAQAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SinoSZBaseClass.CooperationWorkBench.IProjectExecutor" Collapsed="true">
+    <Position X="18" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\IProjectExecutor.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SinoSZBaseClass.CooperationWorkBench.IProjectToDo" Collapsed="true">
+    <Position X="6.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\IProjectToDo.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SinoSZBaseClass.CooperationWorkBench.Enum_ExecutorType">
+    <Position X="17.75" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\Enum_ExecutorType.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAgEAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SinoSZBaseClass.CooperationWorkBench.Enum_ToDoStatus">
+    <Position X="6.75" Y="7.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>CooperationWorkBench\Enum_ToDoStatus.cs</FileName>
+      <HashCode>AAAAAAAAQQAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+</ClassDiagram>

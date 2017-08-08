@@ -303,9 +303,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                     PRIORITY,TASKSTATE,REQUESTUSER,REQUESTPOST,
                                                     QUERYPROGRESS,LOCKRESULT,RESULTCLEARTIME,TASKTYPE,REQUESTSOURCE,SOURCEVIEW)
                                                     values 
-                                                    (:ID,:TASKNAME,:REQUESTTIME,sysdate +30,
+                                                    (:ID,:TASKNAME,:REQUESTTIME,GETDATE() +30,
                                                     0,0,:USERID,:POSTID, 
-                                                    0,0,sysdate +200,:TASKTYPE,:REQUESTSOURCE,:SOURCEVIEW)";
+                                                    0,0,GETDATE() +200,:TASKTYPE,:REQUESTSOURCE,:SOURCEVIEW)";
         /// <summary>
         /// 添加任务记录
         /// </summary>
@@ -654,7 +654,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_WriteQueryLog = @"insert into query_log (ID,SJ,USETIME,QUERY_STR,LX,YHID)
-                                                 values (SEQ_ZHTJ.NEXTVAL,sysdate,:USETIME,:QUERY_STR,'1',:YHID)  ";
+                                                 values (SEQ_ZHTJ.NEXTVAL,GETDATE(),:USETIME,:QUERY_STR,'1',:YHID)  ";
         private void WriteQueryLog(string _sqlStr, int _userTime)
         {
             using (SqlConnection cn = SqlHelper.OpenConnection())
@@ -673,7 +673,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private void WriteQueryLogBySystem(string _sqlStr, int _userTime)
         {
             string _sql = "insert into query_log (ID,SJ,USETIME,QUERY_STR,LX,YHID) ";
-            _sql += " values (SEQ_ZHTJ.NEXTVAL,sysdate,:USETIME,:QUERY_STR,'1',:YHID) ";
+            _sql += " values (SEQ_ZHTJ.NEXTVAL,GETDATE(),:USETIME,:QUERY_STR,'1',:YHID) ";
             SqlParameter[] _param = { 
                                 new SqlParameter(":USETIME", OracleDbType.Decimal), 
                                 new SqlParameter(":QUERY_STR", SqlDbType.NVarChar,4000), 
@@ -699,7 +699,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 MD_ConceptGroup _group = new MD_ConceptGroup(dr.IsDBNull(0) ? "" : dr.GetString(0),
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? "" : dr.GetString(2),
-                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDouble(3)));
+                        dr.IsDBNull(3) ? 0 : Convert.ToInt32(dr.GetDecimal(3)));
                 _group.Items = GetSubConceptTag(_group.Name);
                 _ret.Add(_group);
             }
@@ -726,7 +726,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                 dr.IsDBNull(4) ? "" : dr.GetString(4),
-                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5)));
+                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDecimal(5)));
                         _ret.Add(_item);
                     }
                     dr.Close();
@@ -879,15 +879,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             while (dr.Read())
             {
                 MD_GuideLine _vt = new MD_GuideLine(
-                        dr.GetDouble(0).ToString(),
+                        dr.GetDecimal(0).ToString(),
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? "" : dr.GetString(2),
                         dr.IsDBNull(3) ? "" : dr.GetString(3),
                         dr.IsDBNull(4) ? "" : dr.GetString(4),
-                        dr.IsDBNull(5) ? "0" : dr.GetDouble(5).ToString(),
+                        dr.IsDBNull(5) ? "0" : dr.GetDecimal(5).ToString(),
                         dr.IsDBNull(6) ? "" : dr.GetString(6),
                         dr.IsDBNull(7) ? "" : dr.GetString(7),
-                        dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDouble(8)),
+                        dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDecimal(8)),
                         dr.IsDBNull(9) ? "" : dr.GetString(9)
                         );
                 _ret.Add(_vt);
@@ -915,15 +915,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
             while (dr.Read())
             {
                 MD_GuideLine _vt = new MD_GuideLine(
-                        dr.GetDouble(0).ToString(),
+                        dr.GetDecimal(0).ToString(),
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? "" : dr.GetString(2),
                         dr.IsDBNull(3) ? "" : dr.GetString(3),
                         dr.IsDBNull(4) ? "" : dr.GetString(4),
-                        dr.IsDBNull(5) ? "0" : dr.GetDouble(5).ToString(),
+                        dr.IsDBNull(5) ? "0" : dr.GetDecimal(5).ToString(),
                         dr.IsDBNull(6) ? "" : dr.GetString(6),
                         dr.IsDBNull(7) ? "" : dr.GetString(7),
-                        dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDouble(8)),
+                        dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDecimal(8)),
                         dr.IsDBNull(9) ? "" : dr.GetString(9)
                         );
                 _ret.Add(_vt);
@@ -1061,15 +1061,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     while (dr.Read())
                     {
                         _ret = new MD_GuideLine(
-                                dr.GetDouble(0).ToString(),
+                                dr.GetDecimal(0).ToString(),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
                                 dr.IsDBNull(4) ? "" : dr.GetString(4),
-                                dr.IsDBNull(5) ? "0" : dr.GetDouble(5).ToString(),
+                                dr.IsDBNull(5) ? "0" : dr.GetDecimal(5).ToString(),
                                 dr.IsDBNull(6) ? "" : dr.GetString(6),
                                 dr.IsDBNull(7) ? "" : dr.GetString(7),
-                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDouble(8)),
+                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDecimal(8)),
                                  dr.IsDBNull(9) ? "" : dr.GetString(9)
                                 );
                     }
@@ -1105,15 +1105,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         dr.IsDBNull(1) ? "" : dr.GetString(1),
                         dr.IsDBNull(2) ? DateTime.MinValue : dr.GetDateTime(2),
                         dr.IsDBNull(3) ? DateTime.MinValue : dr.GetDateTime(3),
-                        dr.IsDBNull(4) ? 0 : Convert.ToInt32(dr.GetDouble(4)),
-                        dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5)),
+                        dr.IsDBNull(4) ? 0 : Convert.ToInt32(dr.GetDecimal(4)),
+                        dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDecimal(5)),
                         dr.IsDBNull(6) ? (DateTime?)null : (DateTime?)dr.GetDateTime(6),
                         SinoUserCtx.CurUser.UserID,
                         SinoUserCtx.CurUser.UserName,
-                        dr.IsDBNull(8) ? "" : dr.GetDouble(8).ToString(),
+                        dr.IsDBNull(8) ? "" : dr.GetDecimal(8).ToString(),
                         dr.IsDBNull(12) ? "" : dr.GetString(12),
                         dr.IsDBNull(13) ? "" : dr.GetString(13),
-                        dr.IsDBNull(9) ? false : (dr.GetDouble(9) > 0),
+                        dr.IsDBNull(9) ? false : (dr.GetDecimal(9) > 0),
                         dr.IsDBNull(10) ? DateTime.MinValue : dr.GetDateTime(10),
                         dr.IsDBNull(11) ? "LOCALORA" : dr.GetString(11)
                         );
@@ -1147,15 +1147,15 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                        dr.IsDBNull(1) ? "" : dr.GetString(1),
                        dr.IsDBNull(2) ? DateTime.MinValue : dr.GetDateTime(2),
                        dr.IsDBNull(3) ? DateTime.MinValue : dr.GetDateTime(3),
-                       dr.IsDBNull(4) ? 0 : Convert.ToInt32(dr.GetDouble(4)),
-                       dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5)),
+                       dr.IsDBNull(4) ? 0 : Convert.ToInt32(dr.GetDecimal(4)),
+                       dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDecimal(5)),
                        dr.IsDBNull(6) ? DateTime.MinValue : dr.GetDateTime(6),
                        SinoUserCtx.CurUser.UserID,
                        SinoUserCtx.CurUser.UserName,
-                       dr.IsDBNull(8) ? "" : dr.GetDouble(8).ToString(),
+                       dr.IsDBNull(8) ? "" : dr.GetDecimal(8).ToString(),
                        dr.IsDBNull(12) ? "" : dr.GetString(12),
                        dr.IsDBNull(13) ? "" : dr.GetString(13),
-                       dr.IsDBNull(9) ? false : (dr.GetDouble(9) > 0),
+                       dr.IsDBNull(9) ? false : (dr.GetDecimal(9) > 0),
                        dr.IsDBNull(10) ? DateTime.MinValue : dr.GetDateTime(10),
                        dr.IsDBNull(11) ? "LOCALORA" : dr.GetString(11)
                        );
@@ -1239,12 +1239,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 while (dr.Read())
                 {
                     MD_CheckRule _rule = new MD_CheckRule(
-                            dr.IsDBNull(0) ? "" : dr.GetDouble(0).ToString(),
+                            dr.IsDBNull(0) ? "" : dr.GetDecimal(0).ToString(),
                             QueryModelName,
                             dr.IsDBNull(1) ? "" : dr.GetString(1),
                             dr.IsDBNull(2) ? "" : dr.GetString(2),
                             dr.IsDBNull(3) ? "" : dr.GetString(3),
-                            dr.IsDBNull(4) ? false : (dr.GetDouble(4) > 0)
+                            dr.IsDBNull(4) ? false : (dr.GetDecimal(4) > 0)
                     );
                     _ret.Add(_rule);
                 }
@@ -1429,7 +1429,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
 
         private const string SQL_SaveQuery = @"insert into QUERY_SAVE (ID,TITLE,TJSF,YHID,LX,SJ,VIEWNAME,SYDWID,ISPUBLIC)
-                                                 values (:ID,:TITLE,:TJSF,:YHID,'查询模型',sysdate,:VIEWNAME,:SYDWID,:ISPUBLIC) ";
+                                                 values (:ID,:TITLE,:TJSF,:YHID,'查询模型',GETDATE(),:VIEWNAME,:SYDWID,:ISPUBLIC) ";
         public void SaveQuery(string SaveName, bool IsPublic, MDQuery_Request QueryRequest)
         {
             IFormatter formatter = new BinaryFormatter();
@@ -1511,12 +1511,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     while (_dr.Read())
                     {
                         _ret = new MD_InputModel(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                 _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                 _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                 _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                                 _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
+                                _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDecimal(5)),
                                 _dr.IsDBNull(6) ? "" : _dr.GetString(6),
                                 _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                                 _dr.IsDBNull(9) ? "" : _dr.GetString(9),
@@ -1574,12 +1574,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 while (_dr.Read())
                 {
                     _ret = new MD_InputModel(
-                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                            _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                             _ns,
                             _mame,
                             _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                             _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                            _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
+                            _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDecimal(5)),
                             _dr.IsDBNull(6) ? "" : _dr.GetString(6),
                             _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                             _dr.IsDBNull(9) ? "" : _dr.GetString(9),
@@ -1652,12 +1652,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     while (_dr.Read())
                     {
                         MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                 _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                 _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
+                                _dr.IsDBNull(3) ? true : (_dr.GetDecimal(3) > 0),
                                 _model.ID,
-                                _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4))
+                                _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDecimal(4))
                         );
                         GetInputModelSaveTableColumn(_tb);
                         _ret.Add(_tb);
@@ -1681,7 +1681,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     while (_dr.Read())
                     {
                         MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                 _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                 _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                 _dr.IsDBNull(3) ? "" : _dr.GetString(3),
@@ -1718,9 +1718,9 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
                     while (_dr.Read())
                     {
-                        string _groupid = _dr.IsDBNull(0) ? "0" : _dr.GetDouble(0).ToString();
+                        string _groupid = _dr.IsDBNull(0) ? "0" : _dr.GetDecimal(0).ToString();
                         string _title = _dr.IsDBNull(1) ? "" : _dr.GetString(1);
-                        int _order = _dr.IsDBNull(2) ? 0 : Convert.ToInt32(_dr.GetDouble(2));
+                        int _order = _dr.IsDBNull(2) ? 0 : Convert.ToInt32(_dr.GetDecimal(2));
                         MD_InputModel_ColumnGroup _group = new MD_InputModel_ColumnGroup(_groupid, _ret.ID, _title, _order);
                         _group.GroupType = _dr.IsDBNull(3) ? "DEFAULT" : _dr.GetString(3).ToUpper();
                         _group.AppRegUrl = _dr.IsDBNull(4) ? "" : _dr.GetString(4);
@@ -1759,32 +1759,32 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 while (_dr.Read())
                 {
                     MD_InputModel_Column _col = new MD_InputModel_Column(
-                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                            _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                             _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                             _dr.IsDBNull(12) ? "" : _dr.GetString(12),
                             _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                            _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDouble(9)),
-                            _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString(),
-                            _dr.IsDBNull(11) ? true : (_dr.GetDouble(11) < 1),
+                            _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDecimal(9)),
+                            _dr.IsDBNull(1) ? "" : _dr.GetDecimal(1).ToString(),
+                            _dr.IsDBNull(11) ? true : (_dr.GetDecimal(11) < 1),
                             _dr.IsDBNull(7) ? true : (_dr.GetString(7).ToUpper() == "Y"),
-                            _dr.IsDBNull(13) ? false : (_dr.GetDouble(13) > 0),
-                            _dr.IsDBNull(11) ? false : (_dr.GetDouble(11) > 0),
+                            _dr.IsDBNull(13) ? false : (_dr.GetDecimal(13) > 0),
+                            _dr.IsDBNull(11) ? false : (_dr.GetDecimal(11) > 0),
                             _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                             _dr.IsDBNull(4) ? "" : _dr.GetString(4),
                             _dr.IsDBNull(5) ? "" : _dr.GetString(5),
                             _dr.IsDBNull(6) ? "" : _dr.GetString(6),
-                            _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDouble(14)),
-                            _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDouble(15)),
-                            _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDouble(16)),
+                            _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDecimal(14)),
+                            _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDecimal(15)),
+                            _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDecimal(16)),
                             _dr.IsDBNull(17) ? "" : _dr.GetString(17),
                             _dr.IsDBNull(18) ? "" : _dr.GetString(18),
-                            _dr.IsDBNull(19) ? false : (_dr.GetDouble(19) > 0),
+                            _dr.IsDBNull(19) ? false : (_dr.GetDecimal(19) > 0),
                             _dr.IsDBNull(20) ? "" : _dr.GetString(20),
-                             _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDouble(22)),
+                             _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDecimal(22)),
                             _dr.IsDBNull(21) ? "" : _dr.GetString(21)
 
                     );
-                    _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDouble(23) > 0);
+                    _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDecimal(23) > 0);
                     _group.Columns.Add(_col);
                 }
                 _dr.Close();
@@ -1812,32 +1812,32 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 while (_dr.Read())
                 {
                     MD_InputModel_Column _col = new MD_InputModel_Column(
-                            _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                            _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                             _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                             _dr.IsDBNull(12) ? "" : _dr.GetString(12),
                             _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                            _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDouble(9)),
-                            _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString(),
-                            _dr.IsDBNull(11) ? true : (_dr.GetDouble(11) < 1),
+                            _dr.IsDBNull(9) ? 0 : Convert.ToInt32(_dr.GetDecimal(9)),
+                            _dr.IsDBNull(1) ? "" : _dr.GetDecimal(1).ToString(),
+                            _dr.IsDBNull(11) ? true : (_dr.GetDecimal(11) < 1),
                             _dr.IsDBNull(7) ? true : (_dr.GetString(7).ToUpper() == "Y"),
-                            _dr.IsDBNull(13) ? false : (_dr.GetDouble(13) > 0),
-                            _dr.IsDBNull(11) ? false : (_dr.GetDouble(11) > 0),
+                            _dr.IsDBNull(13) ? false : (_dr.GetDecimal(13) > 0),
+                            _dr.IsDBNull(11) ? false : (_dr.GetDecimal(11) > 0),
                             _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                             _dr.IsDBNull(4) ? "" : _dr.GetString(4),
                             _dr.IsDBNull(5) ? "" : _dr.GetString(5),
                             _dr.IsDBNull(6) ? "" : _dr.GetString(6),
-                            _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDouble(14)),
-                            _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDouble(15)),
-                            _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDouble(16)),
+                            _dr.IsDBNull(14) ? 1 : Convert.ToInt32(_dr.GetDecimal(14)),
+                            _dr.IsDBNull(15) ? 1 : Convert.ToInt32(_dr.GetDecimal(15)),
+                            _dr.IsDBNull(16) ? 0 : Convert.ToInt32(_dr.GetDecimal(16)),
                             _dr.IsDBNull(17) ? "" : _dr.GetString(17),
                             _dr.IsDBNull(18) ? "" : _dr.GetString(18),
-                            _dr.IsDBNull(19) ? false : (_dr.GetDouble(19) > 0),
+                            _dr.IsDBNull(19) ? false : (_dr.GetDecimal(19) > 0),
                             _dr.IsDBNull(20) ? "" : _dr.GetString(20),
-                             _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDouble(22)),
+                             _dr.IsDBNull(22) ? 0 : Convert.ToInt32(_dr.GetDecimal(22)),
                             _dr.IsDBNull(21) ? "" : _dr.GetString(21)
 
                     );
-                    _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDouble(23) > 0);
+                    _col.DefaultShow = _dr.IsDBNull(23) ? false : (_dr.GetDecimal(23) > 0);
                     _ret.Add(_col);
                 }
                 _dr.Close();
@@ -2024,8 +2024,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         private const string SQL_SaveDataCheckResult_Upd_SJSHB_ZONGSJ = "Update SJSH_B Set SH_ZONGSJ =:VALUE Where ID = :ID";
         private const string SQL_SaveDataCheckResult_Upd_SJSHB_ZHISJ = "Update SJSH_B Set SH_ZHISJ =:VALUE Where ID = :ID";
         private const string SQL_SaveDataCheckResult_Upd_SJSHB_FJ = "Update SJSH_B Set SH_FJ =:VALUE Where ID = :ID";
-        private const string SQL_SaveDataCheckResult_Ins_JGJLB = "insert into SJSH_JGJLB (SHJLID,ID,DWDM,DWJBFL,RYXM,SHRQ,SHYJ,SHJG,WHXH) values (:SHJLID,:ID,:DWDM,:DWJBFL,:RYXM,sysdate,:SHYJ,:SHJG,:WHXH)";
-        private const string SQL_SaveDataCheckResult_Upd_JGJLB = "Update SJSH_JGJLB SET DWDM = :DWDM,RYXM = :RYXM,SHRQ = sysdate,SHYJ = :SHYJ,SHJG =:SHJG,WHXH = :WHXH WHERE SHJLID=:SHJLID";
+        private const string SQL_SaveDataCheckResult_Ins_JGJLB = "insert into SJSH_JGJLB (SHJLID,ID,DWDM,DWJBFL,RYXM,SHRQ,SHYJ,SHJG,WHXH) values (:SHJLID,:ID,:DWDM,:DWJBFL,:RYXM,GETDATE(),:SHYJ,:SHJG,:WHXH)";
+        private const string SQL_SaveDataCheckResult_Upd_JGJLB = "Update SJSH_JGJLB SET DWDM = :DWDM,RYXM = :RYXM,SHRQ = GETDATE(),SHYJ = :SHYJ,SHJG =:SHJG,WHXH = :WHXH WHERE SHJLID=:SHJLID";
         private const string SQL_SaveDataCheckResult_Upd_RZJLB = @"insert into sjsh_rzjlb (rzid, id, shjlid, shrq, viewname, namespace,
                     shdxgjz, sh_fj, sh_zhisj, sh_fsj, sh_zongsj, shyj, dwjbfl, ryxm, whxh) 
                     select SEQUENCES_META.NEXTVAL,B.ID,A.SHJLID,A.SHRQ,
@@ -2271,7 +2271,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         }
 
         private const string SQL_CreateNewPASpace = @"insert into  MD_ANALIZESPACE (AS_ID,DISPLAYTITLE,YHID,CREATE_YH,CREATE_DATE,AS_LX,CREATE_DWID) values
-                                                       (:AS_ID,:DISPLAYTITLE,:YHID,:CREATE_YH,sysdate,0,:CREATE_DWID) ";
+                                                       (:AS_ID,:DISPLAYTITLE,:YHID,:CREATE_YH,GETDATE(),0,:CREATE_DWID) ";
         public MD_PAnalizeProject CreateNewPASpace(string PersonAnalizeSapceName)
         {
             OraMetaDataFactroy _of = new OraMetaDataFactroy();
@@ -2320,14 +2320,14 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         while (_dr.Read())
                         {
                             MD_PAnalizeProject _p = new MD_PAnalizeProject(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? "0" : _dr.GetDouble(3).ToString(),
-                                    _dr.IsDBNull(4) ? "" : _dr.GetDouble(4).ToString(),
+                                    _dr.IsDBNull(3) ? "0" : _dr.GetDecimal(3).ToString(),
+                                    _dr.IsDBNull(4) ? "" : _dr.GetDecimal(4).ToString(),
                                     _dr.IsDBNull(5) ? "" : _dr.GetString(5),
                                     _dr.IsDBNull(6) ? DateTime.Now : _dr.GetDateTime(6),
-                                    _dr.IsDBNull(7) ? 0 : Convert.ToInt32(_dr.GetDouble(7))
+                                    _dr.IsDBNull(7) ? 0 : Convert.ToInt32(_dr.GetDecimal(7))
                             );
                             _ret.Add(_p);
                         }
@@ -2357,7 +2357,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                                         MAINKEY,TYPE,CREATEUSER,CREATEDATE)
                                                         values
                                                          (:TID,:AS_ID,:TABLENAME,:DISPLAYNAME,:DESCRIPTION,
-                                                        'MAINID','基础数据',:CREATEUSER,sysdate)";
+                                                        'MAINID','基础数据',:CREATEUSER,GETDATE())";
         public bool SaveDataToPAnalize(MD_PAnalizeProject _PAProject, string _tableName, List<MD_PATable_Column> columnDefine, DataTable _dt)
         {
             /*
@@ -2657,7 +2657,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
 
         private const string SQL_SaveComputeFieldDefine = @"insert into MD_COMPUTECOLUMN (ID,COLUMNAME,COLUMNEXP,TABLENAME,VIEWNAME,COLUMNMETA,COLUMNDES,ISPUBLIC,USERID,CREATEDATE) 
-                                                values (:ID,:COLUMNAME,:COLUMNEXP,:TABLENAME,:VIEWNAME,:COLUMNMETA,:COLUMNDES,0,:USERID,sysdate) ";
+                                                values (:ID,:COLUMNAME,:COLUMNEXP,:TABLENAME,:VIEWNAME,:COLUMNMETA,:COLUMNDES,0,:USERID,GETDATE()) ";
         public void SaveComputeFieldDefine(string DisplayName, string Description, string Expression, string QueryString, string ResultDataType, string TableName, string ModelName)
         {
             using (SqlConnection cn = SqlHelper.OpenConnection())
@@ -2709,7 +2709,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
-                                    _dr.IsDBNull(4) ? false : (_dr.GetDouble(4) > 0),
+                                    _dr.IsDBNull(4) ? false : (_dr.GetDecimal(4) > 0),
                                     _dr.IsDBNull(5) ? "" : _dr.GetString(5),
                                     _dr.IsDBNull(6) ? "" : _dr.GetString(6),
                                     StrUtils.GetMetaByName2("ResultDataType", _meta),
@@ -2748,12 +2748,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         {
                             string _meta = _dr.IsDBNull(6) ? "" : _dr.GetString(6);
                             MD_FUNCTION _item = new MD_FUNCTION(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                                      _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                    _dr.IsDBNull(5) ? "" : _dr.GetDouble(5).ToString()
+                                    _dr.IsDBNull(5) ? "" : _dr.GetDecimal(5).ToString()
                             );
                             string[] _strs = _meta.Split(',');
                             foreach (string _s in _strs)
@@ -2896,12 +2896,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         string _qv = dr.IsDBNull(5) ? "" : dr.GetString(5);
 
                         srcRule = new MD_CheckRule(
-                                dr.IsDBNull(0) ? "" : dr.GetDouble(0).ToString(),
+                                dr.IsDBNull(0) ? "" : dr.GetDecimal(0).ToString(),
                                 string.Format("{0}.{1}", _ns, _qv),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
-                                dr.IsDBNull(4) ? false : (dr.GetDouble(4) > 0)
+                                dr.IsDBNull(4) ? false : (dr.GetDecimal(4) > 0)
                         );
                     }
                     dr.Close();
@@ -2959,12 +2959,12 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         string _qv = dr.IsDBNull(5) ? "" : dr.GetString(5);
 
                         srcRule = new MD_CheckRule(
-                                dr.IsDBNull(0) ? "" : dr.GetDouble(0).ToString(),
+                                dr.IsDBNull(0) ? "" : dr.GetDecimal(0).ToString(),
                                 string.Format("{0}.{1}", _ns, _qv),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
-                                dr.IsDBNull(4) ? false : (dr.GetDouble(4) > 0)
+                                dr.IsDBNull(4) ? false : (dr.GetDecimal(4) > 0)
                         );
 
                     }
@@ -3071,8 +3071,8 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         while (_dr.Read())
                         {
                             _ret = new MD_DataCheckMsg(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
-                                    _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
+                                    _dr.IsDBNull(1) ? "" : _dr.GetDecimal(1).ToString(),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                                     _dr.IsDBNull(4) ? "" : _dr.GetString(4),
@@ -3086,7 +3086,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                                     _dr.IsDBNull(12) ? "" : _dr.GetString(12),
                                     _dr.IsDBNull(13) ? "" : _dr.GetString(13),
                                     _dr.IsDBNull(14) ? null : (object)_dr.GetDateTime(14),
-                                    _dr.IsDBNull(15) ? (decimal)0 : (decimal)_dr.GetDouble(15)
+                                    _dr.IsDBNull(15) ? (decimal)0 : (decimal)_dr.GetDecimal(15)
                              );
                         }
                     }
@@ -3109,7 +3109,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         {
             string _sql = "insert into SJSH_GGXX ";
             _sql += " ( ID,SHJLID,BH,FBDW,FBSJ,FBR,LXDH,DZYJ,XXBT,XXNR,CDDW,SFYC) ";
-            _sql += " values (  SEQUENCES_META.NEXTVAL,:SHJLID,'',:FBDW,sysdate,:FBR,:LXDH,:DZYJ,:XXBT,:XXNR,:CDDW,:SFYC) ";
+            _sql += " values (  SEQUENCES_META.NEXTVAL,:SHJLID,'',:FBDW,GETDATE(),:FBR,:LXDH,:DZYJ,:XXBT,:XXNR,:CDDW,:SFYC) ";
             using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
@@ -3197,7 +3197,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool SendDataCheckMsgFK(string _ggjlid, string _fkjg)
         {
 
-            string _sql = "update SJSH_GGXX set FKJG=:FKJG,FKSJ=sysdate where ID=:ID ";
+            string _sql = "update SJSH_GGXX set FKJG=:FKJG,FKSJ=GETDATE() where ID=:ID ";
             using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 try
@@ -3397,10 +3397,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                 SqlDataReader _dr = _cmd.ExecuteReader();
                 while (_dr.Read())
                 {
-                    string _groupid = _dr.IsDBNull(0) ? "0" : _dr.GetDouble(0).ToString();
-                    string _ivid = _dr.IsDBNull(1) ? "" : _dr.GetDouble(1).ToString();
+                    string _groupid = _dr.IsDBNull(0) ? "0" : _dr.GetDecimal(0).ToString();
+                    string _ivid = _dr.IsDBNull(1) ? "" : _dr.GetDecimal(1).ToString();
                     string _title = _dr.IsDBNull(2) ? "" : _dr.GetString(2);
-                    int _order = _dr.IsDBNull(3) ? 0 : Convert.ToInt32(_dr.GetDouble(3));
+                    int _order = _dr.IsDBNull(3) ? 0 : Convert.ToInt32(_dr.GetDecimal(3));
                     _ret = new MD_InputModel_ColumnGroup(_groupid, _ivid, _title, _order);
                     _ret.GroupType = _dr.IsDBNull(4) ? "DEFAULT" : _dr.GetString(4).ToUpper();
                     _ret.AppRegUrl = _dr.IsDBNull(5) ? "" : _dr.GetString(5);

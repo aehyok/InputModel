@@ -33,24 +33,22 @@ namespace aehyok.BizMetaData
                 while (_dr.Read())
                 {
                     MD_InputModel _model = new MD_InputModel(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                                     _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
+                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDecimal(5)),
                                     _dr.IsDBNull(6) ? "" : _dr.GetString(6),
                                     _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                                     _dr.IsDBNull(9) ? "" : _dr.GetString(9),
-                                    _dr.IsDBNull(10) ? "" : _dr.GetString(10),
-                                    _dr.IsDBNull(11) ? "" : _dr.GetString(11)
+                                    _dr.IsDBNull(10) ? "" : _dr.GetString(10),_dr.IsDBNull(11) ? "" : _dr.GetString(11)
                     );
                     _ret.Add(_model);
                 }
                 _dr.Close();
                 foreach (MD_InputModel _model in _ret)
-                {
-                    string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
+                {string _tname = StrUtils.GetMetaByName2("TABLE", _model.Param);
                     string _orderField = StrUtils.GetMetaByName2("ORDER", _model.Param);
                     string _modelType = StrUtils.GetMetaByName2("TYPE", _model.Param);
                     string _paramType = StrUtils.GetMetaByName2("PARAMTYPE", _model.Param);
@@ -83,12 +81,12 @@ namespace aehyok.BizMetaData
                 while (_dr.Read())
                 {
                     MD_InputModel_SaveTable _tb = new MD_InputModel_SaveTable(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                    _dr.IsDBNull(3) ? true : (_dr.GetDouble(3) > 0),
+                                    _dr.IsDBNull(3) ? true : (_dr.GetDecimal(3) > 0),
                                     _model.ID,
-                                    _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDouble(4)),
+                                    _dr.IsDBNull(4) ? 0 : Convert.ToInt32(_dr.GetDecimal(4)),
                                     _dr.IsDBNull(5) ? "" : _dr.GetString(5)
                     );
                     GetInputModelSaveTableColumn(_tb);
@@ -98,20 +96,18 @@ namespace aehyok.BizMetaData
             }
             return _ret;
         }
-
         private const string SQL_GetInputModelSaveTableColumn = @"select ID,SRCCOL,DESCOL,METHOD,DESDES from MD_INPUTTABLECOLUMN where IVT_ID=@TID";
         private static void GetInputModelSaveTableColumn(MD_InputModel_SaveTable _tb)
         {
             using (SqlConnection cn = SqlHelper.OpenConnection())
             {
                 SqlCommand _cmd = new SqlCommand(SQL_GetInputModelSaveTableColumn, cn);
-                _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));
-                SqlDataReader _dr = _cmd.ExecuteReader();
+                _cmd.Parameters.Add("@TID", decimal.Parse(_tb.ID));SqlDataReader _dr = _cmd.ExecuteReader();
                 if (_tb.Columns == null) _tb.Columns = new List<MD_InputModel_SaveTableColumn>();
                 while (_dr.Read())
                 {
                     MD_InputModel_SaveTableColumn _col = new MD_InputModel_SaveTableColumn(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
@@ -135,10 +131,10 @@ namespace aehyok.BizMetaData
             while (_dr.Read())
             {
                 MD_InputModel_ColumnGroup _g = new MD_InputModel_ColumnGroup(
-                                _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                 _model.ID,
                                 _dr.IsDBNull(2) ? "" : _dr.GetString(2),
-                                _dr.IsDBNull(3) ? 0 : Convert.ToInt32(_dr.GetDouble(3))
+                                _dr.IsDBNull(3) ? 0 : Convert.ToInt32(_dr.GetDecimal(3))
                 );
                 _g.GroupType = _dr.IsDBNull(4) ? "DEFAULT" : _dr.GetString(4).ToUpper();
                 _g.AppRegUrl = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
@@ -168,12 +164,12 @@ namespace aehyok.BizMetaData
                 while (_dr.Read())
                 {
                     _model = new MD_InputModel(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     _dr.IsDBNull(1) ? "" : _dr.GetString(1),
                                     _dr.IsDBNull(2) ? "" : _dr.GetString(2),
                                     _dr.IsDBNull(3) ? "" : _dr.GetString(3),
                                     _dr.IsDBNull(4) ? "" : _dr.GetString(4),
-                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDouble(5)),
+                                    _dr.IsDBNull(5) ? (int)0 : Convert.ToInt32(_dr.GetDecimal(5)),
                                     _dr.IsDBNull(6) ? "" : _dr.GetString(6),
                                     _dr.IsDBNull(8) ? "" : _dr.GetString(8),
                                     _dr.IsDBNull(9) ? "" : _dr.GetString(9),
@@ -218,13 +214,13 @@ namespace aehyok.BizMetaData
                     string _cname = _dr.IsDBNull(5) ? "" : _dr.GetString(5);
                     string _paramstring = _dr.IsDBNull(3) ? "" : _dr.GetString(3);
                     MD_InputModel_Child _child = new MD_InputModel_Child(
-                                    _dr.IsDBNull(0) ? "" : _dr.GetDouble(0).ToString(),
+                                    _dr.IsDBNull(0) ? "" : _dr.GetDecimal(0).ToString(),
                                     string.Format("{0}.{1}", _model.NameSpace, _model.ModelName),
                                     string.Format("{0}.{1}", _cns, _cname),
-                                    _dr.IsDBNull(6) ? 0 : Convert.ToInt32(_dr.GetDouble(6))
+                                    _dr.IsDBNull(6) ? 0 : Convert.ToInt32(_dr.GetDecimal(6))
                     );
                     _child.ShowCondition = _dr.IsDBNull(7) ? "" : _dr.GetString(7);
-                    _child.SelectMode = _dr.IsDBNull(8) ? 0 : Convert.ToInt16(_dr.GetDouble(8));
+                    _child.SelectMode = _dr.IsDBNull(8) ? 0 : Convert.ToInt16(_dr.GetDecimal(8));
                     _child.ChildModel = GetInputModel(_cns, _cname);
                     if (_child.Parameters == null) _child.Parameters = new List<MD_InputModel_ChildParam>();
                     foreach (string _pstr in StrUtils.GetMetasByName2("PARAM", _paramstring))

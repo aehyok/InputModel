@@ -12,7 +12,7 @@ namespace SinoSZJS.DataAccess.Sql
     /// </summary>
     public class LogWriter
     {
-        private const string SQL_WriteSystemLog = @"insert into XT_SYSTEMLOG  (ID,CZSJ,LOGTYPE,LOGTEXT) values  (:ID,sysdate,:LOGTYPE,:LOGTEXT) ";
+        private const string SQL_WriteSystemLog = @"insert into XT_SYSTEMLOG  (ID,CZSJ,LOGTYPE,LOGTEXT) values  (@ID,GETDATE(),@LOGTYPE,@LOGTEXT) ";
         /// <summary>
         /// 写系统日志
         /// </summary>
@@ -20,16 +20,15 @@ namespace SinoSZJS.DataAccess.Sql
         /// <param name="_type">类型　　INFO:信息　ERROR:错误</param>
         /// <returns></returns>
         static public bool WriteSystemLog(string _msg, string _type)
-        {
-            if (_msg.Length > 3700) _msg = _msg.Substring(0, 3700);
+        {if (_msg.Length > 3700) _msg = _msg.Substring(0, 3700);
             using (SqlConnection cn = new SqlConnection(SqlHelper.ConnectionStringProfile))
             {
                 cn.Open();
                 //OracleTransaction _txn = cn.BeginTransaction();
                 SqlCommand comm = new SqlCommand(SQL_WriteSystemLog, cn);
-                comm.Parameters.Add(":ID", Guid.NewGuid().ToString());
-                comm.Parameters.Add(":LOGTYPE", _type);
-                comm.Parameters.Add(":LOGTEXT", _msg);
+                comm.Parameters.Add("@ID", Guid.NewGuid().ToString());
+                comm.Parameters.Add("@LOGTYPE", _type);
+                comm.Parameters.Add("@LOGTEXT", _msg);
                 comm.ExecuteScalar();
                 //_txn.Commit();
                 cn.Close();
@@ -40,10 +39,10 @@ namespace SinoSZJS.DataAccess.Sql
 
 
         private const string SQL_WriteUserLog = @"insert into XT_USERLOG (ID,YHID,CZSJ,CZLX,CZXXNR,FROMIP,SYSTEMID,RESULTTYPE,FROMHOST) values
-                                                                             (:ID,:YHID,sysdate,:CZLX,:CZXXNR,:FROMIP,:SYSTEMID,:RESULTTYPE,:FROMHOST) ";
+                                                                             (:ID,:YHID,GETDATE(),:CZLX,:CZXXNR,:FROMIP,:SYSTEMID,:RESULTTYPE,:FROMHOST) ";
         private const string SQL_WriteUserLog2 = @"insert into XT_USERLOG (ID,YHID,gwid,CZSJ,CZLX,CZXXNR,FROMIP,SYSTEMID,RESULTTYPE,FROMHOST) values
           
-                                                                      (:ID,:YHID,:GWID,sysdate,:CZLX,:CZXXNR,:FROMIP,:SYSTEMID,:RESULTTYPE,:FROMHOST) ";
+                                                                      (:ID,:YHID,:GWID,GETDATE(),:CZLX,:CZXXNR,:FROMIP,:SYSTEMID,:RESULTTYPE,:FROMHOST) ";
         /// <summary>
         /// 写用户操作日志
         /// </summary>
@@ -123,7 +122,7 @@ namespace SinoSZJS.DataAccess.Sql
 
 
         private const string SQL_WriteQueryLog = @"insert into query_log (ID,SJ,USETIME,QUERY_STR,LX,YHID,BZ)
-                                                   values (SEQ_ZHTJ.NEXTVAL,sysdate,:USETIME,:QUERY_STR,:LX,:YHID,:BZ)";
+                                                   values (SEQ_ZHTJ.NEXTVAL,GETDATE(),:USETIME,:QUERY_STR,:LX,:YHID,:BZ)";
         /// <summary>
         /// 查询日志
         /// </summary>

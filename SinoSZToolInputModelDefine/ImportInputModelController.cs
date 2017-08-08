@@ -8,6 +8,7 @@ using SinoSZJS.CS.BizMetaDataManager.DAL;
 using SinoSZJS.DataAccess;
 using SinoSZJS.DataAccess.Sql;
 using System.Data.SqlClient;
+using aehyok.BizMetaData;
 
 namespace SinoSZToolInputModelDefine
 {
@@ -37,7 +38,7 @@ namespace SinoSZToolInputModelDefine
 			{
 				ModelName = _dr["IV_NAME"].ToString();
 				_dr["NAMESPACE"] = CurrentNs.NameSpace;
-				decimal _newid = decimal.Parse(_of.GetNewID());
+                decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["IV_ID"];
 				_dr["IV_ID"] = _newid;
 				IDDict.Add(_oldid, _newid);
@@ -49,7 +50,7 @@ namespace SinoSZToolInputModelDefine
 			DataTable TB_INPUTGROUP = ImportSourceDataSet.Tables["MD_INPUTGROUP"];
 			foreach (DataRow _dr in TB_INPUTGROUP.Rows)
 			{
-				decimal _newid = decimal.Parse(_of.GetNewID());
+                decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["IVG_ID"];
 				_dr["IVG_ID"] = _newid;
 				IDDict.Add(_oldid, _newid);
@@ -59,7 +60,7 @@ namespace SinoSZToolInputModelDefine
 			DataTable TB_INPUTVIEWCOLUMN = ImportSourceDataSet.Tables["MD_INPUTVIEWCOLUMN"];
 			foreach (DataRow _dr in TB_INPUTVIEWCOLUMN.Rows)
 			{
-				decimal _newid = decimal.Parse(_of.GetNewID());
+                decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["IVC_ID"];
 				_dr["IVC_ID"] = _newid;
 				IDDict.Add(_oldid, _newid);
@@ -75,7 +76,7 @@ namespace SinoSZToolInputModelDefine
 			DataTable TB_INPUTTABLE = ImportSourceDataSet.Tables["MD_INPUTTABLE"];
 			foreach (DataRow _dr in TB_INPUTTABLE.Rows)
 			{
-				decimal _newid = decimal.Parse(_of.GetNewID());
+                decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["ID"];
 				_dr["ID"] = _newid;
 				IDDict.Add(_oldid, _newid);
@@ -86,7 +87,7 @@ namespace SinoSZToolInputModelDefine
 			DataTable TB_INPUTVIEWCHILD = ImportSourceDataSet.Tables["MD_INPUTVIEWCHILD"];
 			foreach (DataRow _dr in TB_INPUTVIEWCHILD.Rows)
 			{
-				decimal _newid = decimal.Parse(_of.GetNewID());
+                decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["ID"];
 				_dr["ID"] = _newid;
 				IDDict.Add(_oldid, _newid);
@@ -95,8 +96,7 @@ namespace SinoSZToolInputModelDefine
 
 			DataTable TB_INPUTTABLECOLUMN = ImportSourceDataSet.Tables["MD_INPUTTABLECOLUMN"];
 			foreach (DataRow _dr in TB_INPUTTABLECOLUMN.Rows)
-			{
-				decimal _newid = decimal.Parse(_of.GetNewID());
+			{decimal _newid = decimal.Parse(SequenceAccessor.GetNewId());
 				decimal _oldid = (decimal)_dr["ID"];
 				_dr["ID"] = _newid;
 				IDDict.Add(_oldid, _newid);

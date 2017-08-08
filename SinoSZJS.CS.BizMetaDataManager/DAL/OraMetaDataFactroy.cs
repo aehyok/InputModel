@@ -829,25 +829,10 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
 
         public string GetNewID()
         {
-            string flag = string.Empty;
-            using (SqlConnection conn = SqlHelper.OpenConnection())
-            {
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "GetSequence";
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Connection = conn;
-
-                SqlParameter p6 = cmd.Parameters.Add("@value", OracleDbType.Double);
-                p6.Direction = ParameterDirection.Output;
-
-                cmd.ExecuteScalar();
-                flag = p6.Value.ToString();
-            }
-            return flag;
+            return SequenceAccessor.GetNewId();
         }
 
         #endregion
-
         #region IMetaDataFactroy Members
 
         private const string SQL_SaveTableDefine = @"update MD_TABLE SET NAMESPACE=@NAMESPACE,TABLENAME = @TABLENAME,TABLETYPE = @TABLETYPE,

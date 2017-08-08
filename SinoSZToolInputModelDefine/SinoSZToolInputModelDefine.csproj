@@ -327,6 +327,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\aehyok.BizMetaData\aehyok.BizMetaData.csproj">
+      <Project>{D7168857-3587-4BA9-8C2F-1D53390109AF}</Project>
+      <Name>aehyok.BizMetaData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SinoSZJS.Base\SinoSZJS.Base.csproj">
       <Project>{76FC4ED1-A1D0-4167-9C82-2B69EFF6A33B}</Project>
       <Name>SinoSZJS.Base</Name>

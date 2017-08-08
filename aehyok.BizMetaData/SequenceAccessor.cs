@@ -15,16 +15,8 @@ namespace aehyok.BizMetaData
             string flag = string.Empty;
             using (SqlConnection conn = SqlHelper.OpenConnection())
             {
-                SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "GetSequence";
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Connection = conn;
-
-                SqlParameter p6 = cmd.Parameters.Add("@value", SqlDbType.Decimal);
-                p6.Direction = ParameterDirection.Output;
-
-                cmd.ExecuteScalar();
-                flag = p6.Value.ToString();
+                var obj = SqlHelper.ExecuteScalar(conn, CommandType.Text, "select next value for GetSequence");
+                flag = obj.ToString();
             }
             return flag;
         }

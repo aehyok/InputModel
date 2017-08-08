@@ -26,6 +26,7 @@ using SinoSZJS.Base.IMetaData;
 using SinoSZJS.Base.Report.DataCheck;
 using SinoSZJS.DataAccess.Sql;
 using System.Data.SqlClient;
+using aehyok.BizMetaData;
 
 
 namespace SinoSZJS.CS.BizMetaDataManager.DAL
@@ -1917,7 +1918,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         //没有审核ID的插入一个审核ID
                         //取新序号
                         OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
-                        _shid = _factroy.GetNewID();
+                        _shid = SequenceAccessor.GetNewId();
                         //插入
                         _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (@ID,@NS,@VN,@MAINKEY)", cn);
                         _cmd.Parameters.Add("@ID", decimal.Parse(_shid));
@@ -1979,7 +1980,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                         //没有审核ID的插入一个审核ID
                         //取新序号
                         OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
-                        SHID = _factroy.GetNewID();
+                        SHID = SequenceAccessor.GetNewId();
                         //插入
                         _cmd = new SqlCommand("insert into SJSH_B (ID,NAMESPACE,VIEWNAME,SHDXGJZ) values (@ID,@NS,@VN,@MAINKEY)", cn);
                         _cmd.Parameters.Add("@ID", decimal.Parse(SHID));
@@ -2072,7 +2073,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
                     if (CurrentJLID == "")
                     {
                         OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
-                        CurrentJLID = _factroy.GetNewID();
+                        CurrentJLID = SequenceAccessor.GetNewId();
                         _ret = CurrentJLID;
                         _cmd = new SqlCommand(SQL_SaveDataCheckResult_Ins_JGJLB, cn);
                         _cmd.Parameters.Add(":SHJLID", decimal.Parse(CurrentJLID));
@@ -2155,7 +2156,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public bool SaveNewDataCheckRule(string _ruleName, string _queryModelName, string _gzsf)
         {
             OraMetaDataFactroy _factroy = new OraMetaDataFactroy();
-            string _newid = _factroy.GetNewID();
+            string _newid = SequenceAccessor.GetNewId();
             string _checkStr = "";
 
             string[] qvs = _queryModelName.Split('.');
@@ -2275,7 +2276,7 @@ namespace SinoSZJS.CS.BizMetaDataManager.DAL
         public MD_PAnalizeProject CreateNewPASpace(string PersonAnalizeSapceName)
         {
             OraMetaDataFactroy _of = new OraMetaDataFactroy();
-            string _newid = _of.GetNewID();
+            string _newid = SequenceAccessor.GetNewId();
 
 
             using (SqlConnection cn = SqlHelper.OpenConnection())

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
 using SinoSZJS.Base.Misc;
 using System.Timers;
+using aehyok.BizMetaData;
 using SinoSZJS.CS.BizMetaDataManager.DAL;
 using SinoSZJS.Base.MetaData.QueryModel;
 using SinoSZJS.Base.InputModel;
@@ -176,7 +177,7 @@ namespace SinoSZJS.CS.BizMetaDataManager
 
         public string GetNewID()
         {
-            return MetaDataFactroy.GetNewID();
+            return SequenceAccessor.GetNewId();
         }
 
         public bool SaveTableDefine(MD_Table _table)

@@ -100,7 +100,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _ret = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
+                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
                         );
                     }
                     dr.Close();
@@ -135,7 +135,7 @@ namespace SinoSZToolFlowDesign.DAL
                         _ret = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
+                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
                         );
                     }
                     dr.Close();
@@ -168,7 +168,7 @@ namespace SinoSZToolFlowDesign.DAL
                         Flow_BaseDefine _fd = new Flow_BaseDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
                                 dr.IsDBNull(1) ? "" : dr.GetString(1),
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
-                                dr.IsDBNull(3) ? "0" : dr.GetDouble(3).ToString()
+                                dr.IsDBNull(3) ? "0" : dr.GetDecimal(3).ToString()
                         );
                         _ret.Add(_fd);
                     }
@@ -265,7 +265,7 @@ namespace SinoSZToolFlowDesign.DAL
                                 dr.IsDBNull(2) ? "" : dr.GetString(2),
                                 dr.IsDBNull(3) ? "" : dr.GetString(3),
                                 dr.IsDBNull(4) ? "" : dr.GetString(4),
-                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDouble(5))
+                                dr.IsDBNull(5) ? 0 : Convert.ToInt32(dr.GetDecimal(5))
                         );
                         _ret.Add(_fd);
                     }
@@ -364,7 +364,7 @@ namespace SinoSZToolFlowDesign.DAL
                                 dr.IsDBNull(5) ? "" : dr.GetString(5),
                                 dr.IsDBNull(6) ? "" : dr.GetString(6),
                                 dr.IsDBNull(7) ? "" : dr.GetString(7),
-                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDouble(8))
+                                dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr.GetDecimal(8))
                         );
 
                         Flow_StateActionDefine _sa = new Flow_StateActionDefine(dr.IsDBNull(0) ? "" : dr.GetString(0),
@@ -373,8 +373,8 @@ namespace SinoSZToolFlowDesign.DAL
                                 flow_StateDefine,
                                 _endStateDefine,
                                 dr.IsDBNull(9) ? "" : dr.GetString(9),
-                                dr.IsDBNull(10) ? 0 : Convert.ToInt32(dr.GetDouble(10)),
-                                dr.IsDBNull(11) ? 0 : Convert.ToInt32(dr.GetDouble(11)),
+                                dr.IsDBNull(10) ? 0 : Convert.ToInt32(dr.GetDecimal(10)),
+                                dr.IsDBNull(11) ? 0 : Convert.ToInt32(dr.GetDecimal(11)),
                                 dr.IsDBNull(12) ? "" : dr.GetString(12)
                         );
 

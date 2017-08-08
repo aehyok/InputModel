@@ -73,7 +73,7 @@ namespace SinoSZToolFlowDesign
             }
 
             //string _cnString = string.Format("user id={0};data source={2};password={1};", this.te_ora_user.EditValue, this.te_ora_pass.EditValue, this.te_ora_netserive.EditValue);
-            string _cnString = @"Data Source =AEHYOK-PC\AEHYOK;Initial Catalog = ZHXTV3;Integrated Security = SSPI;";
+            string _cnString = @"Data Source =.;Initial Catalog = ZHXTV3META;Integrated Security = SSPI;";
             if (SqlHelper.IsReady(_cnString))
             {
                 ConnectStringSetting = _cnString;
